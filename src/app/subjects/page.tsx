@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
-import { useSubjects, type Subject } from "@/lib/subjects";
+import { useSubjects, type Subject, type Topic } from "@/lib/subjects";
 import { useSettings } from "@/lib/settings";
 import { Plus } from "@phosphor-icons/react/dist/ssr/Plus";
 import { Trash } from "@phosphor-icons/react/dist/ssr/Trash";
@@ -44,7 +44,7 @@ const ACCEPTED_MIME = ["application/pdf", "application/json", "text/markdown", "
 
 // ── Drop Zone ──
 
-function DropZone({ onFile, fullHeight }: { onFile: (file: File) => void; fullHeight?: boolean }) {
+function DropZone({ onFile }: { onFile: (file: File) => void }) {
   const [dragOver, setDragOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -61,19 +61,13 @@ function DropZone({ onFile, fullHeight }: { onFile: (file: File) => void; fullHe
       onDragLeave={() => setDragOver(false)}
       onDrop={handleDrop}
       onClick={() => inputRef.current?.click()}
-      className={`w-full border-2 border-dashed rounded-xl flex flex-col items-center justify-center text-center cursor-pointer transition-colors ${
-        fullHeight ? "min-h-[60vh]" : "py-16"
-      } ${dragOver ? "border-primary bg-primary/5" : "border-border/40 hover:border-border hover:bg-accent/10"}`}
+      className={`w-full border-2 border-dashed rounded-lg flex items-center gap-3 px-4 py-3.5 cursor-pointer transition-colors ${
+        dragOver ? "border-primary bg-primary/5" : "border-border/30 hover:border-border/50 hover:bg-accent/5"
+      }`}
     >
-      <div className="w-14 h-14 rounded-2xl bg-muted/50 flex items-center justify-center mb-4">
-        <UploadSimple size={28} weight="light" className="text-muted-foreground/60" />
-      </div>
-      <p className="text-sm font-medium">Drop your exam specification here</p>
-      <p className="text-xs text-muted-foreground mt-1.5 max-w-xs">
-        PDF, JSON, Markdown, or text files — AI will extract the topic structure
-      </p>
-      <button onClick={(e) => { e.stopPropagation(); inputRef.current?.click(); }}
-        className="mt-3 text-xs text-primary hover:underline">or browse files</button>
+      <UploadSimple size={18} weight="light" className="text-muted-foreground/40 shrink-0" />
+      <span className="text-sm text-muted-foreground/50">Drop a specification file to add a subject</span>
+      <span className="text-[10px] text-muted-foreground/30 ml-auto shrink-0">PDF, JSON, MD, TXT</span>
       <input ref={inputRef} type="file" accept={ACCEPTED_TYPES} className="hidden"
         onChange={(e) => { const f = e.target.files?.[0]; if (f) onFile(f); }} />
     </div>
@@ -305,32 +299,109 @@ function ReviewView({ parsed, onParsedChange, onSave, onReparse }: {
   );
 }
 
+// ── Stored topic tree viewer ──
+
+function StoredTopicTree({ topics }: { topics: Topic[] }) {
+  const roots = topics.filter((t) => !t.parentCode)
+    .sort((a, b) => a.code.localeCompare(b.code, undefined, { numeric: true }));
+
+  return (
+    <div className="space-y-0.5">
+      {roots.map((root) => (
+        <StoredTopicNode key={root.id} topic={root} allTopics={topics} depth={0} />
+      ))}
+    </div>
+  );
+}
+
+function StoredTopicNode({ topic, allTopics, depth }: { topic: Topic; allTopics: Topic[]; depth: number }) {
+  const children = allTopics.filter((t) => t.parentCode === topic.code)
+    .sort((a, b) => a.code.localeCompare(b.code, undefined, { numeric: true }));
+  const [expanded, setExpanded] = useState(depth < 1);
+  const hasChildren = children.length > 0;
+  const hasContent = topic.content && topic.content.length > 0;
+
+  return (
+    <div>
+      <div
+        className="flex items-center gap-2 py-1 px-1 rounded hover:bg-accent/20 transition-colors"
+        style={{ paddingLeft: `${depth * 18}px` }}
+      >
+        {hasChildren ? (
+          <button onClick={() => setExpanded(!expanded)} className="w-4 shrink-0 text-muted-foreground/40">
+            {expanded ? <CaretDown size={11} /> : <CaretRight size={11} />}
+          </button>
+        ) : <span className="w-4 shrink-0" />}
+        <span className="text-[10px] font-mono text-muted-foreground/40 w-10 shrink-0">{topic.code}</span>
+        <span className="text-xs text-muted-foreground truncate">{topic.title}</span>
+        {hasContent && !hasChildren && (
+          <button onClick={() => setExpanded(!expanded)} className="text-[9px] text-muted-foreground/30 shrink-0">
+            {topic.content.length} pts
+          </button>
+        )}
+      </div>
+      {expanded && hasContent && !hasChildren && (
+        <div className="space-y-0.5 py-0.5" style={{ paddingLeft: `${depth * 18 + 32}px` }}>
+          {topic.content.map((c, i) => (
+            <p key={i} className="text-[11px] text-muted-foreground/50 leading-relaxed">
+              <span className="text-muted-foreground/20 mr-1">·</span>{c}
+            </p>
+          ))}
+        </div>
+      )}
+      {expanded && hasChildren && children.map((child) => (
+        <StoredTopicNode key={child.id} topic={child} allTopics={allTopics} depth={depth + 1} />
+      ))}
+    </div>
+  );
+}
+
 // ── Subject row ──
 
 function SubjectRow({ subject }: { subject: Subject }) {
   const { deleteSubject } = useSubjects();
+  const [expanded, setExpanded] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   return (
-    <div className="group flex items-center gap-4 px-4 py-3.5 rounded-lg bg-card border border-border/20 hover:border-border/40 transition-colors cursor-default">
-      <div className="flex-1 min-w-0 flex items-center gap-3">
-        <span className="text-sm font-medium truncate">{subject.name}</span>
-        <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-primary/10 text-primary shrink-0">
-          {subject.examBoard}
+    <div className="rounded-lg bg-card border border-border/20 hover:border-border/40 transition-colors overflow-hidden">
+      <div className="group flex items-center gap-4 px-4 py-3.5 cursor-pointer" onClick={() => setExpanded(!expanded)}>
+        <button className="text-muted-foreground/40 shrink-0">
+          {expanded ? <CaretDown size={14} /> : <CaretRight size={14} />}
+        </button>
+        <div className="flex-1 min-w-0 flex items-center gap-3">
+          <span className="text-sm font-medium truncate">{subject.name}</span>
+          <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-primary/10 text-primary shrink-0">
+            {subject.examBoard}
+          </span>
+          <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground shrink-0">
+            {subject.level}
+          </span>
+        </div>
+        <span className="text-xs text-muted-foreground/60 shrink-0">
+          {subject.topics.length} topics
         </span>
-        <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground shrink-0">
-          {subject.level}
-        </span>
+        {confirmDelete ? (
+          <div className="flex items-center gap-1.5 shrink-0" onClick={(e) => e.stopPropagation()}>
+            <button onClick={() => deleteSubject(subject.id)}
+              className="text-[11px] font-medium text-destructive hover:underline">Delete</button>
+            <button onClick={() => setConfirmDelete(false)}
+              className="text-[11px] text-muted-foreground hover:underline">Cancel</button>
+          </div>
+        ) : (
+          <button
+            onClick={(e) => { e.stopPropagation(); setConfirmDelete(true); }}
+            className="opacity-0 group-hover:opacity-100 p-1 text-muted-foreground/30 hover:text-destructive transition-all shrink-0"
+          >
+            <Trash size={14} />
+          </button>
+        )}
       </div>
-      <span className="text-xs text-muted-foreground/60 shrink-0">
-        {subject.topics.length} topics
-      </span>
-      <button
-        onClick={(e) => { e.stopPropagation(); deleteSubject(subject.id); }}
-        className="opacity-0 group-hover:opacity-100 p-1 text-muted-foreground/30 hover:text-destructive transition-all shrink-0"
-      >
-        <Trash size={14} />
-      </button>
-      <CaretRight size={14} className="text-muted-foreground/30 shrink-0" />
+      {expanded && subject.topics.length > 0 && (
+        <div className="border-t border-border/10 px-4 py-2">
+          <StoredTopicTree topics={subject.topics} />
+        </div>
+      )}
     </div>
   );
 }
@@ -646,25 +717,19 @@ export default function SubjectsPage() {
     setStage("list");
   }, [parsed, addSubject, addTopic]);
 
-  const hasSubjects = subjects.length > 0;
-  const [listDragOver, setListDragOver] = useState(false);
   const isAdding = stage === "processing" || stage === "review";
 
-  const handleListDrop = useCallback((e: React.DragEvent) => {
+  const handlePageDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
-    setListDragOver(false);
     const file = e.dataTransfer.files[0];
     if (file) handleFile(file);
   }, [handleFile]);
 
   return (
     <div
-      className={`p-8 h-full flex flex-col transition-colors ${
-        !isAdding && listDragOver ? "bg-primary/5" : ""
-      }`}
-      onDragOver={!isAdding ? (e) => { e.preventDefault(); setListDragOver(true); } : undefined}
-      onDragLeave={!isAdding ? () => setListDragOver(false) : undefined}
-      onDrop={!isAdding ? handleListDrop : undefined}
+      className="p-8 h-full flex flex-col"
+      onDragOver={!isAdding ? (e) => e.preventDefault() : undefined}
+      onDrop={!isAdding ? handlePageDrop : undefined}
     >
       <div className="flex items-start justify-between shrink-0">
         <div>
@@ -687,41 +752,29 @@ export default function SubjectsPage() {
       )}
 
       <div className="mt-6 flex-1 min-h-0 overflow-auto">
-        {/* Empty + not adding: full drop zone */}
-        {!hasSubjects && !isAdding && <DropZone onFile={handleFile} fullHeight />}
+        <div className="space-y-2">
+          {/* Subject rows */}
+          {subjects.map((s) => <SubjectRow key={s.id} subject={s} />)}
 
-        {/* Subject list (always visible when subjects exist) */}
-        {hasSubjects && (
-          <div className="space-y-2">
-            {subjects.map((s) => <SubjectRow key={s.id} subject={s} />)}
-          </div>
-        )}
+          {/* Inline processing/review */}
+          {stage === "processing" && (
+            <div className="border border-border/20 rounded-lg p-4 bg-card">
+              <ProcessingView fileName={fileName} />
+            </div>
+          )}
 
-        {/* Inline processing/review — appears below existing subjects */}
-        {stage === "processing" && (
-          <div className={`${hasSubjects ? "mt-3 border border-border/20 rounded-lg p-4 bg-card" : ""}`}>
-            <ProcessingView fileName={fileName} />
-          </div>
-        )}
+          {stage === "review" && parsed && (
+            <div className="border border-border/20 rounded-lg p-4 bg-card">
+              <ReviewView parsed={parsed} onParsedChange={setParsed} onSave={handleSave}
+                onReparse={() => { if (fileRef.current) handleFile(fileRef.current); }} />
+            </div>
+          )}
 
-        {stage === "review" && parsed && (
-          <div className={`${hasSubjects ? "mt-3 border border-border/20 rounded-lg p-4 bg-card" : ""}`}>
-            <ReviewView parsed={parsed} onParsedChange={setParsed} onSave={handleSave}
-              onReparse={() => { if (fileRef.current) handleFile(fileRef.current); }} />
-          </div>
-        )}
-
-        {/* Drop hint at bottom (only when list view, has subjects, not adding) */}
-        {hasSubjects && !isAdding && (
-          <div className={`mt-2 flex items-center justify-center py-5 border-2 border-dashed rounded-lg transition-colors ${
-            listDragOver
-              ? "border-primary bg-primary/5 text-primary"
-              : "border-transparent text-muted-foreground/30"
-          }`}>
-            <p className="text-xs">Drop a spec file to add another subject</p>
-          </div>
-        )}
-
+          {/* Empty drop row — always visible when not processing */}
+          {!isAdding && (
+            <DropZone onFile={handleFile} />
+          )}
+        </div>
       </div>
     </div>
   );
