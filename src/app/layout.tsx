@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, Newsreader, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Titlebar } from "@/components/titlebar";
@@ -7,18 +7,10 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
-const spaceGrotesk = Space_Grotesk({
+const inter = Inter({
   variable: "--font-sans",
   subsets: ["latin"],
   display: "swap",
-  weight: ["400", "500", "600", "700"],
-});
-
-const newsreader = Newsreader({
-  variable: "--font-heading",
-  subsets: ["latin"],
-  display: "swap",
-  weight: ["400", "500", "600"],
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -40,13 +32,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${spaceGrotesk.variable} ${newsreader.variable} ${jetbrainsMono.variable} h-full`}
+      className={`${inter.variable} ${jetbrainsMono.variable} h-full`}
       suppressHydrationWarning
     >
       <body className="h-full flex flex-col overflow-hidden antialiased">
         <ThemeProvider>
           <TooltipProvider>
-            <SidebarProvider>
+            <SidebarProvider className="flex-col">
               <Titlebar />
               <div className="flex-1 overflow-hidden flex">
                 <AppSidebar />

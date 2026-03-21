@@ -59,7 +59,7 @@
   /* ── Typography ── */
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
-  --font-heading: var(--font-heading);
+  --font-heading: var(--font-sans);
 
   /* ── Border radius ── */
   --radius-sm: calc(var(--radius) * 0.6);
