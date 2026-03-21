@@ -578,13 +578,17 @@ All visual values are defined as CSS custom properties in `src/app/globals.css`.
 
 ### Typography
 
-| Context | Font | Weight | Size |
-|---|---|---|---|
-| Body / UI | Geist Sans (`--font-sans`) | `400` | `14px` (text-sm) |
-| Code / mono | Geist Mono (`--font-mono`) | `400` | `14px` |
-| Headings | Geist Sans (`--font-heading`) | `600` | varies |
-| Sidebar nav | Geist Sans | `500` | `14px` (text-sm) |
-| Sidebar logo | Geist Sans | `600` | `16px` (text-base) |
+Per `ui-design.md`, the font pairing is **Newsreader** (serif, editorial authority) for headlines and **Space Grotesk** (geometric sans, technical precision) for body/UI.
+
+| Context | Font | Weight | Size | Class |
+|---|---|---|---|---|
+| Page headings | Newsreader (`--font-heading`) | `500` | `30px` | `font-heading text-3xl font-medium tracking-tight` |
+| Section headings | Newsreader (`--font-heading`) | `500` | `24px` | `font-heading text-2xl font-medium tracking-tight` |
+| Body / UI | Space Grotesk (`--font-sans`) | `400` | `14px` | `text-sm` |
+| Subtitles | Space Grotesk (`--font-sans`) | `400` | `14px` | `text-sm text-muted-foreground` |
+| Code / mono | JetBrains Mono (`--font-mono`) | `400` | `14px` | `font-mono text-sm` |
+| Sidebar nav | Space Grotesk | `500` | `14px` | `text-sm font-medium` |
+| Sidebar logo | Space Grotesk | `600` | `16px` | `text-base font-semibold` |
 
 ### Mention Chip Colors
 
