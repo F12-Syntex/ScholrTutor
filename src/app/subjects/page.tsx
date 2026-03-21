@@ -305,46 +305,32 @@ function ReviewView({ parsed, onParsedChange, onSave, onReparse }: {
   );
 }
 
-// ── Subject card ──
+// ── Subject row ──
 
-function SubjectCard({ subject }: { subject: Subject }) {
+function SubjectRow({ subject }: { subject: Subject }) {
   const { deleteSubject } = useSubjects();
-  const [expanded, setExpanded] = useState(false);
-  const rootTopics = subject.topics.filter((t) => !t.parentCode)
-    .sort((a, b) => a.code.localeCompare(b.code, undefined, { numeric: true }));
 
   return (
-    <div className="border border-border/30 rounded-lg bg-card overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-3">
-        <div className="flex items-center gap-3 min-w-0">
-          <button onClick={() => setExpanded(!expanded)} className="text-muted-foreground/50 shrink-0">
-            {expanded ? <CaretDown size={14} /> : <CaretRight size={14} />}
-          </button>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium">{subject.name}</span>
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">{subject.level}</span>
-            </div>
-            <div className="text-xs text-muted-foreground mt-0.5">
-              {subject.examBoard} · {subject.topics.length} topics
-            </div>
-          </div>
-        </div>
-        <button onClick={() => deleteSubject(subject.id)}
-          className="p-1.5 text-muted-foreground/30 hover:text-destructive transition-colors">
-          <Trash size={14} />
-        </button>
+    <div className="group flex items-center gap-4 px-4 py-3.5 rounded-lg bg-card border border-border/20 hover:border-border/40 transition-colors cursor-default">
+      <div className="flex-1 min-w-0 flex items-center gap-3">
+        <span className="text-sm font-medium truncate">{subject.name}</span>
+        <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-primary/10 text-primary shrink-0">
+          {subject.examBoard}
+        </span>
+        <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground shrink-0">
+          {subject.level}
+        </span>
       </div>
-      {expanded && rootTopics.length > 0 && (
-        <div className="border-t border-border/20 px-4 py-2 space-y-0.5">
-          {rootTopics.map((t) => (
-            <div key={t.id} className="flex items-center gap-2 py-1 text-xs">
-              <span className="font-mono text-muted-foreground/50 w-8">{t.code}</span>
-              <span className="text-muted-foreground">{t.title}</span>
-            </div>
-          ))}
-        </div>
-      )}
+      <span className="text-xs text-muted-foreground/60 shrink-0">
+        {subject.topics.length} topics
+      </span>
+      <button
+        onClick={(e) => { e.stopPropagation(); deleteSubject(subject.id); }}
+        className="opacity-0 group-hover:opacity-100 p-1 text-muted-foreground/30 hover:text-destructive transition-all shrink-0"
+      >
+        <Trash size={14} />
+      </button>
+      <CaretRight size={14} className="text-muted-foreground/30 shrink-0" />
     </div>
   );
 }
@@ -567,22 +553,33 @@ export default function SubjectsPage() {
   }, [parsed, addSubject, addTopic]);
 
   const hasSubjects = subjects.length > 0;
+  const [listDragOver, setListDragOver] = useState(false);
+
   const subtitle = stage === "processing" ? "Extracting specification structure..."
     : stage === "review" ? "Review and edit the extracted structure."
     : "Define subjects, exam boards, and topic trees.";
 
+  const handleListDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setListDragOver(false);
+    const file = e.dataTransfer.files[0];
+    if (file) handleFile(file);
+  }, [handleFile]);
+
   return (
-    <div className="p-8 h-full flex flex-col">
+    <div
+      className={`p-8 h-full flex flex-col transition-colors ${
+        stage === "list" && listDragOver ? "bg-primary/5" : ""
+      }`}
+      onDragOver={stage === "list" ? (e) => { e.preventDefault(); setListDragOver(true); } : undefined}
+      onDragLeave={stage === "list" ? () => setListDragOver(false) : undefined}
+      onDrop={stage === "list" ? handleListDrop : undefined}
+    >
       <div className="flex items-start justify-between shrink-0">
         <div>
           <h1 className="text-3xl font-medium tracking-tight">Subjects</h1>
           <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
         </div>
-        {stage === "list" && hasSubjects && (
-          <Button size="sm" onClick={() => setStage("drop")}>
-            <Plus size={15} className="mr-1.5" /> Add Subject
-          </Button>
-        )}
         {(stage === "drop" || stage === "review") && (
           <Button variant="ghost" size="sm" onClick={() => { setStage("list"); setParsed(null); setError(""); }}>
             Back to list
@@ -597,10 +594,23 @@ export default function SubjectsPage() {
       )}
 
       <div className="mt-6 flex-1 min-h-0">
+        {/* Empty state: full-height drop zone */}
         {stage === "list" && !hasSubjects && <DropZone onFile={handleFile} fullHeight />}
+
+        {/* Has subjects: list + subtle drop hint */}
         {stage === "list" && hasSubjects && (
-          <div className="space-y-2">{subjects.map((s) => <SubjectCard key={s.id} subject={s} />)}</div>
+          <div className="space-y-2">
+            {subjects.map((s) => <SubjectRow key={s.id} subject={s} />)}
+            <div className={`flex items-center justify-center py-6 border-2 border-dashed rounded-lg transition-colors ${
+              listDragOver
+                ? "border-primary bg-primary/5 text-primary"
+                : "border-transparent text-muted-foreground/30 hover:border-border/30 hover:text-muted-foreground/50"
+            }`}>
+              <p className="text-xs">Drop a spec file to add another subject</p>
+            </div>
+          </div>
         )}
+
         {stage === "drop" && <DropZone onFile={handleFile} />}
         {stage === "processing" && <ProcessingView fileName={fileName} />}
         {stage === "review" && parsed && (
