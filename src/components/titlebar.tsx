@@ -27,7 +27,7 @@ export function Titlebar() {
 
   return (
     <header
-      className="flex items-center h-9 bg-sidebar border-b border-border/40 select-none shrink-0"
+      className="flex items-center h-9 bg-sidebar select-none shrink-0"
       style={{ WebkitAppRegion: "drag" } as React.CSSProperties}
     >
       {/* Left: sidebar toggle + breadcrumb */}

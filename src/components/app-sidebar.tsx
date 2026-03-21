@@ -92,7 +92,7 @@ export function AppSidebar() {
       </SidebarHeader>
 
       {/* Navigation */}
-      <SidebarContent className="px-3.5 pt-2">
+      <SidebarContent className="px-4 pt-2">
         <SidebarGroup className="p-0">
           <SidebarGroupLabel className="px-2 mb-0.5">
             Navigation
@@ -104,7 +104,7 @@ export function AppSidebar() {
       </SidebarContent>
 
       {/* Footer: theme toggle */}
-      <SidebarFooter className="px-3.5 py-3 border-t border-sidebar-border/40">
+      <SidebarFooter className="px-3.5 py-3">
         <div className="flex items-center">
           <ThemeToggle />
         </div>

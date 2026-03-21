@@ -30,9 +30,9 @@ export default function RootLayout({
           <TooltipProvider>
             <SidebarProvider className="flex-col">
               <Titlebar />
-              <div className="flex-1 overflow-hidden flex">
+              <div className="flex-1 overflow-hidden flex bg-sidebar">
                 <AppSidebar />
-                <SidebarInset>
+                <SidebarInset className="my-2 mr-2 rounded-xl shadow-md overflow-hidden">
                   <div className="flex-1 overflow-auto">
                     {children}
                   </div>
