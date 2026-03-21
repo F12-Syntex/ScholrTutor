@@ -102,14 +102,14 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="px-4 py-2.5 border-t border-sidebar-border/30">
-        <div className="flex items-center gap-1">
+      <SidebarFooter className="p-3">
+        <div className="flex items-center justify-center gap-1 h-10 rounded-lg bg-sidebar-accent/50">
           <Link
             href="/settings"
-            className="flex items-center justify-center w-8 h-8 rounded-md text-sidebar-foreground/40 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-colors"
+            className="flex items-center justify-center w-9 h-9 rounded-md text-sidebar-foreground/50 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
             title="Settings"
           >
-            <GearSix size={16} />
+            <GearSix size={17} />
           </Link>
           <ThemeToggle />
         </div>
