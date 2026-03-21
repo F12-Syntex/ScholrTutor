@@ -1,0 +1,10 @@
+<svg width="100%" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+  
+
+  <g transform="translate(340, 340)" style="fill:rgb(0, 0, 0);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+    <path d="&#10;      M -80 -130&#10;      C -80 -130, 80 -130, 100 -90&#10;      C 120 -50, 60 -20, 0 0&#10;      C -60 20, -120 50, -100 90&#10;      C -80 130, 80 130, 80 130&#10;    " fill="none" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--color-text-primary); stroke-width: 52; fill: none;;fill:none;stroke:rgb(250, 249, 245);color:rgb(255, 255, 255);stroke-width:52px;stroke-linecap:round;stroke-linejoin:round;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+    <circle cx="80" cy="-130" r="30" style="fill:rgb(250, 249, 245);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+    <circle cx="-80" cy="130" r="30" style="fill:rgb(250, 249, 245);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  </g>
+</svg>
