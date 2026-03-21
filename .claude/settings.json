@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"Stop\",\"additionalContext\":\"AUTO-COMMIT REMINDER: If any files were changed during this response, you MUST now: 1) Read the current version from package.json, 2) Bump the version (patch for fixes/tweaks, minor for new features, major for breaking changes), 3) Update package.json with the new version, 4) git add all changed files (but NOT node_modules, .next, out, dist), 5) Commit with format: type(scope): description (vX.Y.Z). If no files were changed, do nothing.\"}}'",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}
