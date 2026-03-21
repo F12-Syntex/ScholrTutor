@@ -32,9 +32,9 @@ type ParsedUnit = {
 
 type FlowStage = "list" | "drop" | "processing" | "review";
 
-// ── Stage 1: Drop Zone ──
+// ── Stage 1: Full-width Drop Zone ──
 
-function DropZone({ onFile }: { onFile: (file: File) => void }) {
+function DropZone({ onFile, fullHeight }: { onFile: (file: File) => void; fullHeight?: boolean }) {
   const [dragOver, setDragOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -51,39 +51,41 @@ function DropZone({ onFile }: { onFile: (file: File) => void }) {
   }, [onFile]);
 
   return (
-    <div className="flex flex-col items-center justify-center py-20">
-      <div
-        onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-        onDragLeave={() => setDragOver(false)}
-        onDrop={handleDrop}
-        className={`w-full max-w-md border-2 border-dashed rounded-xl p-12 text-center transition-colors cursor-pointer ${
-          dragOver
-            ? "border-primary bg-primary/5"
-            : "border-border/50 hover:border-border hover:bg-accent/20"
-        }`}
-        onClick={() => inputRef.current?.click()}
-      >
-        <UploadSimple size={40} weight="thin" className="mx-auto text-muted-foreground/40 mb-4" />
-        <p className="text-sm font-medium">
-          Drop your exam specification PDF here
-        </p>
-        <p className="text-xs text-muted-foreground mt-1.5">
-          The AI will extract subjects, units, and topics automatically
-        </p>
-        <input
-          ref={inputRef}
-          type="file"
-          accept=".pdf"
-          className="hidden"
-          onChange={handleSelect}
-        />
+    <div
+      onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+      onDragLeave={() => setDragOver(false)}
+      onDrop={handleDrop}
+      onClick={() => inputRef.current?.click()}
+      className={`w-full border-2 border-dashed rounded-xl flex flex-col items-center justify-center text-center cursor-pointer transition-colors ${
+        fullHeight ? "min-h-[60vh]" : "py-16"
+      } ${
+        dragOver
+          ? "border-primary bg-primary/5"
+          : "border-border/40 hover:border-border hover:bg-accent/10"
+      }`}
+    >
+      <div className="w-14 h-14 rounded-2xl bg-muted/50 flex items-center justify-center mb-4">
+        <UploadSimple size={28} weight="light" className="text-muted-foreground/60" />
       </div>
+      <p className="text-sm font-medium">
+        Drop your exam specification here
+      </p>
+      <p className="text-xs text-muted-foreground mt-1.5 max-w-xs">
+        PDF files supported — the AI will extract subjects, units, and topics automatically
+      </p>
       <button
-        onClick={() => inputRef.current?.click()}
-        className="mt-3 text-xs text-muted-foreground hover:text-foreground transition-colors"
+        onClick={(e) => { e.stopPropagation(); inputRef.current?.click(); }}
+        className="mt-3 text-xs text-primary hover:underline transition-colors"
       >
         or browse files
       </button>
+      <input
+        ref={inputRef}
+        type="file"
+        accept=".pdf"
+        className="hidden"
+        onChange={handleSelect}
+      />
     </div>
   );
 }
@@ -544,27 +546,24 @@ export default function SubjectsPage() {
     if (fileRef.current) handleFile(fileRef.current);
   }, [handleFile]);
 
+  const hasSubjects = subjects.length > 0;
+  const subtitle = stage === "processing"
+    ? "Extracting specification structure..."
+    : stage === "review"
+    ? "Review and edit the extracted structure."
+    : "Define subjects, exam boards, and topic trees.";
+
   return (
-    <div className="p-8 max-w-2xl">
-      <div className="flex items-start justify-between">
+    <div className="p-8 h-full flex flex-col">
+      <div className="flex items-start justify-between shrink-0">
         <div>
           <h1 className="text-3xl font-medium tracking-tight">Subjects</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {stage === "list"
-              ? "Define subjects, exam boards, and topic trees."
-              : stage === "drop"
-              ? "Upload a specification to auto-extract topics."
-              : stage === "processing"
-              ? "Extracting specification structure..."
-              : "Review and edit the extracted structure."}
-          </p>
+          <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
         </div>
-        {stage === "list" && (
-          <div className="flex gap-2 shrink-0">
-            <Button variant="ghost" size="sm" onClick={() => setStage("drop")}>
-              <UploadSimple size={15} className="mr-1.5" /> Import Spec
-            </Button>
-          </div>
+        {stage === "list" && hasSubjects && (
+          <Button size="sm" onClick={() => setStage("drop")}>
+            <Plus size={15} className="mr-1.5" /> Add Subject
+          </Button>
         )}
         {(stage === "drop" || stage === "review") && (
           <Button variant="ghost" size="sm" onClick={() => { setStage("list"); setParsed(null); setError(""); }}>
@@ -574,40 +573,36 @@ export default function SubjectsPage() {
       </div>
 
       {error && (
-        <div className="mt-4 p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-sm text-destructive">
+        <div className="mt-4 p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-sm text-destructive shrink-0">
           {error}
         </div>
       )}
 
-      <div className="mt-6">
-        {stage === "list" && (
+      <div className="mt-6 flex-1 min-h-0">
+        {/* Empty state: entire area is the drop zone */}
+        {stage === "list" && !hasSubjects && (
+          <DropZone onFile={handleFile} fullHeight />
+        )}
+
+        {/* Has subjects: show list */}
+        {stage === "list" && hasSubjects && (
           <div className="space-y-2">
-            {subjects.length === 0 ? (
-              <div className="text-center py-16">
-                <FileText size={40} weight="thin" className="mx-auto text-muted-foreground/30 mb-3" />
-                <p className="text-sm text-muted-foreground">No subjects yet.</p>
-                <p className="text-xs text-muted-foreground/60 mt-1">Import a spec PDF or create one manually.</p>
-                <div className="flex gap-2 justify-center mt-4">
-                  <Button size="sm" onClick={() => setStage("drop")}>
-                    <UploadSimple size={15} className="mr-1.5" /> Import Spec
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              subjects.map((s) => <SubjectCard key={s.id} subject={s} />)
-            )}
+            {subjects.map((s) => <SubjectCard key={s.id} subject={s} />)}
           </div>
         )}
 
+        {/* Explicit drop zone (from "Add Subject" button) */}
         {stage === "drop" && <DropZone onFile={handleFile} />}
         {stage === "processing" && <ProcessingView fileName={fileName} />}
         {stage === "review" && parsed && (
-          <ReviewView
-            parsed={parsed}
-            onParsedChange={setParsed}
-            onSave={handleSave}
-            onReparse={handleReparse}
-          />
+          <div className="max-w-2xl">
+            <ReviewView
+              parsed={parsed}
+              onParsedChange={setParsed}
+              onSave={handleSave}
+              onReparse={handleReparse}
+            />
+          </div>
         )}
       </div>
     </div>
