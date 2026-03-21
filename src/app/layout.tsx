@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import { Space_Grotesk, Newsreader, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AppSidebar } from "@/components/app-sidebar";
+import { ContentHeader } from "@/components/content-header";
 import { Titlebar } from "@/components/titlebar";
 import { ThemeProvider } from "@/components/theme-provider";
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 const spaceGrotesk = Space_Grotesk({
@@ -51,10 +52,10 @@ export default function RootLayout({
               <SidebarProvider>
                 <AppSidebar />
                 <SidebarInset>
-                  <div className="absolute top-2 left-2 z-10 peer-data-[state=expanded]:hidden">
-                    <SidebarTrigger />
+                  <ContentHeader />
+                  <div className="flex-1 overflow-auto">
+                    {children}
                   </div>
-                  {children}
                 </SidebarInset>
               </SidebarProvider>
             </TooltipProvider>
