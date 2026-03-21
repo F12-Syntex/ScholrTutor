@@ -376,9 +376,9 @@ Explicit check-in action on the Session page. Log entries alone do not count as 
 ## 10. Pages & Navigation
 
 ### Shell Layout
-- **Sidebar** (collapsible): logo, nav links, today's roster chip strip
-- **Header**: breadcrumbs, current date, global quick-log button (`Cmd+K`)
-- **Quick-log modal**: floating session input accessible from any page
+- **Custom titlebar** (36px): frameless Electron window with draggable title area and window controls (minimize, maximize, close). No default menu bar.
+- **Sidebar** (shadcn `<SidebarProvider>` + `<Sidebar collapsible="icon">`): logo, nav links, today's roster chip strip. Collapses to icon-only mode with smooth CSS transition (200ms ease-linear). Toggle via `Ctrl+B` keyboard shortcut or rail click.
+- **Quick-log modal**: floating session input accessible from any page (`Cmd+K`)
 
 ---
 
@@ -571,8 +571,10 @@ All visual values are defined as CSS custom properties in `src/app/globals.css`.
 | Token | Value | Usage |
 |---|---|---|
 | `--radius` | `0.625rem` | Base border radius (sm/md/lg/xl derived from this) |
-| Sidebar expanded | `240px` | Full sidebar width |
-| Sidebar collapsed | `68px` | Icon-only sidebar width |
+| `--sidebar-width` | `16rem` | Full sidebar width |
+| `--sidebar-width-icon` | `3rem` | Icon-only collapsed sidebar width |
+| Titlebar height | `36px` (`h-9`) | Custom Electron titlebar |
+| Window controls | `44px` wide each | Minimize, maximize, close buttons |
 
 ### Typography
 
