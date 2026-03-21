@@ -9,17 +9,20 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const newsreader = Newsreader({
   variable: "--font-heading",
   subsets: ["latin"],
+  display: "swap",
   weight: ["400", "500", "600"],
 });
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -35,9 +38,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${spaceGrotesk.variable} ${newsreader.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`${spaceGrotesk.variable} ${newsreader.variable} ${jetbrainsMono.variable} h-full`}
     >
-      <body className="h-full flex flex-col overflow-hidden">
+      <body className="h-full flex flex-col overflow-hidden antialiased">
         <Titlebar />
         <div className="flex-1 overflow-hidden">
           <TooltipProvider>

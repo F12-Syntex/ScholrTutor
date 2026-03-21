@@ -562,8 +562,8 @@ All visual values are defined as CSS custom properties in `src/app/globals.css`.
 | `--sidebar-foreground` | `oklch(0.145 0 0)` | `oklch(0.985 0 0)` |
 | `--sidebar-primary` | `oklch(0.205 0 0)` | `oklch(0.488 0.243 264.376)` |
 | `--sidebar-primary-foreground` | `oklch(0.985 0 0)` | `oklch(0.985 0 0)` |
-| `--sidebar-accent` | `oklch(0.97 0 0)` | `oklch(0.269 0 0)` |
-| `--sidebar-accent-foreground` | `oklch(0.205 0 0)` | `oklch(0.985 0 0)` |
+| `--sidebar-accent` | `oklch(0.95 0 0)` | `oklch(0.269 0 0)` |
+| `--sidebar-accent-foreground` | `oklch(0.145 0 0)` | `oklch(0.985 0 0)` |
 | `--sidebar-border` | `oklch(0.922 0 0)` | `oklch(1 0 0 / 10%)` |
 
 ### Layout Tokens
