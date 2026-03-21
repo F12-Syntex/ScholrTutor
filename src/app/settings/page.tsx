@@ -22,19 +22,6 @@ function SettingRow({ label, description, children }: { label: string; descripti
   );
 }
 
-function SliderControl({ value, min, max, step, unit, onChange }: { value: number; min: number; max: number; step?: number; unit: string; onChange: (v: number) => void }) {
-  return (
-    <div className="flex items-center gap-2.5">
-      <input
-        type="range" min={min} max={max} step={step ?? 1} value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
-        className="w-28 h-1.5 rounded-full appearance-none cursor-pointer bg-border"
-      />
-      <span className="text-xs font-mono text-muted-foreground w-10 text-right">{value}{unit}</span>
-    </div>
-  );
-}
-
 // ── Theme preview ──
 
 function ThemePreviewCard({ mode, isActive, onClick }: { mode: string; isActive: boolean; onClick: () => void }) {
@@ -213,20 +200,76 @@ function AppearanceContent() {
         </div>
       </SettingRow>
 
-      <SettingRow label="Border radius" description="Roundness of UI elements.">
-        <SliderControl value={settings.borderRadius} min={0} max={16} unit="px" onChange={(v) => updateSetting("borderRadius", v)} />
+      <SettingRow label="Border radius" description="Roundness of buttons, inputs, cards.">
+        <div className="flex gap-2">
+          {([
+            { value: 0, label: "Sharp" },
+            { value: 6, label: "Subtle" },
+            { value: 10, label: "Medium" },
+            { value: 16, label: "Round" },
+          ]).map((r) => {
+            const sel = settings.borderRadius === r.value;
+            return (
+              <button key={r.value} onClick={() => updateSetting("borderRadius", r.value)}
+                className={`flex flex-col items-center gap-1.5 w-16 py-2 rounded-md border transition-colors ${
+                  sel ? "border-primary bg-primary/5" : "border-border/40 hover:border-border"
+                }`}>
+                <div className="w-7 h-7 border-2 border-current opacity-50" style={{ borderRadius: r.value }} />
+                <span className="text-[10px] text-muted-foreground">{r.label}</span>
+              </button>
+            );
+          })}
+        </div>
       </SettingRow>
 
-      <SettingRow label="Sidebar width">
-        <SliderControl value={settings.sidebarWidth} min={200} max={320} step={8} unit="px" onChange={(v) => updateSetting("sidebarWidth", v)} />
+      <SettingRow label="Sidebar width" description="Navigation panel width.">
+        <div className="flex gap-2">
+          {([
+            { value: 208, label: "Narrow" },
+            { value: 256, label: "Default" },
+            { value: 304, label: "Wide" },
+          ]).map((w) => {
+            const sel = settings.sidebarWidth === w.value;
+            const sidebarW = (w.value / 320) * 16;
+            return (
+              <button key={w.value} onClick={() => updateSetting("sidebarWidth", w.value)}
+                className={`flex flex-col items-center gap-1.5 py-2 px-2 rounded-md border transition-colors ${
+                  sel ? "border-primary bg-primary/5" : "border-border/40 hover:border-border"
+                }`}>
+                <div className="w-14 h-9 rounded overflow-hidden flex" style={{ backgroundColor: 'var(--muted)' }}>
+                  <div className="h-full opacity-40" style={{ width: sidebarW, backgroundColor: 'currentColor' }} />
+                  <div className="flex-1 m-0.5 rounded-sm" style={{ backgroundColor: 'var(--background)', opacity: 0.6 }} />
+                </div>
+                <span className="text-[10px] text-muted-foreground">{w.label}</span>
+              </button>
+            );
+          })}
+        </div>
       </SettingRow>
 
-      <SettingRow label="Panel gap" description="Space around content panel.">
-        <SliderControl value={settings.contentPanelGap} min={0} max={12} unit="px" onChange={(v) => updateSetting("contentPanelGap", v)} />
-      </SettingRow>
-
-      <SettingRow label="Panel radius" description="Content panel corners.">
-        <SliderControl value={settings.panelRadius} min={0} max={20} unit="px" onChange={(v) => updateSetting("panelRadius", v)} />
+      <SettingRow label="Panel style" description="Content panel gap and corners.">
+        <div className="flex gap-2">
+          {([
+            { gap: 0, radius: 0, label: "Flush" },
+            { gap: 4, radius: 8, label: "Subtle" },
+            { gap: 8, radius: 12, label: "Inset" },
+            { gap: 10, radius: 16, label: "Float" },
+          ]).map((p) => {
+            const sel = settings.contentPanelGap === p.gap && settings.panelRadius === p.radius;
+            return (
+              <button key={p.label} onClick={() => { updateSetting("contentPanelGap", p.gap); updateSetting("panelRadius", p.radius); }}
+                className={`flex flex-col items-center gap-1.5 py-2 px-2 rounded-md border transition-colors ${
+                  sel ? "border-primary bg-primary/5" : "border-border/40 hover:border-border"
+                }`}>
+                <div className="w-14 h-9 rounded overflow-hidden flex" style={{ backgroundColor: 'var(--muted)', opacity: 0.5 }}>
+                  <div className="w-4 h-full" style={{ opacity: 0.5 }} />
+                  <div className="flex-1" style={{ margin: p.gap * 0.4, borderRadius: p.radius * 0.4, backgroundColor: 'var(--background)', opacity: 0.8 }} />
+                </div>
+                <span className="text-[10px] text-muted-foreground">{p.label}</span>
+              </button>
+            );
+          })}
+        </div>
       </SettingRow>
     </>
   );
