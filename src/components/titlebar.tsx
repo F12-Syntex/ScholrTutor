@@ -1,24 +1,63 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { Minus } from "@phosphor-icons/react/dist/ssr/Minus";
 import { Square } from "@phosphor-icons/react/dist/ssr/Square";
 import { X } from "@phosphor-icons/react/dist/ssr/X";
+import { SidebarSimple } from "@phosphor-icons/react/dist/ssr/SidebarSimple";
+import { User } from "@phosphor-icons/react/dist/ssr/User";
+import { useSidebar } from "@/components/ui/sidebar";
+
+const pageTitles: Record<string, string> = {
+  "/": "Dashboard",
+  "/students": "Students",
+  "/session": "Session Log",
+  "/files": "Files",
+  "/summary": "Summary",
+  "/subjects": "Subjects",
+};
 
 export function Titlebar() {
+  const { toggleSidebar } = useSidebar();
+  const pathname = usePathname();
+  const title = pageTitles[pathname] ?? "";
   const handleMinimize = () => window.electron?.window.minimize();
   const handleMaximize = () => window.electron?.window.maximize();
   const handleClose = () => window.electron?.window.close();
 
   return (
     <header
-      className="flex items-center justify-between h-9 bg-sidebar border-b border-border select-none shrink-0"
+      className="flex items-center h-9 bg-sidebar border-b border-border/40 select-none shrink-0"
       style={{ WebkitAppRegion: "drag" } as React.CSSProperties}
     >
+      {/* Left: sidebar toggle + breadcrumb */}
+      <div
+        className="flex items-center gap-1.5 h-full px-2"
+        style={{ WebkitAppRegion: "no-drag" } as React.CSSProperties}
+      >
+        <button
+          onClick={toggleSidebar}
+          className="flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+          title="Toggle sidebar (Ctrl+B)"
+        >
+          <SidebarSimple size={16} />
+        </button>
+        <span className="text-xs font-medium text-muted-foreground/80 truncate">
+          {title}
+        </span>
+      </div>
+
+      {/* Center: draggable spacer */}
       <div className="flex-1" />
+
+      {/* Right: avatar + window controls */}
       <div
         className="flex items-center h-full"
         style={{ WebkitAppRegion: "no-drag" } as React.CSSProperties}
       >
+        <button className="flex items-center justify-center w-7 h-7 mx-1 rounded-full bg-muted text-muted-foreground hover:bg-accent hover:text-foreground transition-colors">
+          <User size={13} weight="bold" />
+        </button>
         <button
           onClick={handleMinimize}
           className="inline-flex items-center justify-center w-11 h-full text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"

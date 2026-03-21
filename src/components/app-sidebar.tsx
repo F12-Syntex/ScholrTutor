@@ -8,9 +8,8 @@ import { ChatText } from "@phosphor-icons/react/dist/ssr/ChatText";
 import { FolderOpen } from "@phosphor-icons/react/dist/ssr/FolderOpen";
 import { FileText } from "@phosphor-icons/react/dist/ssr/FileText";
 import { Books } from "@phosphor-icons/react/dist/ssr/Books";
-import { GraduationCap } from "@phosphor-icons/react/dist/ssr/GraduationCap";
+import { AppLogo } from "@/components/app-logo";
 import { MagnifyingGlass } from "@phosphor-icons/react/dist/ssr/MagnifyingGlass";
-import { CaretDoubleLeft } from "@phosphor-icons/react/dist/ssr/CaretDoubleLeft";
 import type { Icon } from "@phosphor-icons/react/dist/lib/types";
 import { ThemeToggle } from "@/components/theme-toggle";
 import {
@@ -24,7 +23,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
 } from "@/components/ui/sidebar";
 
 const navItems: { href: string; label: string; icon: Icon }[] = [
@@ -79,39 +77,16 @@ function NavItems() {
   );
 }
 
-function CollapseButton() {
-  const { toggleSidebar } = useSidebar();
-
-  return (
-    <button
-      onClick={toggleSidebar}
-      className="flex items-center justify-center w-7 h-7 rounded-md border border-sidebar-border/60 text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground hover:border-sidebar-border transition-colors"
-      title="Collapse sidebar (Ctrl+B)"
-    >
-      <CaretDoubleLeft size={14} />
-    </button>
-  );
-}
-
 export function AppSidebar() {
   return (
     <Sidebar collapsible="offcanvas">
       {/* Header: logo + brand + collapse */}
       <SidebarHeader className="px-3.5 pt-3 pb-1 gap-3.5">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5 overflow-hidden">
-            <div className="flex items-center justify-center w-7 h-7 rounded-md bg-primary shrink-0">
-              <GraduationCap
-                className="text-primary-foreground"
-                size={15}
-                weight="duotone"
-              />
-            </div>
-            <span className="text-[14px] font-semibold tracking-tight truncate text-sidebar-foreground">
-              ScholrTutor
-            </span>
-          </div>
-          <CollapseButton />
+        <div className="flex items-center gap-2.5 overflow-hidden">
+          <AppLogo size={28} />
+          <span className="text-[14px] font-semibold tracking-tight truncate text-sidebar-foreground">
+            ScholrTutor
+          </span>
         </div>
         <SearchButton />
       </SidebarHeader>

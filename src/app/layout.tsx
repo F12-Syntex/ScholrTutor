@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Space_Grotesk, Newsreader, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AppSidebar } from "@/components/app-sidebar";
-import { ContentHeader } from "@/components/content-header";
 import { Titlebar } from "@/components/titlebar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
@@ -46,20 +45,19 @@ export default function RootLayout({
     >
       <body className="h-full flex flex-col overflow-hidden antialiased">
         <ThemeProvider>
-          <Titlebar />
-          <div className="flex-1 overflow-hidden">
-            <TooltipProvider>
-              <SidebarProvider>
+          <TooltipProvider>
+            <SidebarProvider>
+              <Titlebar />
+              <div className="flex-1 overflow-hidden flex">
                 <AppSidebar />
                 <SidebarInset>
-                  <ContentHeader />
                   <div className="flex-1 overflow-auto">
                     {children}
                   </div>
                 </SidebarInset>
-              </SidebarProvider>
-            </TooltipProvider>
-          </div>
+              </div>
+            </SidebarProvider>
+          </TooltipProvider>
         </ThemeProvider>
       </body>
     </html>
