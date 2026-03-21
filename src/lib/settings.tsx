@@ -10,17 +10,10 @@ import {
 } from "react";
 
 export interface AppSettings {
-  // AI
   openRouterApiKey: string;
   aiModel: string;
-
-  // Appearance
-  accentHue: number; // 0-360
+  accentHue: number;
   fontSize: "sm" | "base" | "lg";
-  uiDensity: "compact" | "default" | "spacious";
-
-  // Data
-  autoBackup: boolean;
 }
 
 const defaultSettings: AppSettings = {
@@ -28,8 +21,6 @@ const defaultSettings: AppSettings = {
   aiModel: "google/gemini-2.0-flash-001",
   accentHue: 265,
   fontSize: "base",
-  uiDensity: "default",
-  autoBackup: false,
 };
 
 const STORAGE_KEY = "scholrtutor-settings";
@@ -50,6 +41,24 @@ function saveSettings(settings: AppSettings) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
 }
 
+const FONT_SIZE_MAP = { sm: "14px", base: "16px", lg: "18px" } as const;
+
+function applySettings(settings: AppSettings) {
+  if (typeof document === "undefined") return;
+  const root = document.documentElement;
+
+  // Accent color — override primary and sidebar-primary with the hue
+  const h = settings.accentHue;
+  root.style.setProperty("--primary", `oklch(0.55 0.2 ${h})`);
+  root.style.setProperty("--primary-foreground", `oklch(0.985 0 0)`);
+  root.style.setProperty("--sidebar-primary", `oklch(0.55 0.2 ${h})`);
+  root.style.setProperty("--sidebar-primary-foreground", `oklch(0.985 0 0)`);
+  root.style.setProperty("--ring", `oklch(0.55 0.15 ${h})`);
+
+  // Font size
+  root.style.fontSize = FONT_SIZE_MAP[settings.fontSize];
+}
+
 type SettingsContextValue = {
   settings: AppSettings;
   updateSetting: <K extends keyof AppSettings>(
@@ -63,11 +72,11 @@ const SettingsContext = createContext<SettingsContextValue | null>(null);
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const [settings, setSettings] = useState<AppSettings>(defaultSettings);
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setSettings(loadSettings());
-    setMounted(true);
+    const loaded = loadSettings();
+    setSettings(loaded);
+    applySettings(loaded);
   }, []);
 
   const updateSetting = useCallback(
@@ -75,6 +84,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       setSettings((prev) => {
         const next = { ...prev, [key]: value };
         saveSettings(next);
+        applySettings(next);
         return next;
       });
     },
@@ -84,6 +94,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const resetSettings = useCallback(() => {
     setSettings(defaultSettings);
     saveSettings(defaultSettings);
+    applySettings(defaultSettings);
   }, []);
 
   return (

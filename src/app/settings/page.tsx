@@ -4,6 +4,7 @@ import { useTheme } from "next-themes";
 import { useSettings } from "@/lib/settings";
 import { Eye } from "@phosphor-icons/react/dist/ssr/Eye";
 import { EyeSlash } from "@phosphor-icons/react/dist/ssr/EyeSlash";
+import { Check } from "@phosphor-icons/react/dist/ssr/Check";
 import { useState } from "react";
 import {
   Card,
@@ -14,15 +15,23 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 
 const AI_MODELS = [
-  { value: "google/gemini-2.0-flash-001", label: "Gemini 2.0 Flash" },
-  { value: "google/gemini-2.5-pro-preview", label: "Gemini 2.5 Pro" },
-  { value: "anthropic/claude-sonnet-4", label: "Claude Sonnet 4" },
-  { value: "anthropic/claude-haiku-4", label: "Claude Haiku 4" },
-  { value: "openai/gpt-4o", label: "GPT-4o" },
-  { value: "openai/gpt-4o-mini", label: "GPT-4o Mini" },
+  {
+    value: "google/gemini-2.0-flash-001",
+    label: "Gemini 2.0 Flash",
+    desc: "Fast, cost-effective",
+  },
+  {
+    value: "anthropic/claude-sonnet-4",
+    label: "Claude Sonnet 4",
+    desc: "Balanced quality",
+  },
+  {
+    value: "openai/gpt-4o-mini",
+    label: "GPT-4o Mini",
+    desc: "Lightweight, cheap",
+  },
 ];
 
 const ACCENT_PRESETS = [
@@ -33,7 +42,6 @@ const ACCENT_PRESETS = [
   { hue: 25, label: "Orange" },
   { hue: 280, label: "Purple" },
   { hue: 180, label: "Teal" },
-  { hue: 0, label: "Red" },
 ];
 
 function ApiKeyInput() {
@@ -61,7 +69,7 @@ function ApiKeyInput() {
         </button>
       </div>
       <p className="text-xs text-muted-foreground">
-        Required for AI summaries. Get one at{" "}
+        Required for AI summaries. Get yours at{" "}
         <span className="font-medium text-foreground/70">openrouter.ai/keys</span>
       </p>
     </div>
@@ -73,22 +81,37 @@ function ModelSelect() {
 
   return (
     <div className="space-y-2">
-      <Label htmlFor="ai-model">AI Model</Label>
-      <select
-        id="ai-model"
-        value={settings.aiModel}
-        onChange={(e) => updateSetting("aiModel", e.target.value)}
-        className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-      >
-        {AI_MODELS.map((m) => (
-          <option key={m.value} value={m.value}>
-            {m.label}
-          </option>
-        ))}
-      </select>
-      <p className="text-xs text-muted-foreground">
-        Model used for generating student summaries and parsing assistance.
-      </p>
+      <Label>AI Model</Label>
+      <div className="grid gap-2">
+        {AI_MODELS.map((m) => {
+          const selected = settings.aiModel === m.value;
+          return (
+            <button
+              key={m.value}
+              onClick={() => updateSetting("aiModel", m.value)}
+              className={`flex items-center gap-3 rounded-lg border px-4 py-3 text-left transition-colors ${
+                selected
+                  ? "border-primary bg-primary/5"
+                  : "border-border hover:border-primary/30 hover:bg-accent/50"
+              }`}
+            >
+              <div
+                className={`flex items-center justify-center w-4 h-4 rounded-full border-2 shrink-0 ${
+                  selected
+                    ? "border-primary bg-primary"
+                    : "border-muted-foreground/30"
+                }`}
+              >
+                {selected && <Check size={10} className="text-primary-foreground" />}
+              </div>
+              <div>
+                <div className="text-sm font-medium">{m.label}</div>
+                <div className="text-xs text-muted-foreground">{m.desc}</div>
+              </div>
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -129,18 +152,15 @@ function AccentColorSection() {
           <button
             key={preset.hue}
             onClick={() => updateSetting("accentHue", preset.hue)}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium border transition-colors ${
               settings.accentHue === preset.hue
-                ? "ring-2 ring-ring ring-offset-2 ring-offset-background"
-                : "hover:bg-accent"
+                ? "border-primary bg-primary/5"
+                : "border-transparent hover:bg-accent"
             }`}
-            title={preset.label}
           >
             <span
-              className="w-4 h-4 rounded-full shrink-0"
-              style={{
-                backgroundColor: `oklch(0.55 0.2 ${preset.hue})`,
-              }}
+              className="w-3.5 h-3.5 rounded-full shrink-0"
+              style={{ backgroundColor: `oklch(0.55 0.2 ${preset.hue})` }}
             />
             <span className="text-muted-foreground">{preset.label}</span>
           </button>
@@ -148,7 +168,7 @@ function AccentColorSection() {
       </div>
       <div className="flex items-center gap-3 pt-1">
         <Label htmlFor="custom-hue" className="text-xs text-muted-foreground shrink-0">
-          Custom hue
+          Custom
         </Label>
         <input
           id="custom-hue"
@@ -157,7 +177,7 @@ function AccentColorSection() {
           max="360"
           value={settings.accentHue}
           onChange={(e) => updateSetting("accentHue", Number(e.target.value))}
-          className="flex-1 h-2 rounded-full appearance-none cursor-pointer"
+          className="flex-1 h-1.5 rounded-full appearance-none cursor-pointer"
           style={{
             background: `linear-gradient(to right,
               oklch(0.55 0.2 0), oklch(0.55 0.2 60), oklch(0.55 0.2 120),
@@ -202,39 +222,7 @@ function FontSizeSection() {
   );
 }
 
-function DensitySection() {
-  const { settings, updateSetting } = useSettings();
-  const options = [
-    { value: "compact" as const, label: "Compact" },
-    { value: "default" as const, label: "Default" },
-    { value: "spacious" as const, label: "Spacious" },
-  ];
-
-  return (
-    <div className="space-y-3">
-      <Label>UI Density</Label>
-      <div className="flex gap-2">
-        {options.map((o) => (
-          <button
-            key={o.value}
-            onClick={() => updateSetting("uiDensity", o.value)}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              settings.uiDensity === o.value
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-            }`}
-          >
-            {o.label}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 export default function SettingsPage() {
-  const { settings, updateSetting } = useSettings();
-
   return (
     <div className="p-8 max-w-2xl space-y-6">
       <div>
@@ -246,7 +234,6 @@ export default function SettingsPage() {
         </p>
       </div>
 
-      {/* AI Configuration */}
       <Card>
         <CardHeader>
           <CardTitle>AI Configuration</CardTitle>
@@ -260,7 +247,6 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
-      {/* Appearance */}
       <Card>
         <CardHeader>
           <CardTitle>Appearance</CardTitle>
@@ -272,39 +258,25 @@ export default function SettingsPage() {
           <ThemeSection />
           <AccentColorSection />
           <FontSizeSection />
-          <DensitySection />
         </CardContent>
       </Card>
 
-      {/* Data & Storage */}
       <Card>
         <CardHeader>
           <CardTitle>Data & Storage</CardTitle>
           <CardDescription>
-            Manage your local database and file storage.
+            Your data is stored locally on this device.
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label>Auto Backup</Label>
-              <p className="text-xs text-muted-foreground">
-                Automatically back up your database on app launch.
-              </p>
-            </div>
-            <Switch
-              checked={settings.autoBackup}
-              onCheckedChange={(v) => updateSetting("autoBackup", v)}
-            />
-          </div>
+        <CardContent className="space-y-3">
           <div className="space-y-1">
-            <Label className="text-muted-foreground">Database Location</Label>
+            <Label className="text-muted-foreground">Database</Label>
             <p className="text-xs font-mono text-muted-foreground/70">
               %APPDATA%/ScholrTutor/scholrtutor.db
             </p>
           </div>
           <div className="space-y-1">
-            <Label className="text-muted-foreground">File Storage</Label>
+            <Label className="text-muted-foreground">Uploaded Files</Label>
             <p className="text-xs font-mono text-muted-foreground/70">
               %APPDATA%/ScholrTutor/files/
             </p>
@@ -312,7 +284,6 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
-      {/* About */}
       <Card>
         <CardHeader>
           <CardTitle>About</CardTitle>
@@ -320,7 +291,7 @@ export default function SettingsPage() {
         <CardContent className="space-y-2 text-sm text-muted-foreground">
           <div className="flex justify-between">
             <span>Version</span>
-            <span className="font-mono">0.8.1</span>
+            <span className="font-mono">0.9.0</span>
           </div>
           <div className="flex justify-between">
             <span>Electron</span>

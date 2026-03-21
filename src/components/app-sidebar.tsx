@@ -24,6 +24,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarSeparator,
 } from "@/components/ui/sidebar";
 
 const navItems: { href: string; label: string; icon: Icon }[] = [
@@ -78,10 +79,33 @@ function NavItems() {
   );
 }
 
+function SidebarFooterContent() {
+  const pathname = usePathname();
+  const isSettingsActive = pathname === "/settings";
+
+  return (
+    <div className="flex flex-col gap-2">
+      <Link
+        href="/settings"
+        className={`flex items-center gap-2.5 w-full rounded-md px-2.5 py-2 text-[13px] font-medium transition-colors ${
+          isSettingsActive
+            ? "bg-sidebar-accent text-sidebar-accent-foreground"
+            : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground"
+        }`}
+      >
+        <GearSix size={18} className="shrink-0" />
+        <span>Settings</span>
+      </Link>
+      <div className="flex items-center px-0.5">
+        <ThemeToggle />
+      </div>
+    </div>
+  );
+}
+
 export function AppSidebar() {
   return (
     <Sidebar collapsible="offcanvas">
-      {/* Header: logo + brand + collapse */}
       <SidebarHeader className="px-3.5 pt-3 pb-1 gap-3.5">
         <div className="flex items-center gap-2.5 overflow-hidden">
           <AppLogo size={28} />
@@ -92,7 +116,6 @@ export function AppSidebar() {
         <SearchButton />
       </SidebarHeader>
 
-      {/* Navigation */}
       <SidebarContent className="px-4 pt-2">
         <SidebarGroup className="p-0">
           <SidebarGroupLabel className="px-2 mb-0.5">
@@ -104,18 +127,9 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      {/* Footer: settings + theme toggle */}
-      <SidebarFooter className="px-3.5 py-3">
-        <div className="flex items-center justify-between">
-          <Link
-            href="/settings"
-            className="flex items-center justify-center w-8 h-8 rounded-md text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-colors"
-            title="Settings"
-          >
-            <GearSix size={18} />
-          </Link>
-          <ThemeToggle />
-        </div>
+      <SidebarSeparator />
+      <SidebarFooter className="px-4 py-3">
+        <SidebarFooterContent />
       </SidebarFooter>
     </Sidebar>
   );
