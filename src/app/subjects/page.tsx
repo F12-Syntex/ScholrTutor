@@ -406,57 +406,181 @@ function SubjectRow({ subject }: { subject: Subject }) {
   );
 }
 
-// ── AI Parse ──
+// ═══════════════════════════════════════════════════════════
+// PHASE 1: Schema Detection
+// Identify which known format the JSON matches.
+// ═══════════════════════════════════════════════════════════
 
-const SYSTEM_PROMPT = `You are a UK exam specification parser. You extract the COMPLETE topic structure with full depth and specification content.
+type SchemaType = "edexcel" | "aqa" | "ocr" | "our-format" | "unknown";
 
-CRITICAL RULES:
-1. Extract EVERY topic down to the DEEPEST level (e.g. 4.1.1.1, 4.1.1.2, not just 4.1.1). Sub-sub-topics are nested inside their parent's "subtopics" array.
-2. For each LEAF topic (the deepest level), extract the "content" array — these are the specific knowledge requirements, bullet points, or specification statements that students must learn.
-3. Use the EXACT numbering from the specification (e.g. 4.1.2.3, not renumbered).
-4. Use the EXACT titles and content text from the specification, word-for-word.
-5. Do NOT skip, truncate, summarise, or paraphrase ANY content. Every single bullet point matters.
-6. Do NOT stop early. Do NOT write "etc", "and so on", or "continued". Output EVERYTHING.
-7. Do NOT invent content that isn't in the document.
-8. Topics that contain sub-topics should have an empty content array and a "subtopics" object.
-9. Leaf topics (no children) should have their content array filled with the spec requirements.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function detectSchema(data: any): SchemaType {
+  const spec = data?.specification ?? data;
 
-Return ONLY valid JSON (no markdown fences, no text before or after):
-{
-  "name": "Subject Name",
-  "examBoard": "Board (AQA, Edexcel, OCR, WJEC, etc.)",
-  "level": "A-Level" or "GCSE" or "Other",
-  "specCode": "spec code if found",
-  "units": [
-    {
-      "code": "4.1",
-      "title": "Unit title from spec",
-      "topics": [
-        {
-          "code": "4.1.1",
-          "title": "Topic title",
-          "content": [],
-          "subtopics": [
-            {
-              "code": "4.1.1.1",
-              "title": "Sub-topic title",
-              "content": [
-                "First specification requirement or bullet point",
-                "Second requirement — exact text from spec",
-                "Third requirement"
-              ]
-            },
-            {
-              "code": "4.1.1.2",
-              "title": "Another sub-topic",
-              "content": ["Requirement text from spec"]
-            }
-          ]
+  // Our own internal format (re-import)
+  if (spec?.units && Array.isArray(spec.units) && spec.units[0]?.topics) return "our-format";
+
+  // Edexcel: themes[] → sections[] → subsections[] → details[]
+  if (spec?.themes && Array.isArray(spec.themes)) {
+    const theme = spec.themes[0];
+    if (theme?.sections?.[0]?.subsections?.[0]?.details) return "edexcel";
+  }
+
+  // AQA: topics{} as object with nested subtopics{}
+  if (spec?.topics && typeof spec.topics === "object" && !Array.isArray(spec.topics)) {
+    const firstKey = Object.keys(spec.topics)[0];
+    if (firstKey && spec.topics[firstKey]?.subtopics) return "aqa";
+  }
+
+  // OCR-style or other: sections[] → topics[] with content
+  if (spec?.sections && Array.isArray(spec.sections)) {
+    if (spec.sections[0]?.topics || spec.sections[0]?.subsections) return "ocr";
+  }
+
+  return "unknown";
+}
+
+// ═══════════════════════════════════════════════════════════
+// PHASE 2: Deterministic Transformers
+// Convert known schemas into our ParsedSubject format.
+// ═══════════════════════════════════════════════════════════
+
+function extractMeta(text: string): { name: string; board: string; level: "A-Level" | "GCSE" | "Other" } {
+  const board = text.match(/Edexcel|AQA|OCR|WJEC|Pearson|Cambridge/i)?.[0] ?? "Unknown";
+  const level = text.match(/A-Level|A Level|Advanced GCE|GCE/i) ? "A-Level" as const
+    : text.match(/GCSE/i) ? "GCSE" as const : "Other" as const;
+  let name = text
+    .replace(/^Pearson\s+/i, "")
+    .replace(/Edexcel\s+/i, "")
+    .replace(/Level\s+\d+\s+(Advanced\s+)?/i, "")
+    .replace(/(GCE|GCSE)\s+in\s+/i, "")
+    .replace(/AQA\s+(A-Level|GCSE)\s+/i, "")
+    .trim();
+  if (name.length > 40) name = name.slice(0, 40);
+  return { name, board, level };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function transformEdexcel(data: any): ParsedSubject {
+  const spec = data.specification ?? data;
+  const meta = extractMeta(spec.title ?? "");
+  const units: ParsedUnit[] = [];
+
+  for (const theme of (spec.themes ?? [])) {
+    for (const section of (theme.sections ?? [])) {
+      const topics: ParsedTopic[] = [];
+      for (const sub of (section.subsections ?? [])) {
+        const subtopics: ParsedTopic[] = [];
+        const plainContent: string[] = [];
+        for (const detail of (sub.details ?? [])) {
+          if (detail.content?.length > 0) {
+            subtopics.push({ code: "", title: detail.topic ?? "", content: detail.content });
+          } else {
+            plainContent.push(detail.topic ?? "");
+          }
         }
-      ]
+        topics.push({
+          code: sub.id ?? "",
+          title: sub.title ?? "",
+          content: subtopics.length === 0 ? plainContent : [],
+          subtopics: subtopics.length > 0 ? subtopics : undefined,
+        });
+      }
+      units.push({ code: section.id ?? "", title: section.name ?? "", topics });
     }
-  ]
-}`;
+  }
+
+  return { name: meta.name, examBoard: meta.board, level: meta.level, specCode: spec.code ?? "", units };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function transformAQA(data: any): ParsedSubject {
+  const spec = data.specification ?? data;
+  const qual = spec.qualification ?? spec.title ?? "";
+  const meta = extractMeta(qual);
+  const units: ParsedUnit[] = [];
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function walkSubtopics(obj: Record<string, any>): ParsedTopic[] {
+    return Object.entries(obj).map(([code, val]) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const v = val as any;
+      return {
+        code,
+        title: v.title ?? "",
+        content: v.content ?? [],
+        subtopics: v.subtopics ? walkSubtopics(v.subtopics) : undefined,
+      };
+    });
+  }
+
+  const topicsObj = spec.topics ?? {};
+  for (const [unitCode, unitData] of Object.entries(topicsObj)) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const ud = unitData as any;
+    const topics = ud.subtopics ? walkSubtopics(ud.subtopics) : [];
+    units.push({ code: unitCode, title: ud.title ?? "", topics });
+  }
+
+  return { name: meta.name, examBoard: meta.board, level: meta.level, specCode: spec.code ?? "", units };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function transformOCR(data: any): ParsedSubject {
+  const spec = data.specification ?? data;
+  const meta = extractMeta(spec.title ?? "");
+  const units: ParsedUnit[] = [];
+
+  for (const section of (spec.sections ?? [])) {
+    const topics: ParsedTopic[] = [];
+    for (const topic of (section.topics ?? section.subsections ?? [])) {
+      topics.push({
+        code: topic.id ?? topic.code ?? "",
+        title: topic.title ?? topic.name ?? "",
+        content: topic.content ?? [],
+        subtopics: topic.subtopics?.map((st: { code?: string; id?: string; title?: string; name?: string; content?: string[] }) => ({
+          code: st.code ?? st.id ?? "",
+          title: st.title ?? st.name ?? "",
+          content: st.content ?? [],
+        })),
+      });
+    }
+    units.push({ code: section.id ?? section.code ?? "", title: section.name ?? section.title ?? "", topics });
+  }
+
+  return { name: meta.name, examBoard: meta.board, level: meta.level, specCode: spec.code ?? "", units };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function transformOurFormat(data: any): ParsedSubject {
+  const spec = data.specification ?? data;
+  return {
+    name: spec.name ?? "",
+    examBoard: spec.examBoard ?? "",
+    level: spec.level ?? "Other",
+    specCode: spec.specCode ?? "",
+    units: spec.units ?? [],
+  };
+}
+
+// ═══════════════════════════════════════════════════════════
+// Pipeline: File → Schema Detect → Transform (or AI fallback)
+// ═══════════════════════════════════════════════════════════
+
+function tryParseJSON(raw: string): ParsedSubject | null {
+  try {
+    const data = JSON.parse(raw);
+    const schema = detectSchema(data);
+    switch (schema) {
+      case "edexcel": return transformEdexcel(data);
+      case "aqa": return transformAQA(data);
+      case "ocr": return transformOCR(data);
+      case "our-format": return transformOurFormat(data);
+      case "unknown": return null;
+    }
+  } catch { /* invalid JSON */ }
+  return null;
+}
 
 async function callAI(messages: { role: string; content: string }[], apiKey: string, model: string): Promise<string> {
   const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -471,170 +595,41 @@ async function callAI(messages: { role: string; content: string }[], apiKey: str
   }
 
   const data = await response.json();
-  const choice = (data as { choices?: { message?: { content?: string }, finish_reason?: string }[] }).choices?.[0];
-  return choice?.message?.content ?? "";
+  return (data as { choices?: { message?: { content?: string } }[] }).choices?.[0]?.message?.content ?? "";
 }
 
-function parseAIResponse(content: string): ParsedSubject {
+const AI_SYSTEM_PROMPT = `You are a UK exam specification parser. Extract the COMPLETE topic structure. Return ONLY valid JSON (no markdown) matching: {"name":"","examBoard":"","level":"A-Level"|"GCSE"|"Other","specCode":"","units":[{"code":"","title":"","topics":[{"code":"","title":"","content":["spec requirement"],"subtopics":[...]}]}]}. Use EXACT numbering and titles from the spec. Extract EVERY topic to the deepest level with content arrays. Do NOT skip, truncate, or summarise.`;
+
+async function parseWithAI(text: string, apiKey: string, model: string): Promise<ParsedSubject> {
+  const content = await callAI([
+    { role: "system", content: AI_SYSTEM_PROMPT },
+    { role: "user", content: `Extract the complete specification structure:\n\n${text.slice(0, 80000)}` },
+  ], apiKey, model);
+
   const jsonMatch = content.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) throw new Error("AI did not return valid JSON. Try a .txt or .md file instead.");
+  if (!jsonMatch) throw new Error("AI did not return valid JSON.");
   const parsed = JSON.parse(jsonMatch[0]);
-  if (!parsed.units?.length) throw new Error("AI could not extract any units. The file may not contain a recognisable specification structure.");
+  if (!parsed.units?.length) throw new Error("AI could not extract any units from this file.");
   return parsed;
 }
 
-async function parseSpecWithAI(text: string, apiKey: string, model: string): Promise<ParsedSubject> {
-  const MAX_CHUNK = 80000;
-
-  if (text.length <= MAX_CHUNK) {
-    const content = await callAI([
-      { role: "system", content: SYSTEM_PROMPT },
-      { role: "user", content: `Parse this exam specification. Extract the COMPLETE topic structure — every single topic and sub-topic, no cutoffs, no summaries:\n\n${text}` },
-    ], apiKey, model);
-    return parseAIResponse(content);
-  }
-
-  // Long specs: parse in two passes with overlap
-  const content1 = await callAI([
-    { role: "system", content: SYSTEM_PROMPT },
-    { role: "user", content: `Parse this exam specification (this is the first part of a long document). Extract ALL topics you find:\n\n${text.slice(0, MAX_CHUNK)}` },
-  ], apiKey, model);
-
-  const partial = parseAIResponse(content1);
-
-  const remainingText = text.slice(MAX_CHUNK - 5000);
-  const content2 = await callAI([
-    { role: "system", content: SYSTEM_PROMPT },
-    { role: "user", content: `This is the continuation of the same specification. Units already extracted: ${partial.units.map(u => `${u.code} "${u.title}"`).join(", ")}.\n\nExtract any ADDITIONAL units and topics from the remaining text that were NOT in the list above. Return the same JSON format with only the new content:\n\n${remainingText}` },
-  ], apiKey, model);
-
-  try {
-    const additional = parseAIResponse(content2);
-    for (const newUnit of additional.units) {
-      const existing = partial.units.find(u => u.code === newUnit.code);
-      if (existing) {
-        for (const t of newUnit.topics) {
-          if (!existing.topics.some(et => et.code === t.code)) existing.topics.push(t);
-        }
-      } else {
-        partial.units.push(newUnit);
-      }
-    }
-  } catch { /* second pass failed — return what we have */ }
-
-  return partial;
-}
-
-// ── Try to parse structured JSON specs directly (Edexcel, AQA, etc.) ──
-
-function tryParseStructuredJSON(raw: string): ParsedSubject | null {
-  try {
-    const data = JSON.parse(raw);
-    const spec = data.specification ?? data;
-
-    // Detect Edexcel-style: themes[] → sections[] → subsections[] → details[]
-    if (spec.themes && Array.isArray(spec.themes)) {
-      const units: ParsedUnit[] = [];
-      for (const theme of spec.themes) {
-        for (const section of (theme.sections ?? [])) {
-          const topics: ParsedTopic[] = [];
-          for (const sub of (section.subsections ?? [])) {
-            const content: string[] = [];
-            const subtopics: ParsedTopic[] = [];
-            for (const detail of (sub.details ?? [])) {
-              if (detail.content && detail.content.length > 0) {
-                subtopics.push({ code: "", title: detail.topic, content: detail.content });
-              } else {
-                content.push(detail.topic);
-              }
-            }
-            topics.push({
-              code: sub.id ?? "",
-              title: sub.title ?? "",
-              content: subtopics.length === 0 ? content : [],
-              subtopics: subtopics.length > 0 ? subtopics : undefined,
-            });
-          }
-          units.push({ code: section.id ?? "", title: section.name ?? "", topics });
-        }
-      }
-      return {
-        name: (spec.title ?? "").replace(/^Pearson\s+Edexcel\s+Level\s+\d+\s+(Advanced\s+)?(GCE|GCSE)\s+in\s+/i, ""),
-        examBoard: spec.title?.match(/Edexcel|AQA|OCR|WJEC/i)?.[0] ?? "Unknown",
-        level: spec.title?.match(/GCE|A-Level/i) ? "A-Level" : spec.title?.match(/GCSE/i) ? "GCSE" : "Other",
-        specCode: spec.code ?? "",
-        units,
-      };
-    }
-
-    // Detect AQA-style: topics{} with nested subtopics{}
-    if (spec.topics && typeof spec.topics === "object" && !Array.isArray(spec.topics)) {
-      const units: ParsedUnit[] = [];
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const topicsObj = spec.topics as Record<string, any>;
-      for (const [unitCode, unitData] of Object.entries(topicsObj)) {
-        const topics: ParsedTopic[] = [];
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        function extractTopics(subtopics: Record<string, any>): ParsedTopic[] {
-          const result: ParsedTopic[] = [];
-          for (const [code, data] of Object.entries(subtopics)) {
-            const childSubtopics = data.subtopics ? extractTopics(data.subtopics) : undefined;
-            result.push({
-              code,
-              title: data.title ?? "",
-              content: data.content ?? [],
-              subtopics: childSubtopics,
-            });
-          }
-          return result;
-        }
-
-        if (unitData.subtopics) {
-          topics.push(...extractTopics(unitData.subtopics));
-        }
-
-        units.push({ code: unitCode, title: unitData.title ?? "", topics });
-      }
-      const qual = spec.qualification ?? spec.title ?? "";
-      return {
-        name: qual.replace(/^AQA\s+(A-Level|GCSE)\s+/i, ""),
-        examBoard: qual.match(/AQA|Edexcel|OCR|WJEC/i)?.[0] ?? "Unknown",
-        level: qual.match(/A-Level/i) ? "A-Level" : qual.match(/GCSE/i) ? "GCSE" : "Other",
-        specCode: spec.code ?? "",
-        units,
-      };
-    }
-  } catch { /* not parseable as structured JSON */ }
-  return null;
-}
-
-async function extractFileText(file: File): Promise<{ text: string; parsed: ParsedSubject | null }> {
+async function extractFileText(file: File): Promise<string> {
   const name = file.name.toLowerCase();
-
+  if (name.endsWith(".md") || name.endsWith(".txt")) return await file.text();
   if (name.endsWith(".json")) {
     const text = await file.text();
-    const directParse = tryParseStructuredJSON(text);
-    if (directParse) return { text: "", parsed: directParse };
-    try { return { text: JSON.stringify(JSON.parse(text), null, 2), parsed: null }; }
-    catch { return { text, parsed: null }; }
+    try { return JSON.stringify(JSON.parse(text), null, 2); }
+    catch { return text; }
   }
-
-  if (name.endsWith(".md") || name.endsWith(".txt")) {
-    return { text: await file.text(), parsed: null };
-  }
-
   // PDF — extract printable ASCII
   const buffer = await file.arrayBuffer();
   const bytes = new Uint8Array(buffer);
   let text = "";
   for (let i = 0; i < bytes.length; i++) {
-    const char = bytes[i];
-    if ((char >= 32 && char <= 126) || char === 10 || char === 13) {
-      text += String.fromCharCode(char);
-    }
+    const c = bytes[i];
+    if ((c >= 32 && c <= 126) || c === 10 || c === 13) text += String.fromCharCode(c);
   }
-  return { text: text.replace(/\s+/g, " ").replace(/[^\x20-\x7E\n]/g, ""), parsed: null };
+  return text.replace(/\s+/g, " ").replace(/[^\x20-\x7E\n]/g, "");
 }
 
 // ── Page ──
@@ -655,22 +650,26 @@ export default function SubjectsPage() {
     setError("");
 
     try {
-      const { text, parsed: directParsed } = await extractFileText(file);
-
-      if (directParsed) {
-        // Structured JSON parsed directly — skip AI
-        setParsed(directParsed);
-        setStage("review");
-        return;
+      // Phase 1: Try deterministic JSON parsing first
+      if (file.name.toLowerCase().endsWith(".json")) {
+        const raw = await file.text();
+        const directParsed = tryParseJSON(raw);
+        if (directParsed) {
+          setParsed(directParsed);
+          setStage("review");
+          return;
+        }
       }
 
+      // Phase 2: Extract text and use AI as fallback
+      const text = await extractFileText(file);
       if (!settings.openRouterApiKey) {
         throw new Error("No API key set. Go to Settings → General to add your OpenRouter key.");
       }
       if (text.trim().length < 100) {
-        throw new Error("Could not extract enough text from this file. Try copying the spec content into a .txt or .md file.");
+        throw new Error("Could not extract enough text. Try a .txt or .md version.");
       }
-      const result = await parseSpecWithAI(text, settings.openRouterApiKey, settings.aiModel);
+      const result = await parseWithAI(text, settings.openRouterApiKey, settings.aiModel);
       setParsed(result);
       setStage("review");
     } catch (err) {
