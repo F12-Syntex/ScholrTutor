@@ -5,7 +5,7 @@ import { Minus } from "@phosphor-icons/react/dist/ssr/Minus";
 import { Square } from "@phosphor-icons/react/dist/ssr/Square";
 import { X } from "@phosphor-icons/react/dist/ssr/X";
 import { SidebarSimple } from "@phosphor-icons/react/dist/ssr/SidebarSimple";
-import { User } from "@phosphor-icons/react/dist/ssr/User";
+import { CaretRight } from "@phosphor-icons/react/dist/ssr/CaretRight";
 import { useSidebar } from "@/components/ui/sidebar";
 
 const pageTitles: Record<string, string> = {
@@ -32,7 +32,7 @@ export function Titlebar() {
     >
       {/* Left: sidebar toggle + breadcrumb */}
       <div
-        className="flex items-center gap-1.5 h-full px-2"
+        className="flex items-center h-full px-1.5"
         style={{ WebkitAppRegion: "no-drag" } as React.CSSProperties}
       >
         <button
@@ -42,6 +42,10 @@ export function Titlebar() {
         >
           <SidebarSimple size={16} />
         </button>
+        <CaretRight
+          size={12}
+          className="mx-1 text-muted-foreground/40 shrink-0"
+        />
         <span className="text-xs font-medium text-muted-foreground/80 truncate">
           {title}
         </span>
@@ -50,14 +54,11 @@ export function Titlebar() {
       {/* Center: draggable spacer */}
       <div className="flex-1" />
 
-      {/* Right: avatar + window controls */}
+      {/* Right: window controls */}
       <div
         className="flex items-center h-full"
         style={{ WebkitAppRegion: "no-drag" } as React.CSSProperties}
       >
-        <button className="flex items-center justify-center w-7 h-7 mx-1 rounded-full bg-muted text-muted-foreground hover:bg-accent hover:text-foreground transition-colors">
-          <User size={13} weight="bold" />
-        </button>
         <button
           onClick={handleMinimize}
           className="inline-flex items-center justify-center w-11 h-full text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
