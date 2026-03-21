@@ -32,7 +32,7 @@ export default function RootLayout({
               <Titlebar />
               <div className="flex-1 overflow-hidden flex bg-sidebar">
                 <AppSidebar />
-                <SidebarInset className="my-2 mr-2 rounded-xl shadow-md overflow-hidden">
+                <SidebarInset className="m-2 rounded-xl shadow-md overflow-hidden">
                   <div className="flex-1 overflow-auto">
                     {children}
                   </div>

@@ -204,7 +204,7 @@
    ═══════════════════════════════════════════════════════════ */
 .dark {
   /* ── Surfaces ── */
-  --background: oklch(0.14 0.008 265);
+  --background: oklch(0.185 0.008 265);
   --foreground: oklch(0.96 0.004 75);
   --card: oklch(0.185 0.009 265);
   --card-foreground: oklch(0.96 0.004 75);
