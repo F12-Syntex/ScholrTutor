@@ -72,10 +72,7 @@ export function SubjectsProvider({ children }: { children: ReactNode }) {
     setSubjects(loadSubjects());
   }, []);
 
-  const persist = useCallback((next: Subject[]) => {
-    setSubjects(next);
-    saveSubjects(next);
-  }, []);
+
 
   const addSubject = useCallback(
     (data: Omit<Subject, "id" | "createdAt" | "topics">) => {

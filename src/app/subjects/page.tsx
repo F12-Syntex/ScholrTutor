@@ -37,7 +37,7 @@ type ParsedUnit = {
   topics: ParsedTopic[];
 };
 
-type FlowStage = "list" | "drop" | "processing" | "review";
+type FlowStage = "list" | "processing" | "review";
 
 const ACCEPTED_TYPES = ".pdf,.json,.md,.txt";
 const ACCEPTED_MIME = ["application/pdf", "application/json", "text/markdown", "text/plain", "text/x-markdown"];
@@ -454,17 +454,103 @@ async function parseSpecWithAI(text: string, apiKey: string, model: string): Pro
   return partial;
 }
 
-async function extractFileText(file: File): Promise<string> {
+// ── Try to parse structured JSON specs directly (Edexcel, AQA, etc.) ──
+
+function tryParseStructuredJSON(raw: string): ParsedSubject | null {
+  try {
+    const data = JSON.parse(raw);
+    const spec = data.specification ?? data;
+
+    // Detect Edexcel-style: themes[] → sections[] → subsections[] → details[]
+    if (spec.themes && Array.isArray(spec.themes)) {
+      const units: ParsedUnit[] = [];
+      for (const theme of spec.themes) {
+        for (const section of (theme.sections ?? [])) {
+          const topics: ParsedTopic[] = [];
+          for (const sub of (section.subsections ?? [])) {
+            const content: string[] = [];
+            const subtopics: ParsedTopic[] = [];
+            for (const detail of (sub.details ?? [])) {
+              if (detail.content && detail.content.length > 0) {
+                subtopics.push({ code: "", title: detail.topic, content: detail.content });
+              } else {
+                content.push(detail.topic);
+              }
+            }
+            topics.push({
+              code: sub.id ?? "",
+              title: sub.title ?? "",
+              content: subtopics.length === 0 ? content : [],
+              subtopics: subtopics.length > 0 ? subtopics : undefined,
+            });
+          }
+          units.push({ code: section.id ?? "", title: section.name ?? "", topics });
+        }
+      }
+      return {
+        name: (spec.title ?? "").replace(/^Pearson\s+Edexcel\s+Level\s+\d+\s+(Advanced\s+)?(GCE|GCSE)\s+in\s+/i, ""),
+        examBoard: spec.title?.match(/Edexcel|AQA|OCR|WJEC/i)?.[0] ?? "Unknown",
+        level: spec.title?.match(/GCE|A-Level/i) ? "A-Level" : spec.title?.match(/GCSE/i) ? "GCSE" : "Other",
+        specCode: spec.code ?? "",
+        units,
+      };
+    }
+
+    // Detect AQA-style: topics{} with nested subtopics{}
+    if (spec.topics && typeof spec.topics === "object" && !Array.isArray(spec.topics)) {
+      const units: ParsedUnit[] = [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const topicsObj = spec.topics as Record<string, any>;
+      for (const [unitCode, unitData] of Object.entries(topicsObj)) {
+        const topics: ParsedTopic[] = [];
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        function extractTopics(subtopics: Record<string, any>): ParsedTopic[] {
+          const result: ParsedTopic[] = [];
+          for (const [code, data] of Object.entries(subtopics)) {
+            const childSubtopics = data.subtopics ? extractTopics(data.subtopics) : undefined;
+            result.push({
+              code,
+              title: data.title ?? "",
+              content: data.content ?? [],
+              subtopics: childSubtopics,
+            });
+          }
+          return result;
+        }
+
+        if (unitData.subtopics) {
+          topics.push(...extractTopics(unitData.subtopics));
+        }
+
+        units.push({ code: unitCode, title: unitData.title ?? "", topics });
+      }
+      const qual = spec.qualification ?? spec.title ?? "";
+      return {
+        name: qual.replace(/^AQA\s+(A-Level|GCSE)\s+/i, ""),
+        examBoard: qual.match(/AQA|Edexcel|OCR|WJEC/i)?.[0] ?? "Unknown",
+        level: qual.match(/A-Level/i) ? "A-Level" : qual.match(/GCSE/i) ? "GCSE" : "Other",
+        specCode: spec.code ?? "",
+        units,
+      };
+    }
+  } catch { /* not parseable as structured JSON */ }
+  return null;
+}
+
+async function extractFileText(file: File): Promise<{ text: string; parsed: ParsedSubject | null }> {
   const name = file.name.toLowerCase();
 
   if (name.endsWith(".json")) {
     const text = await file.text();
-    try { return JSON.stringify(JSON.parse(text), null, 2); }
-    catch { return text; }
+    const directParse = tryParseStructuredJSON(text);
+    if (directParse) return { text: "", parsed: directParse };
+    try { return { text: JSON.stringify(JSON.parse(text), null, 2), parsed: null }; }
+    catch { return { text, parsed: null }; }
   }
 
   if (name.endsWith(".md") || name.endsWith(".txt")) {
-    return await file.text();
+    return { text: await file.text(), parsed: null };
   }
 
   // PDF — extract printable ASCII
@@ -477,7 +563,7 @@ async function extractFileText(file: File): Promise<string> {
       text += String.fromCharCode(char);
     }
   }
-  return text.replace(/\s+/g, " ").replace(/[^\x20-\x7E\n]/g, "");
+  return { text: text.replace(/\s+/g, " ").replace(/[^\x20-\x7E\n]/g, ""), parsed: null };
 }
 
 // ── Page ──
@@ -498,10 +584,18 @@ export default function SubjectsPage() {
     setError("");
 
     try {
+      const { text, parsed: directParsed } = await extractFileText(file);
+
+      if (directParsed) {
+        // Structured JSON parsed directly — skip AI
+        setParsed(directParsed);
+        setStage("review");
+        return;
+      }
+
       if (!settings.openRouterApiKey) {
         throw new Error("No API key set. Go to Settings → General to add your OpenRouter key.");
       }
-      const text = await extractFileText(file);
       if (text.trim().length < 100) {
         throw new Error("Could not extract enough text from this file. Try copying the spec content into a .txt or .md file.");
       }
@@ -510,7 +604,7 @@ export default function SubjectsPage() {
       setStage("review");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to parse specification");
-      setStage("drop");
+      setStage("list");
     }
   }, [settings.openRouterApiKey, settings.aiModel]);
 
@@ -554,10 +648,7 @@ export default function SubjectsPage() {
 
   const hasSubjects = subjects.length > 0;
   const [listDragOver, setListDragOver] = useState(false);
-
-  const subtitle = stage === "processing" ? "Extracting specification structure..."
-    : stage === "review" ? "Review and edit the extracted structure."
-    : "Define subjects, exam boards, and topic trees.";
+  const isAdding = stage === "processing" || stage === "review";
 
   const handleListDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -569,20 +660,22 @@ export default function SubjectsPage() {
   return (
     <div
       className={`p-8 h-full flex flex-col transition-colors ${
-        stage === "list" && listDragOver ? "bg-primary/5" : ""
+        !isAdding && listDragOver ? "bg-primary/5" : ""
       }`}
-      onDragOver={stage === "list" ? (e) => { e.preventDefault(); setListDragOver(true); } : undefined}
-      onDragLeave={stage === "list" ? () => setListDragOver(false) : undefined}
-      onDrop={stage === "list" ? handleListDrop : undefined}
+      onDragOver={!isAdding ? (e) => { e.preventDefault(); setListDragOver(true); } : undefined}
+      onDragLeave={!isAdding ? () => setListDragOver(false) : undefined}
+      onDrop={!isAdding ? handleListDrop : undefined}
     >
       <div className="flex items-start justify-between shrink-0">
         <div>
           <h1 className="text-3xl font-medium tracking-tight">Subjects</h1>
-          <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Define subjects, exam boards, and topic trees.
+          </p>
         </div>
-        {(stage === "drop" || stage === "review") && (
+        {isAdding && (
           <Button variant="ghost" size="sm" onClick={() => { setStage("list"); setParsed(null); setError(""); }}>
-            Back to list
+            Cancel
           </Button>
         )}
       </div>
@@ -593,30 +686,42 @@ export default function SubjectsPage() {
         </div>
       )}
 
-      <div className="mt-6 flex-1 min-h-0">
-        {/* Empty state: full-height drop zone */}
-        {stage === "list" && !hasSubjects && <DropZone onFile={handleFile} fullHeight />}
+      <div className="mt-6 flex-1 min-h-0 overflow-auto">
+        {/* Empty + not adding: full drop zone */}
+        {!hasSubjects && !isAdding && <DropZone onFile={handleFile} fullHeight />}
 
-        {/* Has subjects: list + subtle drop hint */}
-        {stage === "list" && hasSubjects && (
+        {/* Subject list (always visible when subjects exist) */}
+        {hasSubjects && (
           <div className="space-y-2">
             {subjects.map((s) => <SubjectRow key={s.id} subject={s} />)}
-            <div className={`flex items-center justify-center py-6 border-2 border-dashed rounded-lg transition-colors ${
-              listDragOver
-                ? "border-primary bg-primary/5 text-primary"
-                : "border-transparent text-muted-foreground/30 hover:border-border/30 hover:text-muted-foreground/50"
-            }`}>
-              <p className="text-xs">Drop a spec file to add another subject</p>
-            </div>
           </div>
         )}
 
-        {stage === "drop" && <DropZone onFile={handleFile} />}
-        {stage === "processing" && <ProcessingView fileName={fileName} />}
-        {stage === "review" && parsed && (
-          <ReviewView parsed={parsed} onParsedChange={setParsed} onSave={handleSave}
-            onReparse={() => { if (fileRef.current) handleFile(fileRef.current); }} />
+        {/* Inline processing/review — appears below existing subjects */}
+        {stage === "processing" && (
+          <div className={`${hasSubjects ? "mt-3 border border-border/20 rounded-lg p-4 bg-card" : ""}`}>
+            <ProcessingView fileName={fileName} />
+          </div>
         )}
+
+        {stage === "review" && parsed && (
+          <div className={`${hasSubjects ? "mt-3 border border-border/20 rounded-lg p-4 bg-card" : ""}`}>
+            <ReviewView parsed={parsed} onParsedChange={setParsed} onSave={handleSave}
+              onReparse={() => { if (fileRef.current) handleFile(fileRef.current); }} />
+          </div>
+        )}
+
+        {/* Drop hint at bottom (only when list view, has subjects, not adding) */}
+        {hasSubjects && !isAdding && (
+          <div className={`mt-2 flex items-center justify-center py-5 border-2 border-dashed rounded-lg transition-colors ${
+            listDragOver
+              ? "border-primary bg-primary/5 text-primary"
+              : "border-transparent text-muted-foreground/30"
+          }`}>
+            <p className="text-xs">Drop a spec file to add another subject</p>
+          </div>
+        )}
+
       </div>
     </div>
   );
