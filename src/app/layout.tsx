@@ -5,6 +5,7 @@ import "./globals.css";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Titlebar } from "@/components/titlebar";
 import { ThemeProvider } from "@/components/theme-provider";
+import { SettingsProvider } from "@/lib/settings";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
@@ -27,6 +28,7 @@ export default function RootLayout({
     >
       <body className="h-full flex flex-col overflow-hidden antialiased">
         <ThemeProvider>
+          <SettingsProvider>
           <TooltipProvider>
             <SidebarProvider className="flex-col">
               <Titlebar />
@@ -40,6 +42,7 @@ export default function RootLayout({
               </div>
             </SidebarProvider>
           </TooltipProvider>
+          </SettingsProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -15,6 +15,7 @@ const pageTitles: Record<string, string> = {
   "/files": "Files",
   "/summary": "Summary",
   "/subjects": "Subjects",
+  "/settings": "Settings",
 };
 
 export function Titlebar() {

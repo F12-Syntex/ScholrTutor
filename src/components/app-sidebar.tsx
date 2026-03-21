@@ -8,6 +8,7 @@ import { ChatText } from "@phosphor-icons/react/dist/ssr/ChatText";
 import { FolderOpen } from "@phosphor-icons/react/dist/ssr/FolderOpen";
 import { FileText } from "@phosphor-icons/react/dist/ssr/FileText";
 import { Books } from "@phosphor-icons/react/dist/ssr/Books";
+import { GearSix } from "@phosphor-icons/react/dist/ssr/GearSix";
 import { AppLogo } from "@/components/app-logo";
 import { MagnifyingGlass } from "@phosphor-icons/react/dist/ssr/MagnifyingGlass";
 import type { Icon } from "@phosphor-icons/react/dist/lib/types";
@@ -103,9 +104,16 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      {/* Footer: theme toggle */}
+      {/* Footer: settings + theme toggle */}
       <SidebarFooter className="px-3.5 py-3">
-        <div className="flex items-center">
+        <div className="flex items-center justify-between">
+          <Link
+            href="/settings"
+            className="flex items-center justify-center w-8 h-8 rounded-md text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-colors"
+            title="Settings"
+          >
+            <GearSix size={18} />
+          </Link>
           <ThemeToggle />
         </div>
       </SidebarFooter>
