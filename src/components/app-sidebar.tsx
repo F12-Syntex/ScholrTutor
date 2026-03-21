@@ -85,7 +85,7 @@ function CollapseButton() {
   return (
     <button
       onClick={toggleSidebar}
-      className="flex items-center justify-center w-8 h-8 rounded-md text-sidebar-foreground/40 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-colors"
+      className="flex items-center justify-center w-7 h-7 rounded-md border border-sidebar-border/60 text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground hover:border-sidebar-border transition-colors"
       title="Collapse sidebar (Ctrl+B)"
     >
       <CaretDoubleLeft size={14} />
@@ -117,7 +117,7 @@ export function AppSidebar() {
       </SidebarHeader>
 
       {/* Navigation */}
-      <SidebarContent className="px-3 pt-2">
+      <SidebarContent className="px-3.5 pt-2">
         <SidebarGroup className="p-0">
           <SidebarGroupLabel className="px-2 mb-0.5">
             Navigation

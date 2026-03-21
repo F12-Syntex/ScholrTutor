@@ -263,15 +263,15 @@ function SidebarTrigger({
       data-sidebar="trigger"
       data-slot="sidebar-trigger"
       variant="ghost"
-      size="icon-sm"
-      className={cn(className)}
+      size="icon"
+      className={cn("size-8", className)}
       onClick={(event) => {
         onClick?.(event)
         toggleSidebar()
       }}
       {...props}
     >
-      <SidebarSimple size={16} />
+      <SidebarSimple size={18} />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )
@@ -457,7 +457,7 @@ function SidebarMenu({ className, ...props }: React.ComponentProps<"ul">) {
     <ul
       data-slot="sidebar-menu"
       data-sidebar="menu"
-      className={cn("flex w-full min-w-0 flex-col gap-0.5", className)}
+      className={cn("flex w-full min-w-0 flex-col gap-1", className)}
       {...props}
     />
   )
