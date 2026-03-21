@@ -4,16 +4,17 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard,
+  SquaresFour,
   Users,
-  MessageSquare,
+  ChatText,
   FolderOpen,
   FileText,
-  BookOpen,
-  PanelLeftClose,
-  PanelLeft,
+  Books,
+  CaretLineLeft,
+  CaretLineRight,
   GraduationCap,
-} from "lucide-react";
+} from "@phosphor-icons/react";
+import type { Icon } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import {
   Tooltip,
@@ -22,13 +23,13 @@ import {
 } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
 
-const navItems = [
-  { href: "/", label: "Dashboard", icon: LayoutDashboard },
+const navItems: { href: string; label: string; icon: Icon }[] = [
+  { href: "/", label: "Dashboard", icon: SquaresFour },
   { href: "/students", label: "Students", icon: Users },
-  { href: "/session", label: "Session Log", icon: MessageSquare },
+  { href: "/session", label: "Session Log", icon: ChatText },
   { href: "/files", label: "Files", icon: FolderOpen },
   { href: "/summary", label: "Summary", icon: FileText },
-  { href: "/subjects", label: "Subjects", icon: BookOpen },
+  { href: "/subjects", label: "Subjects", icon: Books },
 ];
 
 export function Sidebar() {
@@ -50,7 +51,11 @@ export function Sidebar() {
         )}
       >
         <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-primary">
-          <GraduationCap className="w-5 h-5 text-primary-foreground" />
+          <GraduationCap
+            className="text-primary-foreground"
+            size={20}
+            weight="duotone"
+          />
         </div>
         {!collapsed && (
           <span className="text-base font-semibold tracking-tight">
@@ -69,6 +74,8 @@ export function Sidebar() {
               ? pathname === "/"
               : pathname.startsWith(item.href);
 
+          const iconWeight = isActive ? "fill" : "regular";
+
           const linkContent = (
             <Link
               key={item.href}
@@ -81,7 +88,7 @@ export function Sidebar() {
                 collapsed && "justify-center px-0 w-10 h-10 mx-auto"
               )}
             >
-              <item.icon className="w-[18px] h-[18px] shrink-0" />
+              <item.icon size={20} weight={iconWeight} className="shrink-0" />
               {!collapsed && <span>{item.label}</span>}
             </Link>
           );
@@ -103,7 +110,11 @@ export function Sidebar() {
                     />
                   }
                 >
-                  <item.icon className="w-[18px] h-[18px] shrink-0" />
+                  <item.icon
+                    size={20}
+                    weight={iconWeight}
+                    className="shrink-0"
+                  />
                 </TooltipTrigger>
                 <TooltipContent side="right" sideOffset={8}>
                   {item.label}
@@ -130,9 +141,9 @@ export function Sidebar() {
           className="flex items-center justify-center w-8 h-8 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
         >
           {collapsed ? (
-            <PanelLeft className="w-4 h-4" />
+            <CaretLineRight size={16} />
           ) : (
-            <PanelLeftClose className="w-4 h-4" />
+            <CaretLineLeft size={16} />
           )}
         </button>
       </div>

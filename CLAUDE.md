@@ -28,6 +28,31 @@ After every change, Claude must:
    ```
    Types: `feat`, `fix`, `refactor`, `style`, `docs`, `chore`, `test`, `build`
 
+## Design document is the source of truth
+
+**`design.md` governs all UI decisions.** Before making any UI change:
+
+1. **Read `design.md` first** — check the relevant section (pages, layout, design tokens, icon conventions).
+2. **Follow what's documented** — use the specified colors, spacing, typography, icon weights, and component patterns.
+3. **If something isn't in the doc, add it** — any new UI decision (new component style, new color usage, new layout pattern) must be documented in `design.md` before or alongside the code change.
+4. **Never contradict the doc** — if the doc says "Phosphor Icons, weight regular, size 20 for nav", don't use a different icon library, weight, or size.
+
+### Design tokens flow
+
+```
+design.md (section 12)  →  globals.css (CSS custom properties)  →  Tailwind utilities
+```
+
+- All colors, radii, and spacing are CSS custom properties in `src/app/globals.css`
+- Tailwind classes (`bg-primary`, `text-muted-foreground`, `border-border`) reference these variables
+- To change the app's visual style: update the token values in `design.md`, then update the matching CSS variables in `globals.css`
+- **Never use hardcoded color values** — always use token-based Tailwind classes
+
+### Icons
+
+- **Phosphor Icons** (`@phosphor-icons/react`) exclusively — no other icon library
+- Refer to design.md section 12 "Icon Library" for weight and size conventions
+
 ## Architecture
 
 This is a **Next.js 15 + Electron** desktop app with **shadcn/ui** components.

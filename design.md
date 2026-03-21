@@ -492,7 +492,110 @@ Searchable, filterable roster table.
 
 ---
 
-## 12. Future / v2 Scope (Hosted SaaS)
+## 12. Design Tokens
+
+All visual values are defined as CSS custom properties in `src/app/globals.css`. Tailwind utilities (`bg-primary`, `text-muted-foreground`, etc.) reference these variables — never hardcoded values. To change the look of the entire app, edit the values below and update `globals.css` to match.
+
+### Icon Library
+
+**Phosphor Icons** (`@phosphor-icons/react`) — used exclusively throughout the app.
+
+| Context | Weight | Size |
+|---|---|---|
+| Navigation (inactive) | `regular` | `20` |
+| Navigation (active) | `fill` | `20` |
+| Logo / branding | `duotone` | `20` |
+| Inline / buttons | `regular` | `16` |
+| Decorative / empty states | `thin` | `48` |
+
+### Color Tokens (Light Mode)
+
+| Token | Value | Usage |
+|---|---|---|
+| `--background` | `oklch(1 0 0)` | Page background |
+| `--foreground` | `oklch(0.145 0 0)` | Default text |
+| `--card` | `oklch(1 0 0)` | Card backgrounds |
+| `--card-foreground` | `oklch(0.145 0 0)` | Card text |
+| `--popover` | `oklch(1 0 0)` | Popover/dropdown backgrounds |
+| `--popover-foreground` | `oklch(0.145 0 0)` | Popover text |
+| `--primary` | `oklch(0.205 0 0)` | Primary buttons, active nav items |
+| `--primary-foreground` | `oklch(0.985 0 0)` | Text on primary |
+| `--secondary` | `oklch(0.97 0 0)` | Secondary buttons |
+| `--secondary-foreground` | `oklch(0.205 0 0)` | Text on secondary |
+| `--muted` | `oklch(0.97 0 0)` | Muted backgrounds |
+| `--muted-foreground` | `oklch(0.556 0 0)` | Inactive nav text, placeholders |
+| `--accent` | `oklch(0.97 0 0)` | Hover backgrounds |
+| `--accent-foreground` | `oklch(0.205 0 0)` | Hover text |
+| `--destructive` | `oklch(0.577 0.245 27.325)` | Delete/danger actions |
+| `--border` | `oklch(0.922 0 0)` | Borders, dividers |
+| `--input` | `oklch(0.922 0 0)` | Input borders |
+| `--ring` | `oklch(0.708 0 0)` | Focus rings |
+
+### Color Tokens (Dark Mode)
+
+| Token | Value |
+|---|---|
+| `--background` | `oklch(0.145 0 0)` |
+| `--foreground` | `oklch(0.985 0 0)` |
+| `--card` | `oklch(0.205 0 0)` |
+| `--card-foreground` | `oklch(0.985 0 0)` |
+| `--popover` | `oklch(0.205 0 0)` |
+| `--popover-foreground` | `oklch(0.985 0 0)` |
+| `--primary` | `oklch(0.922 0 0)` |
+| `--primary-foreground` | `oklch(0.205 0 0)` |
+| `--secondary` | `oklch(0.269 0 0)` |
+| `--secondary-foreground` | `oklch(0.985 0 0)` |
+| `--muted` | `oklch(0.269 0 0)` |
+| `--muted-foreground` | `oklch(0.708 0 0)` |
+| `--accent` | `oklch(0.269 0 0)` |
+| `--accent-foreground` | `oklch(0.985 0 0)` |
+| `--destructive` | `oklch(0.704 0.191 22.216)` |
+| `--border` | `oklch(1 0 0 / 10%)` |
+| `--input` | `oklch(1 0 0 / 15%)` |
+| `--ring` | `oklch(0.556 0 0)` |
+
+### Sidebar Tokens
+
+| Token | Light | Dark |
+|---|---|---|
+| `--sidebar` | `oklch(0.985 0 0)` | `oklch(0.205 0 0)` |
+| `--sidebar-foreground` | `oklch(0.145 0 0)` | `oklch(0.985 0 0)` |
+| `--sidebar-primary` | `oklch(0.205 0 0)` | `oklch(0.488 0.243 264.376)` |
+| `--sidebar-primary-foreground` | `oklch(0.985 0 0)` | `oklch(0.985 0 0)` |
+| `--sidebar-accent` | `oklch(0.97 0 0)` | `oklch(0.269 0 0)` |
+| `--sidebar-accent-foreground` | `oklch(0.205 0 0)` | `oklch(0.985 0 0)` |
+| `--sidebar-border` | `oklch(0.922 0 0)` | `oklch(1 0 0 / 10%)` |
+
+### Layout Tokens
+
+| Token | Value | Usage |
+|---|---|---|
+| `--radius` | `0.625rem` | Base border radius (sm/md/lg/xl derived from this) |
+| Sidebar expanded | `240px` | Full sidebar width |
+| Sidebar collapsed | `68px` | Icon-only sidebar width |
+
+### Typography
+
+| Context | Font | Weight | Size |
+|---|---|---|---|
+| Body / UI | Geist Sans (`--font-sans`) | `400` | `14px` (text-sm) |
+| Code / mono | Geist Mono (`--font-mono`) | `400` | `14px` |
+| Headings | Geist Sans (`--font-heading`) | `600` | varies |
+| Sidebar nav | Geist Sans | `500` | `14px` (text-sm) |
+| Sidebar logo | Geist Sans | `600` | `16px` (text-base) |
+
+### Mention Chip Colors
+
+| Mention type | Color |
+|---|---|
+| Student | Blue |
+| File | Purple |
+| Topic | Green |
+| Unresolved | Amber |
+
+---
+
+## 13. Future / v2 Scope (Hosted SaaS)
 
 When the hosted version is built, the migration path is intentionally minimal:
 
