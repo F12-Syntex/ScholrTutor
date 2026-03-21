@@ -24,10 +24,17 @@ type ParsedSubject = {
   units: ParsedUnit[];
 };
 
+type ParsedTopic = {
+  code: string;
+  title: string;
+  content: string[];
+  subtopics?: ParsedTopic[];
+};
+
 type ParsedUnit = {
   code: string;
   title: string;
-  topics: { code: string; title: string }[];
+  topics: ParsedTopic[];
 };
 
 type FlowStage = "list" | "drop" | "processing" | "review";
@@ -148,35 +155,67 @@ function EditableField({ value, onChange, className, mono }: { value: string; on
 
 // ── Topic row ──
 
-function TopicRow({ topic, onUpdate, onDelete, depth }: {
-  topic: { code: string; title: string }; onUpdate: (code: string, title: string) => void; onDelete: () => void; depth: number;
+function TopicRow({ topic, onDelete, depth }: {
+  topic: ParsedTopic; onDelete: () => void; depth: number;
 }) {
+  const [expanded, setExpanded] = useState(depth < 2);
+  const hasChildren = topic.subtopics && topic.subtopics.length > 0;
+  const hasContent = topic.content && topic.content.length > 0;
+
   return (
-    <div className="group flex items-center gap-2 py-1.5 px-2 -mx-2 rounded-md hover:bg-accent/20 transition-colors"
-      style={{ paddingLeft: `${depth * 24 + 8}px` }}>
-      <span className="text-[11px] font-mono text-muted-foreground/60 w-12 shrink-0">
-        <EditableField value={topic.code} onChange={(v) => onUpdate(v, topic.title)} mono className="text-[11px] w-10" />
-      </span>
-      <EditableField value={topic.title} onChange={(v) => onUpdate(topic.code, v)} className="text-sm flex-1" />
-      <button onClick={onDelete}
-        className="opacity-0 group-hover:opacity-100 p-1 text-muted-foreground/40 hover:text-destructive transition-all">
-        <Trash size={13} />
-      </button>
+    <div>
+      <div className="group flex items-center gap-2 py-1.5 px-2 -mx-2 rounded-md hover:bg-accent/20 transition-colors"
+        style={{ paddingLeft: `${depth * 20 + 8}px` }}>
+        {(hasChildren || hasContent) ? (
+          <button onClick={() => setExpanded(!expanded)} className="w-4 shrink-0 text-muted-foreground/40">
+            {expanded ? <CaretDown size={11} /> : <CaretRight size={11} />}
+          </button>
+        ) : <span className="w-4 shrink-0" />}
+        <span className="text-[11px] font-mono text-muted-foreground/50 shrink-0">{topic.code}</span>
+        <span className="text-sm flex-1 truncate">{topic.title}</span>
+        {hasContent && (
+          <span className="text-[10px] text-muted-foreground/40 shrink-0">{topic.content.length} pts</span>
+        )}
+        <button onClick={onDelete}
+          className="opacity-0 group-hover:opacity-100 p-1 text-muted-foreground/40 hover:text-destructive transition-all shrink-0">
+          <Trash size={12} />
+        </button>
+      </div>
+
+      {expanded && hasContent && (
+        <div className="space-y-0.5 py-1" style={{ paddingLeft: `${depth * 20 + 36}px` }}>
+          {topic.content.map((c, i) => (
+            <p key={i} className="text-xs text-muted-foreground/70 leading-relaxed">
+              <span className="text-muted-foreground/30 mr-1.5">·</span>{c}
+            </p>
+          ))}
+        </div>
+      )}
+
+      {expanded && hasChildren && topic.subtopics!.map((sub, si) => (
+        <TopicRow key={si} topic={sub} onDelete={() => {}} depth={depth + 1} />
+      ))}
     </div>
   );
 }
 
 // ── Unit block ──
 
-function UnitBlock({ unit, onUpdateUnit, onUpdateTopic, onDeleteTopic, onAddTopic, onDeleteUnit }: {
+function countAllTopics(topics: ParsedTopic[]): number {
+  let count = 0;
+  for (const t of topics) {
+    count++;
+    if (t.subtopics) count += countAllTopics(t.subtopics);
+  }
+  return count;
+}
+
+function UnitBlock({ unit, onDeleteUnit }: {
   unit: ParsedUnit;
-  onUpdateUnit: (code: string, title: string) => void;
-  onUpdateTopic: (topicIdx: number, code: string, title: string) => void;
-  onDeleteTopic: (topicIdx: number) => void;
-  onAddTopic: () => void;
   onDeleteUnit: () => void;
 }) {
   const [expanded, setExpanded] = useState(true);
+  const totalTopics = countAllTopics(unit.topics);
 
   return (
     <div className="border border-border/20 rounded-lg overflow-hidden">
@@ -184,13 +223,9 @@ function UnitBlock({ unit, onUpdateUnit, onUpdateTopic, onDeleteTopic, onAddTopi
         <button onClick={() => setExpanded(!expanded)} className="text-muted-foreground/50 shrink-0">
           {expanded ? <CaretDown size={14} /> : <CaretRight size={14} />}
         </button>
-        <span className="text-xs font-mono text-muted-foreground/60 w-8">
-          <EditableField value={unit.code} onChange={(v) => onUpdateUnit(v, unit.title)} mono className="text-xs w-6" />
-        </span>
-        <EditableField value={unit.title} onChange={(v) => onUpdateUnit(unit.code, v)} className="text-sm font-medium flex-1" />
-        <span className="text-[10px] text-muted-foreground/40 mr-1">
-          {unit.topics.length} {unit.topics.length === 1 ? "topic" : "topics"}
-        </span>
+        <span className="text-xs font-mono text-muted-foreground/50 shrink-0">{unit.code}</span>
+        <span className="text-sm font-medium flex-1 truncate">{unit.title}</span>
+        <span className="text-[10px] text-muted-foreground/40 mr-1">{totalTopics} topics</span>
         <button onClick={onDeleteUnit}
           className="opacity-0 group-hover:opacity-100 p-1 text-muted-foreground/40 hover:text-destructive transition-all">
           <Trash size={13} />
@@ -199,14 +234,8 @@ function UnitBlock({ unit, onUpdateUnit, onUpdateTopic, onDeleteTopic, onAddTopi
       {expanded && (
         <div className="px-2 py-1">
           {unit.topics.map((topic, ti) => (
-            <TopicRow key={ti} topic={topic}
-              onUpdate={(code, title) => onUpdateTopic(ti, code, title)}
-              onDelete={() => onDeleteTopic(ti)} depth={1} />
+            <TopicRow key={ti} topic={topic} onDelete={() => {}} depth={1} />
           ))}
-          <button onClick={onAddTopic}
-            className="flex items-center gap-1.5 text-xs text-muted-foreground/50 hover:text-muted-foreground py-1.5 px-2 ml-6 transition-colors">
-            <Plus size={12} /> Add topic
-          </button>
         </div>
       )}
     </div>
@@ -222,45 +251,11 @@ function ReviewView({ parsed, onParsedChange, onSave, onReparse }: {
     onParsedChange({ ...parsed, [key]: value });
   };
 
-  const updateUnit = (ui: number, code: string, title: string) => {
-    const units = [...parsed.units];
-    units[ui] = { ...units[ui], code, title };
-    updateField("units", units);
-  };
-
-  const updateTopic = (ui: number, ti: number, code: string, title: string) => {
-    const units = [...parsed.units];
-    const topics = [...units[ui].topics];
-    topics[ti] = { code, title };
-    units[ui] = { ...units[ui], topics };
-    updateField("units", units);
-  };
-
-  const deleteTopic = (ui: number, ti: number) => {
-    const units = [...parsed.units];
-    units[ui] = { ...units[ui], topics: units[ui].topics.filter((_, i) => i !== ti) };
-    updateField("units", units);
-  };
-
   const deleteUnit = (ui: number) => {
     updateField("units", parsed.units.filter((_, i) => i !== ui));
   };
 
-  const addTopic = (ui: number) => {
-    const units = [...parsed.units];
-    const lastCode = units[ui].topics.at(-1)?.code ?? `${units[ui].code}.0`;
-    const parts = lastCode.split(".");
-    const next = [...parts.slice(0, -1), String(Number(parts.at(-1)) + 1)].join(".");
-    units[ui] = { ...units[ui], topics: [...units[ui].topics, { code: next, title: "" }] };
-    updateField("units", units);
-  };
-
-  const addUnit = () => {
-    const lastCode = parsed.units.at(-1)?.code ?? "0";
-    updateField("units", [...parsed.units, { code: String(Number(lastCode) + 1), title: "", topics: [] }]);
-  };
-
-  const totalTopics = parsed.units.reduce((sum, u) => sum + u.topics.length, 0);
+  const totalTopics = parsed.units.reduce((sum, u) => countAllTopics(u.topics), 0);
 
   return (
     <div className="max-w-xl mx-auto space-y-5 py-4">
@@ -294,19 +289,9 @@ function ReviewView({ parsed, onParsedChange, onSave, onReparse }: {
       {/* Units */}
       <div className="space-y-2">
         {parsed.units.map((unit, ui) => (
-          <UnitBlock key={ui} unit={unit}
-            onUpdateUnit={(code, title) => updateUnit(ui, code, title)}
-            onUpdateTopic={(ti, code, title) => updateTopic(ui, ti, code, title)}
-            onDeleteTopic={(ti) => deleteTopic(ui, ti)}
-            onAddTopic={() => addTopic(ui)}
-            onDeleteUnit={() => deleteUnit(ui)} />
+          <UnitBlock key={ui} unit={unit} onDeleteUnit={() => deleteUnit(ui)} />
         ))}
       </div>
-
-      <button onClick={addUnit}
-        className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
-        <Plus size={13} /> Add unit
-      </button>
 
       {/* Actions */}
       <div className="flex items-center justify-between pt-4 border-t border-border/20">
@@ -366,31 +351,51 @@ function SubjectCard({ subject }: { subject: Subject }) {
 
 // ── AI Parse ──
 
-const SYSTEM_PROMPT = `You are a UK exam specification parser. You extract the COMPLETE topic structure from exam specification documents.
+const SYSTEM_PROMPT = `You are a UK exam specification parser. You extract the COMPLETE topic structure with full depth and specification content.
 
 CRITICAL RULES:
-1. Extract EVERY SINGLE topic, sub-topic, and sub-sub-topic. Do NOT skip, truncate, or summarise ANY content. If the spec has 200 topics, you MUST output all 200.
-2. Use the EXACT numbering from the specification (e.g. 3.1.2, not renumbered).
-3. Use the EXACT titles from the specification, word-for-word, not paraphrased.
-4. Include ALL levels of hierarchy: units/themes/sections → topics → sub-topics → sub-sub-topics.
-5. If a section uses "Theme", "Unit", "Component", "Paper", "Section" etc., map the top-level groupings to "units".
-6. Every unit MUST contain at least one topic.
-7. Do NOT stop early. Do NOT write "and so on", "etc", "continued", or similar. Output the COMPLETE structure.
-8. Do NOT invent topics that aren't in the document.
+1. Extract EVERY topic down to the DEEPEST level (e.g. 4.1.1.1, 4.1.1.2, not just 4.1.1). Sub-sub-topics are nested inside their parent's "subtopics" array.
+2. For each LEAF topic (the deepest level), extract the "content" array — these are the specific knowledge requirements, bullet points, or specification statements that students must learn.
+3. Use the EXACT numbering from the specification (e.g. 4.1.2.3, not renumbered).
+4. Use the EXACT titles and content text from the specification, word-for-word.
+5. Do NOT skip, truncate, summarise, or paraphrase ANY content. Every single bullet point matters.
+6. Do NOT stop early. Do NOT write "etc", "and so on", or "continued". Output EVERYTHING.
+7. Do NOT invent content that isn't in the document.
+8. Topics that contain sub-topics should have an empty content array and a "subtopics" object.
+9. Leaf topics (no children) should have their content array filled with the spec requirements.
 
-Return ONLY valid JSON (no markdown fences, no explanation text before or after) with this structure:
+Return ONLY valid JSON (no markdown fences, no text before or after):
 {
   "name": "Subject Name",
-  "examBoard": "Board Name (AQA, Edexcel, OCR, WJEC, etc.)",
+  "examBoard": "Board (AQA, Edexcel, OCR, WJEC, etc.)",
   "level": "A-Level" or "GCSE" or "Other",
-  "specCode": "spec code if found, otherwise empty string",
+  "specCode": "spec code if found",
   "units": [
     {
-      "code": "3.1",
-      "title": "Unit title exactly from spec",
+      "code": "4.1",
+      "title": "Unit title from spec",
       "topics": [
-        { "code": "3.1.1", "title": "Topic title exactly from spec" },
-        { "code": "3.1.1.1", "title": "Sub-topic title exactly from spec" }
+        {
+          "code": "4.1.1",
+          "title": "Topic title",
+          "content": [],
+          "subtopics": [
+            {
+              "code": "4.1.1.1",
+              "title": "Sub-topic title",
+              "content": [
+                "First specification requirement or bullet point",
+                "Second requirement — exact text from spec",
+                "Third requirement"
+              ]
+            },
+            {
+              "code": "4.1.1.2",
+              "title": "Another sub-topic",
+              "content": ["Requirement text from spec"]
+            }
+          ]
+        }
       ]
     }
   ]
@@ -536,12 +541,27 @@ export default function SubjectsPage() {
         { grade: "U", minPercent: 0 },
       ],
     });
-    for (const unit of parsed.units) {
-      addTopic(subject.id, { code: unit.code, title: unit.title, parentCode: null });
-      for (const topic of unit.topics) {
-        addTopic(subject.id, { code: topic.code, title: topic.title, parentCode: unit.code });
+
+    // Recursively flatten nested topics into flat list with parentCode
+    function addTopicsRecursive(topics: ParsedTopic[], parentCode: string | null) {
+      for (const t of topics) {
+        addTopic(subject.id, {
+          code: t.code,
+          title: t.title,
+          parentCode,
+          content: t.content ?? [],
+        });
+        if (t.subtopics) {
+          addTopicsRecursive(t.subtopics, t.code);
+        }
       }
     }
+
+    for (const unit of parsed.units) {
+      addTopic(subject.id, { code: unit.code, title: unit.title, parentCode: null, content: [] });
+      addTopicsRecursive(unit.topics, unit.code);
+    }
+
     setParsed(null);
     setStage("list");
   }, [parsed, addSubject, addTopic]);

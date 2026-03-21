@@ -14,6 +14,7 @@ export interface Topic {
   code: string;
   title: string;
   parentCode: string | null;
+  content: string[];
 }
 
 export interface GradeBoundary {
