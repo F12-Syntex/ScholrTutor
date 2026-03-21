@@ -75,9 +75,9 @@ const ACCENT_PRESETS = [
 // ── AI models ──
 
 const AI_MODELS = [
-  { value: "google/gemini-2.0-flash-001", label: "Gemini 2.0 Flash", desc: "Fast, cost-effective" },
-  { value: "anthropic/claude-sonnet-4", label: "Claude Sonnet 4", desc: "Balanced quality" },
-  { value: "openai/gpt-4o-mini", label: "GPT-4o Mini", desc: "Lightweight, cheap" },
+  { value: "google/gemini-2.5-flash-lite", label: "Gemini 2.5 Flash Lite", desc: "Fast, cost-effective" },
+  { value: "google/gemini-3.1-flash-lite-preview", label: "Gemini 3.1 Flash Lite", desc: "Latest preview" },
+  { value: "google/gemini-3-flash-preview", label: "Gemini 3 Flash", desc: "Most capable" },
 ];
 
 // ── Tab content ──

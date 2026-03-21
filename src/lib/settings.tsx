@@ -25,7 +25,7 @@ export interface AppSettings {
 
 const defaultSettings: AppSettings = {
   openRouterApiKey: "",
-  aiModel: "google/gemini-2.0-flash-001",
+  aiModel: "google/gemini-2.5-flash-lite",
   accentHue: 265,
   fontSize: "base",
   borderRadius: 10,
