@@ -10,10 +10,17 @@ import {
 } from "react";
 
 export interface AppSettings {
+  // AI
   openRouterApiKey: string;
   aiModel: string;
+
+  // Appearance
   accentHue: number;
   fontSize: "sm" | "base" | "lg";
+  borderRadius: number; // 0-16 px
+  sidebarWidth: number; // 200-320 px
+  contentPanelGap: number; // 0-12 px
+  panelRadius: number; // 0-20 px
 }
 
 const defaultSettings: AppSettings = {
@@ -21,6 +28,10 @@ const defaultSettings: AppSettings = {
   aiModel: "google/gemini-2.0-flash-001",
   accentHue: 265,
   fontSize: "base",
+  borderRadius: 10,
+  sidebarWidth: 256,
+  contentPanelGap: 8,
+  panelRadius: 12,
 };
 
 const STORAGE_KEY = "scholrtutor-settings";
@@ -47,7 +58,6 @@ function applySettings(settings: AppSettings) {
   if (typeof document === "undefined") return;
   const root = document.documentElement;
 
-  // Accent color — override primary and sidebar-primary with the hue
   const h = settings.accentHue;
   root.style.setProperty("--primary", `oklch(0.55 0.2 ${h})`);
   root.style.setProperty("--primary-foreground", `oklch(0.985 0 0)`);
@@ -55,8 +65,11 @@ function applySettings(settings: AppSettings) {
   root.style.setProperty("--sidebar-primary-foreground", `oklch(0.985 0 0)`);
   root.style.setProperty("--ring", `oklch(0.55 0.15 ${h})`);
 
-  // Font size
   root.style.fontSize = FONT_SIZE_MAP[settings.fontSize];
+  root.style.setProperty("--radius", `${settings.borderRadius / 16}rem`);
+  root.style.setProperty("--sidebar-width", `${settings.sidebarWidth}px`);
+  root.style.setProperty("--panel-gap", `${settings.contentPanelGap}px`);
+  root.style.setProperty("--panel-radius", `${settings.panelRadius}px`);
 }
 
 type SettingsContextValue = {
@@ -109,3 +122,5 @@ export function useSettings() {
   if (!ctx) throw new Error("useSettings must be used within SettingsProvider");
   return ctx;
 }
+
+export { defaultSettings };

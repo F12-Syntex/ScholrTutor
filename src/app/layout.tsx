@@ -36,7 +36,7 @@ export default function RootLayout({
               <Titlebar />
               <div className="flex-1 overflow-hidden flex bg-sidebar">
                 <AppSidebar />
-                <SidebarInset className="m-2 rounded-xl shadow-md overflow-hidden">
+                <SidebarInset className="shadow-md overflow-hidden" style={{ margin: 'var(--panel-gap, 8px)', borderRadius: 'var(--panel-radius, 12px)' }}>
                   <div className="flex-1 overflow-auto">
                     {children}
                   </div>
