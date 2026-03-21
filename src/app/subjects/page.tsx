@@ -366,84 +366,117 @@ function SubjectCard({ subject }: { subject: Subject }) {
 
 // ── AI Parse ──
 
-async function parseSpecWithAI(text: string, apiKey: string, model: string): Promise<ParsedSubject> {
-  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    method: "POST",
-    headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model,
-      messages: [
-        {
-          role: "system",
-          content: `You are a UK exam specification parser. You will be given the text content of an exam specification document (AQA, Edexcel, OCR, etc.).
+const SYSTEM_PROMPT = `You are a UK exam specification parser. You extract the COMPLETE topic structure from exam specification documents.
 
-Your task: extract the COMPLETE topic structure exactly as it appears in the specification. Do NOT invent, summarise, or reorganise — preserve the specification's own numbering and hierarchy.
+CRITICAL RULES:
+1. Extract EVERY SINGLE topic, sub-topic, and sub-sub-topic. Do NOT skip, truncate, or summarise ANY content. If the spec has 200 topics, you MUST output all 200.
+2. Use the EXACT numbering from the specification (e.g. 3.1.2, not renumbered).
+3. Use the EXACT titles from the specification, word-for-word, not paraphrased.
+4. Include ALL levels of hierarchy: units/themes/sections → topics → sub-topics → sub-sub-topics.
+5. If a section uses "Theme", "Unit", "Component", "Paper", "Section" etc., map the top-level groupings to "units".
+6. Every unit MUST contain at least one topic.
+7. Do NOT stop early. Do NOT write "and so on", "etc", "continued", or similar. Output the COMPLETE structure.
+8. Do NOT invent topics that aren't in the document.
 
-Return ONLY valid JSON (no markdown, no explanation) with this exact structure:
+Return ONLY valid JSON (no markdown fences, no explanation text before or after) with this structure:
 {
-  "name": "Subject Name (e.g. Economics, Biology)",
-  "examBoard": "Board Name (e.g. AQA, Edexcel, OCR)",
+  "name": "Subject Name",
+  "examBoard": "Board Name (AQA, Edexcel, OCR, WJEC, etc.)",
   "level": "A-Level" or "GCSE" or "Other",
-  "specCode": "specification code if visible (e.g. 7136)",
+  "specCode": "spec code if found, otherwise empty string",
   "units": [
     {
-      "code": "1",
-      "title": "Exact unit/section title from the spec",
+      "code": "3.1",
+      "title": "Unit title exactly from spec",
       "topics": [
-        { "code": "1.1", "title": "Exact topic title from the spec" },
-        { "code": "1.1.1", "title": "Exact sub-topic title" }
+        { "code": "3.1.1", "title": "Topic title exactly from spec" },
+        { "code": "3.1.1.1", "title": "Sub-topic title exactly from spec" }
       ]
     }
   ]
-}
+}`;
 
-Rules:
-- Use the EXACT numbering from the spec (e.g. 3.1.2, not renumbered)
-- Use the EXACT titles from the spec, not paraphrased
-- Include ALL levels of the hierarchy (units → topics → sub-topics)
-- If the spec uses "Section", "Unit", "Theme", "Component" etc., treat the top level as units
-- Every unit MUST have topics — if a section has no sub-items, list it as a single topic under itself`
-        },
-        {
-          role: "user",
-          content: `Parse this exam specification and extract the complete topic structure:\n\n${text}`
-        }
-      ],
-      temperature: 0,
-      max_tokens: 8000,
-    }),
+async function callAI(messages: { role: string; content: string }[], apiKey: string, model: string): Promise<string> {
+  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ model, messages, temperature: 0, max_tokens: 16000 }),
   });
 
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(`API error ${response.status}: ${(err as { error?: { message?: string } }).error?.message ?? response.statusText}`);
+  }
+
   const data = await response.json();
-  const content = data.choices?.[0]?.message?.content ?? "";
+  const choice = (data as { choices?: { message?: { content?: string }, finish_reason?: string }[] }).choices?.[0];
+  return choice?.message?.content ?? "";
+}
+
+function parseAIResponse(content: string): ParsedSubject {
   const jsonMatch = content.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) throw new Error("AI did not return valid JSON. Try a different file format.");
+  if (!jsonMatch) throw new Error("AI did not return valid JSON. Try a .txt or .md file instead.");
   const parsed = JSON.parse(jsonMatch[0]);
-  if (!parsed.units?.length) throw new Error("AI could not extract any units from this file. Try pasting the spec content as a .txt file.");
+  if (!parsed.units?.length) throw new Error("AI could not extract any units. The file may not contain a recognisable specification structure.");
   return parsed;
+}
+
+async function parseSpecWithAI(text: string, apiKey: string, model: string): Promise<ParsedSubject> {
+  const MAX_CHUNK = 80000;
+
+  if (text.length <= MAX_CHUNK) {
+    const content = await callAI([
+      { role: "system", content: SYSTEM_PROMPT },
+      { role: "user", content: `Parse this exam specification. Extract the COMPLETE topic structure — every single topic and sub-topic, no cutoffs, no summaries:\n\n${text}` },
+    ], apiKey, model);
+    return parseAIResponse(content);
+  }
+
+  // Long specs: parse in two passes with overlap
+  const content1 = await callAI([
+    { role: "system", content: SYSTEM_PROMPT },
+    { role: "user", content: `Parse this exam specification (this is the first part of a long document). Extract ALL topics you find:\n\n${text.slice(0, MAX_CHUNK)}` },
+  ], apiKey, model);
+
+  const partial = parseAIResponse(content1);
+
+  const remainingText = text.slice(MAX_CHUNK - 5000);
+  const content2 = await callAI([
+    { role: "system", content: SYSTEM_PROMPT },
+    { role: "user", content: `This is the continuation of the same specification. Units already extracted: ${partial.units.map(u => `${u.code} "${u.title}"`).join(", ")}.\n\nExtract any ADDITIONAL units and topics from the remaining text that were NOT in the list above. Return the same JSON format with only the new content:\n\n${remainingText}` },
+  ], apiKey, model);
+
+  try {
+    const additional = parseAIResponse(content2);
+    for (const newUnit of additional.units) {
+      const existing = partial.units.find(u => u.code === newUnit.code);
+      if (existing) {
+        for (const t of newUnit.topics) {
+          if (!existing.topics.some(et => et.code === t.code)) existing.topics.push(t);
+        }
+      } else {
+        partial.units.push(newUnit);
+      }
+    }
+  } catch { /* second pass failed — return what we have */ }
+
+  return partial;
 }
 
 async function extractFileText(file: File): Promise<string> {
   const name = file.name.toLowerCase();
 
-  // JSON — try to parse and stringify for clean text
   if (name.endsWith(".json")) {
     const text = await file.text();
-    try {
-      const obj = JSON.parse(text);
-      return JSON.stringify(obj, null, 2).slice(0, 30000);
-    } catch {
-      return text.slice(0, 30000);
-    }
+    try { return JSON.stringify(JSON.parse(text), null, 2); }
+    catch { return text; }
   }
 
-  // Markdown / text — read directly
   if (name.endsWith(".md") || name.endsWith(".txt")) {
-    const text = await file.text();
-    return text.slice(0, 30000);
+    return await file.text();
   }
 
-  // PDF — extract printable ASCII (basic extraction)
+  // PDF — extract printable ASCII
   const buffer = await file.arrayBuffer();
   const bytes = new Uint8Array(buffer);
   let text = "";
@@ -453,7 +486,7 @@ async function extractFileText(file: File): Promise<string> {
       text += String.fromCharCode(char);
     }
   }
-  return text.replace(/\s+/g, " ").replace(/[^\x20-\x7E\n]/g, "").slice(0, 30000);
+  return text.replace(/\s+/g, " ").replace(/[^\x20-\x7E\n]/g, "");
 }
 
 // ── Page ──
@@ -478,8 +511,8 @@ export default function SubjectsPage() {
         throw new Error("No API key set. Go to Settings → General to add your OpenRouter key.");
       }
       const text = await extractFileText(file);
-      if (text.trim().length < 50) {
-        throw new Error("Could not extract enough text from this file. Try a .txt or .md version instead.");
+      if (text.trim().length < 100) {
+        throw new Error("Could not extract enough text from this file. Try copying the spec content into a .txt or .md file.");
       }
       const result = await parseSpecWithAI(text, settings.openRouterApiKey, settings.aiModel);
       setParsed(result);
