@@ -1,7 +1,7 @@
 # ScholrTutor — Design Document
-**Version:** 0.3
+**Version:** 0.4
 **Author:** Saif
-**Last Updated:** 2026-03-20
+**Last Updated:** 2026-03-21
 
 ---
 
@@ -376,8 +376,14 @@ Explicit check-in action on the Session page. Log entries alone do not count as 
 ## 10. Pages & Navigation
 
 ### Shell Layout
-- **Custom titlebar** (36px): frameless Electron window with draggable title area and window controls (minimize, maximize, close). No default menu bar.
-- **Sidebar** (shadcn `<SidebarProvider>` + `<Sidebar collapsible="icon">`): logo, nav links, today's roster chip strip. Collapses to icon-only mode with smooth CSS transition (200ms ease-linear). Toggle via `Ctrl+B` keyboard shortcut or rail click.
+
+The app uses an **inset panel** layout pattern. The sidebar's dark background acts as a shell that frames the content panel — a lighter, elevated surface with rounded corners and a subtle gap on all sides.
+
+- **Custom titlebar** (36px / `h-9`): frameless Electron window. Left side: sidebar toggle (`SidebarSimple` icon) + `>` breadcrumb separator + page title. Center: draggable zone. Right side: minimize, maximize, close buttons. Background matches sidebar color.
+- **Sidebar** (shadcn `<SidebarProvider>` + `<Sidebar collapsible="offcanvas">`): S-curve brand logo, search bar, nav links. Collapses via offcanvas slide (200ms ease-linear). Toggle via `Ctrl+B` keyboard shortcut or titlebar button.
+- **Content panel**: `rounded-xl` corners, `m-2` gap from sidebar edges, `shadow-md`, `bg-background`. The sidebar's darker color shows through in the gaps, creating depth.
+- **Sidebar footer tray**: recessed `rounded-lg` strip at bottom with `bg-sidebar-accent/50`, contains gear (settings) + theme toggle icons at equal weight. Mirrors the inset panel pattern at miniature scale.
+- **Settings page** (`/settings`): AI config (OpenRouter key, model selection), appearance (theme, accent color, font size), data paths, about info.
 - **Quick-log modal**: floating session input accessible from any page (`Cmd+K`)
 
 ---
@@ -446,44 +452,52 @@ Searchable, filterable roster table.
 
 ---
 
+### 10.8 Settings `/settings`
+
+Card-based layout with sections:
+
+| Section | Contents |
+|---|---|
+| AI Configuration | OpenRouter API key (masked input with show/hide toggle), AI model selector (radio-card UI: Gemini 2.0 Flash, Claude Sonnet 4, GPT-4o Mini) |
+| Appearance | Theme switcher (Light / Dark / System), accent color picker (7 preset swatches + continuous hue slider 0-360°), font size (Small / Default / Large) |
+| Data & Storage | Database path, file storage path (read-only display) |
+| About | App version, Electron version, Next.js version |
+
+Settings are persisted to `localStorage` via `SettingsProvider` context. Accent color overrides `--primary`, `--sidebar-primary`, and `--ring` CSS vars at runtime. Font size sets `html { font-size }` to 14/16/18px.
+
+---
+
 ## 11. File & Folder Structure
 
 ```
 /
-├── main/                        → Electron main process
-│   ├── index.ts                 → App entry, window creation
-│   ├── db.ts                    → Prisma init + DB path setup
-│   ├── ipc/                     → IPC handlers (one file per resource)
-│   │   ├── students.ts
-│   │   ├── session.ts
-│   │   ├── files.ts
-│   │   ├── summary.ts
-│   │   ├── attendance.ts
-│   │   └── subjects.ts
-│   └── parser.ts                → @mention tokeniser + resolver
+├── electron/                    → Electron main process
+│   ├── main.js                  → App entry, window creation, IPC handlers
+│   └── preload.js               → contextBridge IPC exposure
 │
-├── renderer/                    → Next.js app (frontend)
+├── src/                         → Next.js app (frontend)
 │   ├── app/
+│   │   ├── layout.tsx           → Root layout (fonts, providers, shell)
+│   │   ├── globals.css          → Design tokens + base styles
 │   │   ├── page.tsx             → Dashboard
-│   │   ├── students/
-│   │   │   ├── page.tsx         → Roster
-│   │   │   └── [id]/page.tsx    → Student Profile
-│   │   ├── session/page.tsx
-│   │   ├── summary/page.tsx
-│   │   ├── files/page.tsx
-│   │   └── subjects/page.tsx
+│   │   ├── students/page.tsx    → Student roster
+│   │   ├── session/page.tsx     → Session log
+│   │   ├── files/page.tsx       → File manager
+│   │   ├── summary/page.tsx     → Daily summaries
+│   │   ├── subjects/page.tsx    → Subject/spec editor
+│   │   └── settings/page.tsx    → Settings (AI, appearance, data)
 │   ├── components/
-│   │   ├── ui/                  → shadcn primitives
-│   │   ├── session/             → SessionInput, MentionChip, LogEntry, RosterSidebar
-│   │   ├── students/            → StudentCard, TopicGrid, GradeBadge
-│   │   ├── summary/             → SummaryCard, RegenerateButton
-│   │   └── subjects/            → TopicTreeEditor, GradeBoundaryEditor
+│   │   ├── ui/                  → shadcn primitives (button, card, input, etc.)
+│   │   ├── app-sidebar.tsx      → Main sidebar with nav + footer tray
+│   │   ├── app-logo.tsx         → S-curve brand icon (inline SVG)
+│   │   ├── titlebar.tsx         → Custom Electron titlebar with breadcrumbs
+│   │   ├── theme-toggle.tsx     → Dark/light toggle button
+│   │   └── theme-provider.tsx   → next-themes wrapper
 │   └── lib/
-│       ├── ipc-client.ts        → Typed renderer-side IPC wrappers
-│       ├── ai-model.ts          → OpenRouter config + callAI()
-│       └── score-detector.ts    → Regex score extraction
+│       ├── settings.tsx         → Settings context + localStorage persistence
+│       └── utils.ts             → cn() + shared utilities
 │
-├── preload.ts                   → contextBridge IPC exposure
+├── build/                       → App icons (icon.svg, icon.png, icon.ico)
 │
 └── prisma/
     ├── schema.prisma
@@ -494,110 +508,141 @@ Searchable, filterable roster table.
 
 ## 12. Design Tokens
 
-All visual values are defined as CSS custom properties in `src/app/globals.css`. Tailwind utilities (`bg-primary`, `text-muted-foreground`, etc.) reference these variables — never hardcoded values. To change the look of the entire app, edit the values below and update `globals.css` to match.
+All visual values are defined as CSS custom properties in `src/app/globals.css`. Tailwind utilities (`bg-primary`, `text-muted-foreground`, etc.) reference these variables — never hardcoded values. The palette uses warm-tinted neutrals (slight chroma on hue 75 for light, hue 265 for dark) to avoid the flat/sterile feel of pure achromatic grays.
 
 ### Icon Library
 
-**Phosphor Icons** (`@phosphor-icons/react`) — used exclusively throughout the app.
+**Phosphor Icons** (`@phosphor-icons/react`) — used exclusively. Always use **direct imports** for tree-shaking:
+
+```ts
+// GOOD
+import { Users } from "@phosphor-icons/react/dist/ssr/Users";
+// BAD — bundles entire library
+import { Users } from "@phosphor-icons/react";
+```
 
 | Context | Weight | Size |
 |---|---|---|
-| Navigation (inactive) | `regular` | `20` |
-| Navigation (active) | `fill` | `20` |
-| Logo / branding | `duotone` | `20` |
+| Navigation (inactive) | `regular` | `18` |
+| Navigation (active) | `fill` | `18` |
+| Sidebar footer / utility | `regular` | `17` |
+| Titlebar | `regular` | `16` |
 | Inline / buttons | `regular` | `16` |
 | Decorative / empty states | `thin` | `48` |
 
-### Color Tokens (Light Mode)
+### Color Tokens (Light Mode — warm neutrals)
 
 | Token | Value | Usage |
 |---|---|---|
-| `--background` | `oklch(1 0 0)` | Page background |
-| `--foreground` | `oklch(0.145 0 0)` | Default text |
+| `--background` | `oklch(0.995 0.002 75)` | Content panel background |
+| `--foreground` | `oklch(0.16 0.006 285)` | Default text |
 | `--card` | `oklch(1 0 0)` | Card backgrounds |
-| `--card-foreground` | `oklch(0.145 0 0)` | Card text |
+| `--card-foreground` | `oklch(0.16 0.006 285)` | Card text |
 | `--popover` | `oklch(1 0 0)` | Popover/dropdown backgrounds |
-| `--popover-foreground` | `oklch(0.145 0 0)` | Popover text |
-| `--primary` | `oklch(0.205 0 0)` | Primary buttons, active nav items |
+| `--popover-foreground` | `oklch(0.16 0.006 285)` | Popover text |
+| `--primary` | `oklch(0.22 0.008 285)` | Primary buttons, active states (overridden by accent hue at runtime) |
 | `--primary-foreground` | `oklch(0.985 0 0)` | Text on primary |
-| `--secondary` | `oklch(0.97 0 0)` | Secondary buttons |
-| `--secondary-foreground` | `oklch(0.205 0 0)` | Text on secondary |
-| `--muted` | `oklch(0.97 0 0)` | Muted backgrounds |
-| `--muted-foreground` | `oklch(0.556 0 0)` | Inactive nav text, placeholders |
-| `--accent` | `oklch(0.97 0 0)` | Hover backgrounds |
-| `--accent-foreground` | `oklch(0.205 0 0)` | Hover text |
-| `--destructive` | `oklch(0.577 0.245 27.325)` | Delete/danger actions |
-| `--border` | `oklch(0.922 0 0)` | Borders, dividers |
-| `--input` | `oklch(0.922 0 0)` | Input borders |
-| `--ring` | `oklch(0.708 0 0)` | Focus rings |
+| `--secondary` | `oklch(0.965 0.003 75)` | Secondary buttons |
+| `--secondary-foreground` | `oklch(0.22 0.008 285)` | Text on secondary |
+| `--muted` | `oklch(0.965 0.003 75)` | Muted backgrounds |
+| `--muted-foreground` | `oklch(0.52 0.01 265)` | Inactive nav, placeholders |
+| `--accent` | `oklch(0.955 0.004 75)` | Hover backgrounds |
+| `--accent-foreground` | `oklch(0.22 0.008 285)` | Hover text |
+| `--destructive` | `oklch(0.58 0.22 25)` | Danger actions |
+| `--destructive-foreground` | `oklch(0.985 0 0)` | Text on danger |
+| `--success` | `oklch(0.62 0.17 150)` | Success states |
+| `--warning` | `oklch(0.78 0.16 80)` | Warning states |
+| `--info` | `oklch(0.60 0.16 255)` | Info states |
+| `--border` | `oklch(0.915 0.004 75)` | Borders, dividers |
+| `--input` | `oklch(0.915 0.004 75)` | Input borders |
+| `--ring` | `oklch(0.65 0.01 265)` | Focus rings (overridden by accent hue) |
 
-### Color Tokens (Dark Mode)
+### Color Tokens (Dark Mode — deep blue-gray)
 
 | Token | Value |
 |---|---|
-| `--background` | `oklch(0.145 0 0)` |
-| `--foreground` | `oklch(0.985 0 0)` |
-| `--card` | `oklch(0.205 0 0)` |
-| `--card-foreground` | `oklch(0.985 0 0)` |
-| `--popover` | `oklch(0.205 0 0)` |
-| `--popover-foreground` | `oklch(0.985 0 0)` |
-| `--primary` | `oklch(0.922 0 0)` |
-| `--primary-foreground` | `oklch(0.205 0 0)` |
-| `--secondary` | `oklch(0.269 0 0)` |
-| `--secondary-foreground` | `oklch(0.985 0 0)` |
-| `--muted` | `oklch(0.269 0 0)` |
-| `--muted-foreground` | `oklch(0.708 0 0)` |
-| `--accent` | `oklch(0.269 0 0)` |
-| `--accent-foreground` | `oklch(0.985 0 0)` |
-| `--destructive` | `oklch(0.704 0.191 22.216)` |
-| `--border` | `oklch(1 0 0 / 10%)` |
-| `--input` | `oklch(1 0 0 / 15%)` |
-| `--ring` | `oklch(0.556 0 0)` |
+| `--background` | `oklch(0.185 0.008 265)` |
+| `--foreground` | `oklch(0.96 0.004 75)` |
+| `--card` | `oklch(0.185 0.009 265)` |
+| `--popover` | `oklch(0.195 0.009 265)` |
+| `--primary` | `oklch(0.93 0.004 75)` |
+| `--primary-foreground` | `oklch(0.16 0.008 265)` |
+| `--secondary` | `oklch(0.24 0.01 265)` |
+| `--muted` | `oklch(0.24 0.01 265)` |
+| `--muted-foreground` | `oklch(0.65 0.012 265)` |
+| `--accent` | `oklch(0.24 0.01 265)` |
+| `--destructive` | `oklch(0.68 0.19 22)` |
+| `--border` | `oklch(1 0 0 / 9%)` |
+| `--input` | `oklch(1 0 0 / 12%)` |
+| `--ring` | `oklch(0.52 0.012 265)` |
 
 ### Sidebar Tokens
 
+The sidebar is darker than the content panel in both themes, creating the "shell frames panel" depth effect.
+
 | Token | Light | Dark |
 |---|---|---|
-| `--sidebar` | `oklch(0.985 0 0)` | `oklch(0.205 0 0)` |
-| `--sidebar-foreground` | `oklch(0.145 0 0)` | `oklch(0.985 0 0)` |
-| `--sidebar-primary` | `oklch(0.205 0 0)` | `oklch(0.488 0.243 264.376)` |
+| `--sidebar` | `oklch(0.98 0.003 75)` | `oklch(0.115 0.009 265)` |
+| `--sidebar-foreground` | `oklch(0.16 0.006 285)` | `oklch(0.96 0.004 75)` |
+| `--sidebar-primary` | `oklch(0.22 0.008 285)` | `oklch(0.56 0.22 265)` |
 | `--sidebar-primary-foreground` | `oklch(0.985 0 0)` | `oklch(0.985 0 0)` |
-| `--sidebar-accent` | `oklch(0.95 0 0)` | `oklch(0.269 0 0)` |
-| `--sidebar-accent-foreground` | `oklch(0.145 0 0)` | `oklch(0.985 0 0)` |
-| `--sidebar-border` | `oklch(0.922 0 0)` | `oklch(1 0 0 / 10%)` |
+| `--sidebar-accent` | `oklch(0.945 0.004 75)` | `oklch(0.18 0.009 265)` |
+| `--sidebar-accent-foreground` | `oklch(0.16 0.006 285)` | `oklch(0.96 0.004 75)` |
+| `--sidebar-border` | `oklch(0.915 0.004 75)` | `oklch(1 0 0 / 7%)` |
 
 ### Layout Tokens
 
 | Token | Value | Usage |
 |---|---|---|
-| `--radius` | `0.625rem` | Base border radius (sm/md/lg/xl derived from this) |
+| `--radius` | `0.625rem` | Base border radius (sm/md/lg/xl derived) |
 | `--sidebar-width` | `16rem` | Full sidebar width |
-| `--sidebar-width-icon` | `3rem` | Icon-only collapsed sidebar width |
-| Titlebar height | `36px` (`h-9`) | Custom Electron titlebar |
-| Window controls | `44px` wide each | Minimize, maximize, close buttons |
+| `--sidebar-width-icon` | `3rem` | Icon-only collapsed width |
+| `--titlebar-height` | `2.25rem` | Custom Electron titlebar (36px) |
+| `--header-height` | `3.5rem` | Content header bar |
+| `--page-padding` | `2rem` | Default page content padding |
+| Content panel radius | `rounded-xl` | 12px corners on inset panel |
+| Content panel gap | `m-2` | 8px gap between sidebar and panel |
+| Window controls | `44px` wide each | Minimize, maximize, close |
 
 ### Typography
 
-Per `ui-design.md`, the font pairing is **Newsreader** (serif, editorial authority) for headlines and **Space Grotesk** (geometric sans, technical precision) for body/UI.
+**Geist** (Vercel's font, `geist` package) for all text. Single font family — weight differentiation only.
 
 | Context | Font | Weight | Size | Class |
 |---|---|---|---|---|
-| Page headings | Newsreader (`--font-heading`) | `500` | `30px` | `font-heading text-3xl font-medium tracking-tight` |
-| Section headings | Newsreader (`--font-heading`) | `500` | `24px` | `font-heading text-2xl font-medium tracking-tight` |
-| Body / UI | Space Grotesk (`--font-sans`) | `400` | `14px` | `text-sm` |
-| Subtitles | Space Grotesk (`--font-sans`) | `400` | `14px` | `text-sm text-muted-foreground` |
-| Code / mono | JetBrains Mono (`--font-mono`) | `400` | `14px` | `font-mono text-sm` |
-| Sidebar nav | Space Grotesk | `500` | `14px` | `text-sm font-medium` |
-| Sidebar logo | Space Grotesk | `600` | `16px` | `text-base font-semibold` |
+| Page headings | Geist Sans (`--font-heading`) | `500` | `30px` | `font-heading text-3xl font-medium tracking-tight` |
+| Section headings | Geist Sans (`--font-heading`) | `500` | `24px` | `font-heading text-2xl font-medium tracking-tight` |
+| Body / UI | Geist Sans (`--font-sans`) | `400` | `14px` | `text-sm` |
+| Subtitles | Geist Sans (`--font-sans`) | `400` | `14px` | `text-sm text-muted-foreground` |
+| Code / mono | Geist Mono (`--font-mono`) | `400` | `14px` | `font-mono text-sm` |
+| Sidebar nav | Geist Sans | `500` | `13px` | `text-[13px] font-medium` |
+| Sidebar logo | Geist Sans | `600` | `14px` | `text-[14px] font-semibold` |
 
 ### Mention Chip Colors
 
-| Mention type | Color |
+| Mention type | Light | Dark |
+|---|---|---|
+| Student | `oklch(0.62 0.15 250)` | `oklch(0.68 0.14 250)` |
+| File | `oklch(0.58 0.18 300)` | `oklch(0.68 0.18 300)` |
+| Topic | `oklch(0.62 0.18 155)` | `oklch(0.68 0.18 155)` |
+| Unresolved | `oklch(0.72 0.14 80)` | `oklch(0.78 0.14 80)` |
+
+### Shadows (warm-tinted light, deep dark)
+
+| Token | Light | Dark |
+|---|---|---|
+| `--shadow-xs` | `0 1px 2px oklch(0.16 0.006 285 / 4%)` | `0 1px 2px oklch(0 0 0 / 12%)` |
+| `--shadow-sm` | two-layer, 6%/4% | two-layer, 24%/18% |
+| `--shadow-md` | two-layer, 7%/5% | two-layer, 28%/22% |
+| `--shadow-lg` | two-layer, 8%/5% | two-layer, 32%/24% |
+
+### Motion
+
+| Token | Value |
 |---|---|
-| Student | Blue |
-| File | Purple |
-| Topic | Green |
-| Unresolved | Amber |
+| `--transition-fast` | `100ms` |
+| `--transition-normal` | `180ms` |
+| `--transition-slow` | `280ms` |
 
 ---
 

@@ -12,7 +12,6 @@ import { GearSix } from "@phosphor-icons/react/dist/ssr/GearSix";
 import { AppLogo } from "@/components/app-logo";
 import { MagnifyingGlass } from "@phosphor-icons/react/dist/ssr/MagnifyingGlass";
 import type { Icon } from "@phosphor-icons/react/dist/lib/types";
-import { ThemeToggle } from "@/components/theme-toggle";
 import {
   Sidebar,
   SidebarContent,
@@ -78,6 +77,29 @@ function NavItems() {
   );
 }
 
+function SettingsButton() {
+  const pathname = usePathname();
+  const isActive = pathname === "/settings";
+
+  return (
+    <SidebarMenu>
+      <SidebarMenuItem>
+        <SidebarMenuButton
+          isActive={isActive}
+          render={<Link href="/settings" />}
+        >
+          <GearSix
+            size={18}
+            weight={isActive ? "fill" : "regular"}
+            className="shrink-0"
+          />
+          <span>Settings</span>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+    </SidebarMenu>
+  );
+}
+
 export function AppSidebar() {
   return (
     <Sidebar collapsible="offcanvas">
@@ -102,17 +124,8 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="p-3">
-        <div className="flex items-center justify-center gap-1 h-10 rounded-lg bg-sidebar-accent/50">
-          <Link
-            href="/settings"
-            className="flex items-center justify-center w-9 h-9 rounded-md text-sidebar-foreground/50 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
-            title="Settings"
-          >
-            <GearSix size={17} />
-          </Link>
-          <ThemeToggle />
-        </div>
+      <SidebarFooter className="px-4 pb-3 pt-0">
+        <SettingsButton />
       </SidebarFooter>
     </Sidebar>
   );
