@@ -2,18 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  SquaresFour,
-  Users,
-  ChatText,
-  FolderOpen,
-  FileText,
-  Books,
-  GraduationCap,
-  MagnifyingGlass,
-  SidebarSimple,
-} from "@phosphor-icons/react";
-import type { Icon } from "@phosphor-icons/react";
+import { SquaresFour } from "@phosphor-icons/react/dist/ssr/SquaresFour";
+import { Users } from "@phosphor-icons/react/dist/ssr/Users";
+import { ChatText } from "@phosphor-icons/react/dist/ssr/ChatText";
+import { FolderOpen } from "@phosphor-icons/react/dist/ssr/FolderOpen";
+import { FileText } from "@phosphor-icons/react/dist/ssr/FileText";
+import { Books } from "@phosphor-icons/react/dist/ssr/Books";
+import { GraduationCap } from "@phosphor-icons/react/dist/ssr/GraduationCap";
+import { MagnifyingGlass } from "@phosphor-icons/react/dist/ssr/MagnifyingGlass";
+import { SidebarSimple } from "@phosphor-icons/react/dist/ssr/SidebarSimple";
+import type { Icon } from "@phosphor-icons/react/dist/lib/types";
 import {
   Sidebar,
   SidebarContent,

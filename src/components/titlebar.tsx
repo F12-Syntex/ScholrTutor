@@ -1,6 +1,8 @@
 "use client";
 
-import { Minus, Square, X } from "@phosphor-icons/react";
+import { Minus } from "@phosphor-icons/react/dist/ssr/Minus";
+import { Square } from "@phosphor-icons/react/dist/ssr/Square";
+import { X } from "@phosphor-icons/react/dist/ssr/X";
 
 export function Titlebar() {
   const handleMinimize = () => window.electron?.window.minimize();

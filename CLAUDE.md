@@ -51,6 +51,14 @@ design.md (section 12)  →  globals.css (CSS custom properties)  →  Tailwind 
 ### Icons
 
 - **Phosphor Icons** (`@phosphor-icons/react`) exclusively — no other icon library
+- **Always use direct imports** for performance — never the barrel export:
+  ```ts
+  // GOOD — only bundles the one icon
+  import { Users } from "@phosphor-icons/react/dist/ssr/Users";
+  // BAD — bundles the entire 6000+ icon library
+  import { Users } from "@phosphor-icons/react";
+  ```
+- For the `Icon` type: `import type { Icon } from "@phosphor-icons/react/dist/lib/types"`
 - Refer to design.md section 12 "Icon Library" for weight and size conventions
 
 ## Architecture
