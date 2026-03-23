@@ -12,12 +12,12 @@ import { Button } from "@/components/ui/button";
 
 function SettingRow({ label, description, children }: { label: string; description?: string; children: React.ReactNode }) {
   return (
-    <div className="flex items-start justify-between gap-6 py-3 border-b border-border/20 last:border-0">
-      <div className="min-w-0 pt-0.5">
+    <div className="flex items-center justify-between gap-8 py-4 border-b border-border/15 last:border-0">
+      <div className="min-w-0">
         <div className="text-sm font-medium">{label}</div>
         {description && <div className="text-xs text-muted-foreground mt-0.5">{description}</div>}
       </div>
-      <div className="flex items-center shrink-0">{children}</div>
+      <div className="flex items-center shrink-0 ml-auto">{children}</div>
     </div>
   );
 }
@@ -80,6 +80,62 @@ const AI_MODELS = [
   { value: "google/gemini-3-flash-preview", label: "Gemini 3 Flash", desc: "Most capable" },
 ];
 
+// ── Pill selector ──
+
+function PillSelect<T extends string | number>({
+  options,
+  value,
+  onChange,
+}: {
+  options: { value: T; label: string }[];
+  value: T;
+  onChange: (v: T) => void;
+}) {
+  return (
+    <div className="flex bg-muted/50 rounded-lg p-0.5 gap-0.5">
+      {options.map((o) => {
+        const sel = value === o.value;
+        return (
+          <button
+            key={String(o.value)}
+            onClick={() => onChange(o.value)}
+            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+              sel
+                ? "bg-background text-foreground shadow-xs"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {o.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+// ── Miniature layout preview ──
+
+function LayoutPreview({ sidebarW, gap, radius }: { sidebarW: number; gap: number; radius: number }) {
+  const sw = Math.round((sidebarW / 320) * 16);
+  return (
+    <div
+      className="w-16 h-10 rounded-md overflow-hidden flex"
+      style={{ backgroundColor: "var(--muted)", opacity: 0.6 }}
+    >
+      <div className="h-full" style={{ width: sw, opacity: 0.5, backgroundColor: "currentColor" }} />
+      <div
+        className="flex-1"
+        style={{
+          margin: gap * 0.4,
+          borderRadius: radius * 0.4,
+          backgroundColor: "var(--background)",
+          opacity: 0.8,
+        }}
+      />
+    </div>
+  );
+}
+
 // ── Tab content ──
 
 function GeneralContent() {
@@ -89,7 +145,7 @@ function GeneralContent() {
   return (
     <>
       <SettingRow label="OpenRouter API Key" description="Required for AI summaries.">
-        <div className="relative w-52">
+        <div className="relative w-60">
           <Input
             type={visible ? "text" : "password"}
             value={settings.openRouterApiKey}
@@ -110,8 +166,8 @@ function GeneralContent() {
             const sel = settings.aiModel === m.value;
             return (
               <button key={m.value} onClick={() => updateSetting("aiModel", m.value)}
-                className={`flex items-center gap-2 rounded-md border px-3 py-2 text-left transition-colors ${
-                  sel ? "border-primary bg-primary/5" : "border-border/40 hover:border-border"
+                className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-left transition-colors ${
+                  sel ? "border-primary bg-primary/5" : "border-border/30 hover:border-border"
                 }`}>
                 <div className={`w-3 h-3 rounded-full border-2 shrink-0 flex items-center justify-center ${
                   sel ? "border-primary bg-primary" : "border-muted-foreground/30"
@@ -181,70 +237,51 @@ function AppearanceContent() {
       </SettingRow>
 
       <SettingRow label="Font size" description="Scales the entire interface.">
-        <div className="flex gap-1.5">
-          {([
+        <PillSelect
+          options={[
             { value: "sm" as const, label: "Small" },
             { value: "base" as const, label: "Default" },
             { value: "lg" as const, label: "Large" },
-          ]).map((s) => {
-            const sel = settings.fontSize === s.value;
-            return (
-              <button key={s.value} onClick={() => updateSetting("fontSize", s.value)}
-                className={`px-3 py-1.5 rounded-md border text-xs font-medium transition-colors ${
-                  sel ? "border-primary bg-primary/10 text-primary" : "border-border/40 text-muted-foreground hover:border-border hover:text-foreground"
-                }`}>
-                {s.label}
-              </button>
-            );
-          })}
-        </div>
+          ]}
+          value={settings.fontSize}
+          onChange={(v) => updateSetting("fontSize", v)}
+        />
       </SettingRow>
 
       <SettingRow label="Border radius" description="Roundness of buttons, inputs, cards.">
-        <div className="flex gap-2">
-          {([
-            { value: 0, label: "Sharp" },
-            { value: 6, label: "Subtle" },
-            { value: 10, label: "Medium" },
-            { value: 16, label: "Round" },
-          ]).map((r) => {
-            const sel = settings.borderRadius === r.value;
-            return (
-              <button key={r.value} onClick={() => updateSetting("borderRadius", r.value)}
-                className={`flex flex-col items-center gap-1.5 w-16 py-2 rounded-md border transition-colors ${
-                  sel ? "border-primary bg-primary/5" : "border-border/40 hover:border-border"
-                }`}>
-                <div className="w-7 h-7 border-2 border-current opacity-50" style={{ borderRadius: r.value }} />
-                <span className="text-[10px] text-muted-foreground">{r.label}</span>
-              </button>
-            );
-          })}
+        <div className="flex items-center gap-3">
+          <div className="flex gap-2">
+            {([
+              { value: 0, label: "Sharp" },
+              { value: 6, label: "Subtle" },
+              { value: 10, label: "Medium" },
+              { value: 16, label: "Round" },
+            ]).map((r) => {
+              const sel = settings.borderRadius === r.value;
+              return (
+                <button key={r.value} onClick={() => updateSetting("borderRadius", r.value)}
+                  className={`flex flex-col items-center gap-1 group`}>
+                  <div className={`w-8 h-8 border-2 transition-colors ${
+                    sel ? "border-primary" : "border-muted-foreground/20 group-hover:border-muted-foreground/40"
+                  }`} style={{ borderRadius: r.value }} />
+                  <span className={`text-[10px] ${sel ? "text-foreground font-medium" : "text-muted-foreground"}`}>{r.label}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </SettingRow>
 
       <SettingRow label="Sidebar width" description="Navigation panel width.">
-        <div className="flex gap-2">
-          {([
+        <PillSelect
+          options={[
             { value: 208, label: "Narrow" },
             { value: 256, label: "Default" },
             { value: 304, label: "Wide" },
-          ]).map((w) => {
-            const sel = settings.sidebarWidth === w.value;
-            const sidebarW = (w.value / 320) * 16;
-            return (
-              <button key={w.value} onClick={() => updateSetting("sidebarWidth", w.value)}
-                className={`flex flex-col items-center gap-1.5 py-2 px-2 rounded-md border transition-colors ${
-                  sel ? "border-primary bg-primary/5" : "border-border/40 hover:border-border"
-                }`}>
-                <div className="w-14 h-9 rounded overflow-hidden flex" style={{ backgroundColor: 'var(--muted)' }}>
-                  <div className="h-full opacity-40" style={{ width: sidebarW, backgroundColor: 'currentColor' }} />
-                  <div className="flex-1 m-0.5 rounded-sm" style={{ backgroundColor: 'var(--background)', opacity: 0.6 }} />
-                </div>
-                <span className="text-[10px] text-muted-foreground">{w.label}</span>
-              </button>
-            );
-          })}
-        </div>
+          ]}
+          value={settings.sidebarWidth}
+          onChange={(v) => updateSetting("sidebarWidth", v)}
+        />
       </SettingRow>
 
       <SettingRow label="Panel style" description="Content panel gap and corners.">
@@ -258,14 +295,14 @@ function AppearanceContent() {
             const sel = settings.contentPanelGap === p.gap && settings.panelRadius === p.radius;
             return (
               <button key={p.label} onClick={() => { updateSetting("contentPanelGap", p.gap); updateSetting("panelRadius", p.radius); }}
-                className={`flex flex-col items-center gap-1.5 py-2 px-2 rounded-md border transition-colors ${
-                  sel ? "border-primary bg-primary/5" : "border-border/40 hover:border-border"
-                }`}>
-                <div className="w-14 h-9 rounded overflow-hidden flex" style={{ backgroundColor: 'var(--muted)', opacity: 0.5 }}>
-                  <div className="w-4 h-full" style={{ opacity: 0.5 }} />
-                  <div className="flex-1" style={{ margin: p.gap * 0.4, borderRadius: p.radius * 0.4, backgroundColor: 'var(--background)', opacity: 0.8 }} />
+                className="flex flex-col items-center gap-1 group">
+                <div className={`w-14 h-9 rounded-md overflow-hidden flex border-2 transition-colors ${
+                  sel ? "border-primary" : "border-transparent group-hover:border-border/40"
+                }`} style={{ backgroundColor: "var(--muted)", opacity: sel ? 1 : 0.5 }}>
+                  <div className="w-4 h-full" style={{ opacity: 0.4 }} />
+                  <div className="flex-1" style={{ margin: p.gap * 0.4, borderRadius: p.radius * 0.4, backgroundColor: "var(--background)", opacity: 0.8 }} />
                 </div>
-                <span className="text-[10px] text-muted-foreground">{p.label}</span>
+                <span className={`text-[10px] ${sel ? "text-foreground font-medium" : "text-muted-foreground"}`}>{p.label}</span>
               </button>
             );
           })}
@@ -290,10 +327,10 @@ function DataContent() {
           <ArrowCounterClockwise size={13} className="mr-1" /> Reset
         </Button>
       </SettingRow>
-      <div className="pt-3 space-y-1">
-        {[["Version", "1.1.0"], ["Electron", "41.x"], ["Next.js", "15.x"]].map(([k, v]) => (
-          <div key={k} className="flex justify-between text-xs text-muted-foreground py-1">
-            <span>{k}</span><span className="font-mono text-muted-foreground/60">{v}</span>
+      <div className="pt-4 flex gap-6">
+        {[["Version", "1.4.2"], ["Electron", "41.x"], ["Next.js", "15.x"]].map(([k, v]) => (
+          <div key={k} className="flex items-center gap-2 text-xs text-muted-foreground">
+            <span>{k}</span><span className="font-mono text-muted-foreground/50">{v}</span>
           </div>
         ))}
       </div>
@@ -315,7 +352,7 @@ export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<TabId>("general");
 
   return (
-    <div className="p-8 max-w-2xl">
+    <div className="p-8">
       <h1 className="text-3xl font-medium tracking-tight">Settings</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         Configure your ScholrTutor experience.
@@ -338,7 +375,7 @@ export default function SettingsPage() {
       </div>
 
       {/* Content */}
-      <div className="mt-4">
+      <div className="mt-2">
         {activeTab === "general" && <GeneralContent />}
         {activeTab === "appearance" && <AppearanceContent />}
         {activeTab === "data" && <DataContent />}
