@@ -341,6 +341,12 @@
     background: color-mix(in srgb, var(--mention-topic) 15%, transparent);
     color: var(--mention-topic);
   }
+  .mention-chip[data-mention-type="deleted"] {
+    background: var(--muted);
+    color: var(--muted-foreground);
+    opacity: 0.5;
+    text-decoration: line-through;
+  }
 
   /* ContentEditable placeholder */
   .session-editor:empty::before {

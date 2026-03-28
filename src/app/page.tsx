@@ -30,18 +30,21 @@ function RichLogText({ text }: { text: string }) {
 
     // Resolve current name (handles renames)
     let displayName = label;
+    let deleted = false;
     if (type === "student") {
       const s = students.find(st => st.name.toLowerCase() === label.toLowerCase());
       if (s) displayName = s.name;
+      else deleted = true;
     } else {
       const allTopics = subjects.flatMap(s => s.topics);
       const t = allTopics.find(tp => `${tp.code} ${tp.title}`.toLowerCase() === label.toLowerCase() || tp.code === label.split(" ")[0]);
       if (t) displayName = `${t.code} ${t.title}`;
+      else deleted = true;
     }
 
     parts.push(
-      <span key={match.index} className="mention-chip" data-mention-type={type}>
-        {displayName}
+      <span key={match.index} className="mention-chip" data-mention-type={deleted ? "deleted" : type}>
+        {deleted ? "[deleted]" : displayName}
       </span>
     );
     lastIndex = match.index + match[0].length;
@@ -82,6 +85,7 @@ function StatCard({ icon: IconComp, label, value, sub }: {
 // ── Log card with rich text ──
 
 function LogCard({ log }: { log: SessionLogEntry }) {
+  const { students } = useStudents();
   const { subjects } = useSubjects();
   const allTopics = subjects.flatMap(s => s.topics);
   const hasParsed = log.parsedData && log.parsedData.students.length > 0;
@@ -98,7 +102,7 @@ function LogCard({ log }: { log: SessionLogEntry }) {
             <div key={sd.studentId} className="space-y-1.5">
               <div className="flex items-center gap-2">
                 <span className="size-1.5 rounded-full bg-[var(--mention-student)] shrink-0" />
-                <span className="text-xs font-medium">{sd.studentName}</span>
+                <span className="text-xs font-medium">{students.find(st => st.id === sd.studentId) ? sd.studentName : <span className="text-muted-foreground/40">[deleted]</span>}</span>
               </div>
               {sd.notes.map((note, i) => (
                 <p key={i} className="text-xs text-muted-foreground pl-3.5 border-l-2 border-border/30">{note}</p>
@@ -114,11 +118,11 @@ function LogCard({ log }: { log: SessionLogEntry }) {
                 <div className="flex flex-wrap gap-1 pl-3.5">
                   {sd.topicIds.map(tid => {
                     const topic = allTopics.find(t => t.id === tid);
-                    return topic ? (
-                      <span key={tid} className="text-[9px] font-medium px-1.5 py-0.5 rounded bg-[color-mix(in_srgb,var(--mention-topic)_15%,transparent)] text-[var(--mention-topic)]">
-                        {topic.code} {topic.title}
+                    return (
+                      <span key={tid} className={`text-[9px] font-medium px-1.5 py-0.5 rounded ${topic ? "bg-[color-mix(in_srgb,var(--mention-topic)_15%,transparent)] text-[var(--mention-topic)]" : "bg-muted text-muted-foreground/40"}`}>
+                        {topic ? `${topic.code} ${topic.title}` : "[deleted]"}
                       </span>
-                    ) : null;
+                    );
                   })}
                 </div>
               )}

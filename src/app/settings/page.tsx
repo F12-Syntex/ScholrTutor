@@ -6,7 +6,9 @@ import { Eye } from "@phosphor-icons/react/dist/ssr/Eye";
 import { EyeSlash } from "@phosphor-icons/react/dist/ssr/EyeSlash";
 import { Check } from "@phosphor-icons/react/dist/ssr/Check";
 import { ArrowCounterClockwise } from "@phosphor-icons/react/dist/ssr/ArrowCounterClockwise";
-import { useState } from "react";
+import { DownloadSimple } from "@phosphor-icons/react/dist/ssr/DownloadSimple";
+import { UploadSimple } from "@phosphor-icons/react/dist/ssr/UploadSimple";
+import { useState, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
@@ -314,21 +316,72 @@ function AppearanceContent() {
 
 function DataContent() {
   const { resetSettings } = useSettings();
+  const importRef = useRef<HTMLInputElement>(null);
+  const [importStatus, setImportStatus] = useState("");
+
+  const DB_KEYS = [
+    "scholrtutor-subjects",
+    "scholrtutor-students",
+    "scholrtutor-session-logs",
+    "scholrtutor-settings",
+  ];
+
+  const handleExport = () => {
+    const data: Record<string, unknown> = { _export: "scholrtutor", _version: "2.3", _date: new Date().toISOString() };
+    for (const key of DB_KEYS) {
+      try { data[key] = JSON.parse(localStorage.getItem(key) || "null"); } catch { data[key] = null; }
+    }
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `scholrtutor-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImport = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(reader.result as string);
+        if (data._export !== "scholrtutor") { setImportStatus("Invalid backup file."); return; }
+        for (const key of DB_KEYS) {
+          if (data[key] !== undefined && data[key] !== null) {
+            localStorage.setItem(key, JSON.stringify(data[key]));
+          }
+        }
+        setImportStatus("Imported successfully. Reloading...");
+        setTimeout(() => window.location.reload(), 800);
+      } catch { setImportStatus("Failed to parse backup file."); }
+    };
+    reader.readAsText(file);
+  };
+
   return (
     <>
-      <SettingRow label="Database">
-        <span className="text-[11px] font-mono text-muted-foreground/60">%APPDATA%/ScholrTutor/scholrtutor.db</span>
+      <SettingRow label="Export database" description="Download all data as a JSON backup.">
+        <Button variant="outline" size="sm" onClick={handleExport} className="h-7 text-xs">
+          <DownloadSimple size={13} className="mr-1" /> Export
+        </Button>
       </SettingRow>
-      <SettingRow label="Files">
-        <span className="text-[11px] font-mono text-muted-foreground/60">%APPDATA%/ScholrTutor/files/</span>
+      <SettingRow label="Import database" description="Restore from a backup file. Overwrites current data.">
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={() => importRef.current?.click()} className="h-7 text-xs">
+            <UploadSimple size={13} className="mr-1" /> Import
+          </Button>
+          <input ref={importRef} type="file" accept=".json" className="hidden"
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) handleImport(f); e.target.value = ""; }} />
+          {importStatus && <span className="text-xs text-muted-foreground">{importStatus}</span>}
+        </div>
       </SettingRow>
-      <SettingRow label="Reset all settings" description="Restore defaults.">
+      <SettingRow label="Reset all settings" description="Restore defaults. Does not delete data.">
         <Button variant="ghost" size="sm" onClick={resetSettings} className="text-destructive hover:text-destructive hover:bg-destructive/10 h-7 text-xs">
           <ArrowCounterClockwise size={13} className="mr-1" /> Reset
         </Button>
       </SettingRow>
       <div className="pt-4 flex gap-6">
-        {[["Version", "1.4.2"], ["Electron", "41.x"], ["Next.js", "15.x"]].map(([k, v]) => (
+        {[["Version", "2.3.2"], ["Electron", "41.x"], ["Next.js", "15.x"]].map(([k, v]) => (
           <div key={k} className="flex items-center gap-2 text-xs text-muted-foreground">
             <span>{k}</span><span className="font-mono text-muted-foreground/50">{v}</span>
           </div>

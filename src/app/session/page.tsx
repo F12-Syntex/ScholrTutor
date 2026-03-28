@@ -57,11 +57,11 @@ function LogEntry({ log }: { log: SessionLogEntry }) {
                   <div className="flex flex-wrap gap-1 pl-2">
                     {sd.topicIds.map(tid => {
                       const topic = allTopics.find(t => t.id === tid);
-                      return topic ? (
-                        <span key={tid} className="text-[9px] font-medium px-1.5 py-0.5 rounded bg-[color-mix(in_srgb,var(--mention-topic)_15%,transparent)] text-[var(--mention-topic)]">
-                          {topic.code} {topic.title}
+                      return (
+                        <span key={tid} className={`text-[9px] font-medium px-1.5 py-0.5 rounded ${topic ? "bg-[color-mix(in_srgb,var(--mention-topic)_15%,transparent)] text-[var(--mention-topic)]" : "bg-muted text-muted-foreground/40 line-through"}`}>
+                          {topic ? `${topic.code} ${topic.title}` : "[deleted]"}
                         </span>
-                      ) : null;
+                      );
                     })}
                   </div>
                 )}

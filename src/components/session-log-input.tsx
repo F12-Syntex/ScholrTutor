@@ -415,11 +415,11 @@ export function SessionLogInput({ studentId, onLogSubmitted }: {
                       <div className="flex flex-wrap gap-1">
                         {sd.topicIds.map(tid => {
                           const topic = subjects.flatMap(s => s.topics).find(t => t.id === tid);
-                          return topic ? (
-                            <span key={tid} className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-[color-mix(in_srgb,var(--mention-topic)_15%,transparent)] text-[var(--mention-topic)]">
-                              {topic.code} {topic.title}
+                          return (
+                            <span key={tid} className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${topic ? "bg-[color-mix(in_srgb,var(--mention-topic)_15%,transparent)] text-[var(--mention-topic)]" : "bg-muted text-muted-foreground/40 line-through"}`}>
+                              {topic ? `${topic.code} ${topic.title}` : "[deleted]"}
                             </span>
-                          ) : null;
+                          );
                         })}
                       </div>
                     </div>
