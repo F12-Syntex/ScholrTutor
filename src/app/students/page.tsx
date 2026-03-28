@@ -11,6 +11,8 @@ import { Trash } from "@phosphor-icons/react/dist/ssr/Trash";
 import { DotsThreeVertical } from "@phosphor-icons/react/dist/ssr/DotsThreeVertical";
 import { PencilSimple } from "@phosphor-icons/react/dist/ssr/PencilSimple";
 import { UserCircle } from "@phosphor-icons/react/dist/ssr/UserCircle";
+import { Notebook } from "@phosphor-icons/react/dist/ssr/Notebook";
+import { Exam } from "@phosphor-icons/react/dist/ssr/Exam";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,6 +33,19 @@ import {
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 
+function formatDate(iso: string) {
+  const d = new Date(iso);
+  return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
+    + ", " + d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+}
+
+function StudentIcon({ icon, size = 14 }: { icon: string; size?: number }) {
+  if (icon) {
+    return <span style={{ fontSize: size * 1.5 }} className="leading-none">{icon}</span>;
+  }
+  return <UserCircle size={size * 2} className="text-muted-foreground/30" weight="thin" />;
+}
+
 // ═══════════════════════════════════════════════════════════
 // ADD STUDENT DIALOG
 // ═══════════════════════════════════════════════════════════
@@ -38,20 +53,19 @@ import {
 function AddStudentDialog({ open, onOpenChange, onSave }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave: (data: { name: string; email: string; subjectId: string; targetGrade: string; isRegular: boolean }) => void;
+  onSave: (data: { name: string; email: string; icon: string; subjectId: string; targetGrade: string; isRegular: boolean }) => void;
 }) {
   const { subjects } = useSubjects();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [subjectId, setSubjectId] = useState("");
   const [targetGrade, setTargetGrade] = useState("");
-  const [isRegular, setIsRegular] = useState(false);
 
-  const reset = () => { setName(""); setEmail(""); setSubjectId(""); setTargetGrade(""); setIsRegular(false); };
+  const reset = () => { setName(""); setEmail(""); setSubjectId(""); setTargetGrade(""); };
 
   const handleSave = () => {
     if (!name.trim()) return;
-    onSave({ name: name.trim(), email: email.trim(), subjectId, targetGrade: targetGrade.trim(), isRegular });
+    onSave({ name: name.trim(), email: email.trim(), icon: "", subjectId, targetGrade: targetGrade.trim(), isRegular: false });
     reset();
     onOpenChange(false);
   };
@@ -85,11 +99,6 @@ function AddStudentDialog({ open, onOpenChange, onSave }: {
             <label className="text-xs font-medium text-muted-foreground mb-1 block">Target grade</label>
             <Input value={targetGrade} onChange={(e) => setTargetGrade(e.target.value)} placeholder="e.g. A*" className="text-sm" />
           </div>
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" checked={isRegular} onChange={(e) => setIsRegular(e.target.checked)}
-              className="rounded border-border" />
-            <span className="text-sm">Regular student</span>
-          </label>
         </div>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
@@ -105,13 +114,22 @@ function AddStudentDialog({ open, onOpenChange, onSave }: {
 // ═══════════════════════════════════════════════════════════
 
 function StudentDetail({ student, onBack }: { student: Student; onBack: () => void }) {
-  const { updateStudent, deleteStudent } = useStudents();
+  const { updateStudent, deleteStudent, addNote, deleteNote, addTestResult, deleteTestResult } = useStudents();
   const { subjects } = useSubjects();
   const { setSubtitle } = useBreadcrumb();
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [editName, setEditName] = useState(student.name);
   const [editEmail, setEditEmail] = useState(student.email);
+  const [editRef, setEditRef] = useState(student.referenceNumber);
+  const [editIcon, setEditIcon] = useState(student.icon);
+
+  // Note form
+  const [noteText, setNoteText] = useState("");
+  // Test result form
+  const [trName, setTrName] = useState("");
+  const [trGot, setTrGot] = useState("");
+  const [trOf, setTrOf] = useState("");
 
   useEffect(() => {
     setSubtitle(student.name);
@@ -123,9 +141,28 @@ function StudentDetail({ student, onBack }: { student: Student; onBack: () => vo
   const handleEditSave = () => {
     const trimmedName = editName.trim();
     if (trimmedName) {
-      updateStudent(student.id, { name: trimmedName, email: editEmail.trim() });
+      updateStudent(student.id, {
+        name: trimmedName,
+        email: editEmail.trim(),
+        referenceNumber: editRef.trim() || student.referenceNumber,
+        icon: editIcon,
+      });
     }
     setEditOpen(false);
+  };
+
+  const handleAddNote = () => {
+    if (!noteText.trim()) return;
+    addNote(student.id, noteText.trim());
+    setNoteText("");
+  };
+
+  const handleAddTestResult = () => {
+    const got = parseInt(trGot, 10);
+    const of_ = parseInt(trOf, 10);
+    if (!trName.trim() || isNaN(got) || isNaN(of_) || of_ <= 0) return;
+    addTestResult(student.id, { name: trName.trim(), scoreGot: got, scoreOf: of_ });
+    setTrName(""); setTrGot(""); setTrOf("");
   };
 
   const grades = [
@@ -145,13 +182,13 @@ function StudentDetail({ student, onBack }: { student: Student; onBack: () => vo
         </button>
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-4">
-            <div className="size-14 rounded-full bg-muted flex items-center justify-center">
-              <UserCircle size={32} className="text-muted-foreground/40" weight="thin" />
+            <div className="size-14 rounded-full bg-muted flex items-center justify-center shrink-0">
+              <StudentIcon icon={student.icon} size={16} />
             </div>
             <div>
               <h1 className="text-2xl font-medium tracking-tight">{student.name}</h1>
               <p className="text-sm text-muted-foreground mt-0.5">
-                {student.referenceNumber} · {student.email || "No email"} · {student.isRegular ? "Regular" : "Casual"}
+                {student.referenceNumber} · {student.email || "No email"} · {student.completedSessions} session{student.completedSessions !== 1 ? "s" : ""}
               </p>
             </div>
           </div>
@@ -160,7 +197,7 @@ function StudentDetail({ student, onBack }: { student: Student; onBack: () => vo
               <DotsThreeVertical size={18} weight="bold" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => { setEditName(student.name); setEditEmail(student.email); setEditOpen(true); }}>
+              <DropdownMenuItem onClick={() => { setEditName(student.name); setEditEmail(student.email); setEditRef(student.referenceNumber); setEditIcon(student.icon); setEditOpen(true); }}>
                 <PencilSimple size={14} /> Edit
               </DropdownMenuItem>
               <DropdownMenuSeparator />
@@ -173,42 +210,123 @@ function StudentDetail({ student, onBack }: { student: Student; onBack: () => vo
       </div>
 
       {/* Content */}
-      <div className="mt-8 flex-1 min-h-0 overflow-auto space-y-6">
-        {/* Subject */}
-        <section className="rounded-lg border border-border/50 overflow-hidden">
-          <div className="px-4 py-2.5 bg-muted/80 text-xs font-medium text-muted-foreground">Subject</div>
-          <div className="px-4 py-3 bg-card text-sm">{subjectName}</div>
-        </section>
+      <div className="mt-6 flex-1 min-h-0 overflow-auto space-y-5">
+        {/* Subject + Grades row */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <section className="rounded-lg border border-border/50 overflow-hidden">
+            <div className="px-4 py-2.5 bg-muted/80 text-xs font-medium text-muted-foreground">Subject</div>
+            <div className="px-4 py-3 bg-card text-sm">{subjectName}</div>
+          </section>
+          <section className="rounded-lg border border-border/50 overflow-hidden">
+            <div className="px-4 py-2.5 bg-muted/80 text-xs font-medium text-muted-foreground">Grades</div>
+            <div className="bg-card flex divide-x divide-border/30">
+              {grades.map(g => (
+                <div key={g.label} className="flex-1 px-3 py-3 text-center">
+                  <div className="text-[10px] text-muted-foreground/60 mb-0.5">{g.label}</div>
+                  <div className="text-sm font-medium">{g.value || "—"}</div>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
 
-        {/* Grades */}
+        {/* Sessions */}
         <section className="rounded-lg border border-border/50 overflow-hidden">
-          <div className="px-4 py-2.5 bg-muted/80 text-xs font-medium text-muted-foreground">Grades</div>
-          <div className="bg-card divide-y divide-border/30">
-            {grades.map(g => (
-              <div key={g.label} className="flex items-center justify-between px-4 py-2.5">
-                <span className="text-sm text-muted-foreground">{g.label}</span>
-                <span className="text-sm font-medium">{g.value || "—"}</span>
-              </div>
-            ))}
+          <div className="px-4 py-2.5 bg-muted/80 text-xs font-medium text-muted-foreground">Completed Sessions</div>
+          <div className="px-4 py-3 bg-card flex items-center justify-between">
+            <span className="text-2xl font-medium tabular-nums">{student.completedSessions}</span>
+            <Button variant="outline" size="xs"
+              onClick={() => updateStudent(student.id, { completedSessions: student.completedSessions + 1 })}>
+              <Plus size={12} className="mr-1" /> Log Session
+            </Button>
           </div>
         </section>
 
-        {/* Status */}
+        {/* Notes */}
         <section className="rounded-lg border border-border/50 overflow-hidden">
-          <div className="px-4 py-2.5 bg-muted/80 text-xs font-medium text-muted-foreground">Status</div>
-          <div className="px-4 py-3 bg-card flex items-center justify-between">
-            <span className="text-sm">Attendance type</span>
-            <div className="flex rounded-full border border-border/60 overflow-hidden">
-              {(["Regular", "Casual"] as const).map(t => {
-                const active = t === "Regular" ? student.isRegular : !student.isRegular;
-                return (
-                  <button key={t} onClick={() => updateStudent(student.id, { isRegular: t === "Regular" })}
-                    className={`px-3 py-1 text-xs font-medium transition-colors ${active ? "bg-foreground/8 text-foreground" : "text-muted-foreground/40 hover:text-muted-foreground"}`}>
-                    {t}
-                  </button>
-                );
-              })}
+          <div className="px-4 py-2.5 bg-muted/80 flex items-center gap-2">
+            <Notebook size={14} className="text-muted-foreground/50" />
+            <span className="text-xs font-medium text-muted-foreground">Notes</span>
+            <span className="text-[10px] text-muted-foreground/40 ml-auto">{student.notes.length}</span>
+          </div>
+          <div className="bg-card">
+            {/* Add note form */}
+            <div className="px-4 py-2.5 flex gap-2 border-b border-border/20">
+              <Input value={noteText} onChange={(e) => setNoteText(e.target.value)}
+                placeholder="Add a note..." className="text-sm h-8 flex-1"
+                onKeyDown={(e) => { if (e.key === "Enter") handleAddNote(); }} />
+              <Button variant="outline" size="xs" onClick={handleAddNote} disabled={!noteText.trim()}>Add</Button>
             </div>
+            {/* Notes list */}
+            {student.notes.length === 0 ? (
+              <p className="px-4 py-4 text-xs text-muted-foreground/40 text-center">No notes yet.</p>
+            ) : (
+              <div className="divide-y divide-border/20 max-h-60 overflow-auto">
+                {student.notes.map(n => (
+                  <div key={n.id} className="group px-4 py-2.5">
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="text-sm text-foreground/80 whitespace-pre-wrap">{n.content}</p>
+                      <button onClick={() => deleteNote(student.id, n.id)}
+                        className="opacity-0 group-hover:opacity-100 p-0.5 text-muted-foreground/30 hover:text-destructive transition-all shrink-0 mt-0.5">
+                        <Trash size={12} />
+                      </button>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground/40 mt-1">{formatDate(n.createdAt)}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* Test Results */}
+        <section className="rounded-lg border border-border/50 overflow-hidden">
+          <div className="px-4 py-2.5 bg-muted/80 flex items-center gap-2">
+            <Exam size={14} className="text-muted-foreground/50" />
+            <span className="text-xs font-medium text-muted-foreground">Test Results</span>
+            <span className="text-[10px] text-muted-foreground/40 ml-auto">{student.testResults.length}</span>
+          </div>
+          <div className="bg-card">
+            {/* Add test result form */}
+            <div className="px-4 py-2.5 flex gap-2 border-b border-border/20 items-center">
+              <Input value={trName} onChange={(e) => setTrName(e.target.value)}
+                placeholder="Test name" className="text-sm h-8 flex-1" />
+              <Input value={trGot} onChange={(e) => setTrGot(e.target.value)}
+                placeholder="Score" className="text-sm h-8 w-16 text-center" type="number" />
+              <span className="text-muted-foreground/40 text-sm">/</span>
+              <Input value={trOf} onChange={(e) => setTrOf(e.target.value)}
+                placeholder="Total" className="text-sm h-8 w-16 text-center" type="number"
+                onKeyDown={(e) => { if (e.key === "Enter") handleAddTestResult(); }} />
+              <Button variant="outline" size="xs" onClick={handleAddTestResult}
+                disabled={!trName.trim() || !trGot || !trOf}>Add</Button>
+            </div>
+            {/* Results list */}
+            {student.testResults.length === 0 ? (
+              <p className="px-4 py-4 text-xs text-muted-foreground/40 text-center">No test results yet.</p>
+            ) : (
+              <div className="divide-y divide-border/20 max-h-60 overflow-auto">
+                {student.testResults.map(r => (
+                  <div key={r.id} className="group px-4 py-2.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className="text-sm font-medium truncate">{r.name}</span>
+                        <span className="text-sm tabular-nums text-muted-foreground shrink-0">
+                          {r.scoreGot}/{r.scoreOf}
+                        </span>
+                        <span className="text-xs text-muted-foreground/50 shrink-0">
+                          ({Math.round((r.scoreGot / r.scoreOf) * 100)}%)
+                        </span>
+                      </div>
+                      <button onClick={() => deleteTestResult(student.id, r.id)}
+                        className="opacity-0 group-hover:opacity-100 p-0.5 text-muted-foreground/30 hover:text-destructive transition-all shrink-0">
+                        <Trash size={12} />
+                      </button>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground/40 mt-1">{formatDate(r.createdAt)}</p>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </section>
       </div>
@@ -219,7 +337,7 @@ function StudentDetail({ student, onBack }: { student: Student; onBack: () => vo
           <AlertDialogHeader>
             <AlertDialogTitle>Delete student?</AlertDialogTitle>
             <AlertDialogDescription>
-              <span className="text-foreground font-medium">{student.name}</span> will be permanently removed. This cannot be undone.
+              <span className="text-foreground font-medium">{student.name}</span> and all their notes and test results will be permanently removed.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -237,9 +355,17 @@ function StudentDetail({ student, onBack }: { student: Student; onBack: () => vo
           </AlertDialogHeader>
           <div className="space-y-3">
             <div>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">Icon (emoji)</label>
+              <Input value={editIcon} onChange={(e) => setEditIcon(e.target.value)} placeholder="e.g. 🎓" className="text-sm w-20" />
+            </div>
+            <div>
               <label className="text-xs font-medium text-muted-foreground mb-1 block">Name</label>
               <Input value={editName} onChange={(e) => setEditName(e.target.value)} className="text-sm" autoFocus
                 onKeyDown={(e) => { if (e.key === "Enter") handleEditSave(); }} />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">Reference</label>
+              <Input value={editRef} onChange={(e) => setEditRef(e.target.value)} className="text-sm font-mono" placeholder="ST-001" />
             </div>
             <div>
               <label className="text-xs font-medium text-muted-foreground mb-1 block">Email</label>
@@ -294,7 +420,6 @@ export default function StudentsPage() {
         </Button>
       </div>
 
-      {/* Search */}
       {students.length > 0 && (
         <div className="relative mt-5 shrink-0">
           <MagnifyingGlass size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/40" />
@@ -303,7 +428,6 @@ export default function StudentsPage() {
         </div>
       )}
 
-      {/* Table */}
       <div className="mt-4 flex-1 min-h-0 overflow-auto">
         {students.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -324,7 +448,7 @@ export default function StudentsPage() {
                   <th className="text-center text-xs font-medium text-muted-foreground px-3 py-2.5">Current</th>
                   <th className="text-center text-xs font-medium text-muted-foreground px-3 py-2.5">Predicted</th>
                   <th className="text-center text-xs font-medium text-muted-foreground px-3 py-2.5">Target</th>
-                  <th className="text-left text-xs font-medium text-muted-foreground px-4 py-2.5">Status</th>
+                  <th className="text-center text-xs font-medium text-muted-foreground px-3 py-2.5">Sessions</th>
                 </tr>
               </thead>
               <tbody>
@@ -335,8 +459,15 @@ export default function StudentsPage() {
                       className="border-b border-border/30 last:border-0 hover:bg-accent/50 cursor-pointer transition-colors"
                       onClick={() => setSelectedId(s.id)}>
                       <td className="px-4 py-3">
-                        <div className="text-sm font-medium">{s.name}</div>
-                        <div className="text-xs text-muted-foreground/50 sm:hidden">{s.referenceNumber}</div>
+                        <div className="flex items-center gap-2.5">
+                          <div className="size-7 rounded-full bg-muted flex items-center justify-center shrink-0">
+                            <StudentIcon icon={s.icon} size={8} />
+                          </div>
+                          <div>
+                            <div className="text-sm font-medium">{s.name}</div>
+                            <div className="text-xs text-muted-foreground/50 sm:hidden">{s.referenceNumber}</div>
+                          </div>
+                        </div>
                       </td>
                       <td className="px-4 py-3 hidden sm:table-cell">
                         <span className="text-xs font-mono text-muted-foreground/50">{s.referenceNumber}</span>
@@ -345,13 +476,7 @@ export default function StudentsPage() {
                       <td className="px-3 py-3 text-center text-sm font-medium">{s.currentGrade || "—"}</td>
                       <td className="px-3 py-3 text-center text-sm font-medium">{s.predictedGrade || "—"}</td>
                       <td className="px-3 py-3 text-center text-sm font-medium">{s.targetGrade || "—"}</td>
-                      <td className="px-4 py-3">
-                        <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                          s.isRegular ? "bg-primary/10 text-primary" : "bg-foreground/5 text-muted-foreground"
-                        }`}>
-                          {s.isRegular ? "Regular" : "Casual"}
-                        </span>
-                      </td>
+                      <td className="px-3 py-3 text-center text-xs text-muted-foreground tabular-nums">{s.completedSessions}</td>
                     </tr>
                   );
                 })}
