@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useSubjects, type Subject, type Topic } from "@/lib/subjects";
 import { useSettings } from "@/lib/settings";
+import { useBreadcrumb } from "@/lib/breadcrumb";
 import { Trash } from "@phosphor-icons/react/dist/ssr/Trash";
 import { Plus } from "@phosphor-icons/react/dist/ssr/Plus";
 import { Minus } from "@phosphor-icons/react/dist/ssr/Minus";
@@ -13,6 +14,7 @@ import { DotsThreeVertical } from "@phosphor-icons/react/dist/ssr/DotsThreeVerti
 import { DownloadSimple } from "@phosphor-icons/react/dist/ssr/DownloadSimple";
 import { ArrowLeft } from "@phosphor-icons/react/dist/ssr/ArrowLeft";
 import { MagnifyingGlass } from "@phosphor-icons/react/dist/ssr/MagnifyingGlass";
+import { PencilSimple } from "@phosphor-icons/react/dist/ssr/PencilSimple";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -68,9 +70,10 @@ function exportSubjectJSON(subject: Subject) {
   URL.revokeObjectURL(url);
 }
 
-function SubjectActions({ subject, onDelete, side = "bottom" }: {
+function SubjectActions({ subject, onDelete, onRename, side = "bottom" }: {
   subject: Subject;
   onDelete: () => void;
+  onRename?: () => void;
   side?: "top" | "bottom";
 }) {
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -82,6 +85,11 @@ function SubjectActions({ subject, onDelete, side = "bottom" }: {
           <DotsThreeVertical size={16} weight="bold" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" side={side}>
+          {onRename && (
+            <DropdownMenuItem onClick={onRename}>
+              <PencilSimple size={14} /> Rename
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem onClick={() => exportSubjectJSON(subject)}>
             <DownloadSimple size={14} /> Export JSON
           </DropdownMenuItem>
@@ -255,9 +263,16 @@ function UnitPreview({ unit }: { unit: { code: string; title: string; topics: { 
 
 function SubjectDetail({ subject, onBack }: { subject: Subject; onBack: () => void }) {
   const { deleteSubject, updateSubject } = useSubjects();
+  const { setSubtitle } = useBreadcrumb();
 
-  // Editable title
-  const [editTitle, setEditTitle] = useState(subject.name);
+  useEffect(() => {
+    setSubtitle(subject.name);
+    return () => setSubtitle(null);
+  }, [subject.name, setSubtitle]);
+
+  // Rename dialog
+  const [renameOpen, setRenameOpen] = useState(false);
+  const [renameValue, setRenameValue] = useState(subject.name);
 
   // Topic search + expand control
   const [topicSearch, setTopicSearch] = useState("");
@@ -276,93 +291,106 @@ function SubjectDetail({ subject, onBack }: { subject: Subject; onBack: () => vo
     matchesSearch(root) || subject.topics.some(t => t.parentCode === root.code && matchesSearch(t))
   );
 
-  const saveTitle = () => {
-    const trimmed = editTitle.trim();
-    if (trimmed && trimmed !== subject.name) {
-      updateSubject(subject.id, { name: trimmed });
-    } else {
-      setEditTitle(subject.name);
-    }
+  const handleRename = () => {
+    const trimmed = renameValue.trim();
+    if (trimmed && trimmed !== subject.name) updateSubject(subject.id, { name: trimmed });
+    setRenameOpen(false);
   };
+
+  const openRename = () => { setRenameValue(subject.name); setRenameOpen(true); };
 
   const expandAll = () => { setDefaultExpanded(true); setExpandKey(k => k + 1); };
   const collapseAll = () => { setDefaultExpanded(false); setExpandKey(k => k + 1); };
 
   return (
-    <div className="h-full flex flex-col">
-      {/* Scrollable content */}
-      <div className="flex-1 min-h-0 overflow-auto px-8 pt-8 pb-6">
-        {/* Editable title */}
-        <input
-          value={editTitle}
-          onChange={(e) => setEditTitle(e.target.value)}
-          onBlur={saveTitle}
-          onKeyDown={(e) => { if (e.key === "Enter") e.currentTarget.blur(); }}
-          className="text-2xl font-medium tracking-tight bg-transparent outline-none w-full border-b-2 border-transparent hover:border-border/30 focus:border-primary/40 pb-1 transition-colors placeholder:text-muted-foreground/30"
-          placeholder="Subject title"
-        />
-        <p className="mt-1.5 text-sm text-muted-foreground/50">
-          {roots.length} units · {subject.topics.length} topics
-        </p>
-
-        {/* Separator */}
-        <div className="mt-6 border-t border-border/30" />
-
-        {/* Search + controls */}
-        <div className="mt-5 flex items-center gap-3">
-          <div className="relative flex-1 max-w-xs">
-            <MagnifyingGlass size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground/40" />
-            <Input
-              value={topicSearch}
-              onChange={(e) => setTopicSearch(e.target.value)}
-              placeholder="Search topics..."
-              className="pl-8 h-8 text-sm"
-            />
-          </div>
-          <div className="flex items-center gap-1 text-xs text-muted-foreground/50">
-            <button onClick={expandAll} className="hover:text-foreground transition-colors px-1.5 py-0.5 rounded hover:bg-accent/50">Expand all</button>
-            <span className="text-muted-foreground/20">·</span>
-            <button onClick={collapseAll} className="hover:text-foreground transition-colors px-1.5 py-0.5 rounded hover:bg-accent/50">Collapse all</button>
-          </div>
+    <div className="p-8 h-full flex flex-col">
+      {/* Header */}
+      <div className="flex items-start justify-between shrink-0">
+        <div>
+          <h1 className="text-3xl font-medium tracking-tight">{subject.name}</h1>
+          <p className="mt-1.5 text-sm text-muted-foreground">
+            {roots.length} units · {subject.topics.length} topics
+          </p>
         </div>
-
-        {/* Topic tree */}
-        <div className="mt-5">
-          {filteredRoots.length === 0 ? (
-            <p className="text-sm text-muted-foreground/40 py-8 text-center">
-              {q ? "No topics match your search." : "No topics defined for this subject."}
-            </p>
-          ) : (
-            <div className="space-y-1.5">
-              {filteredRoots.map(root => (
-                <DetailUnit
-                  key={`${root.id}-${expandKey}`}
-                  root={root}
-                  allTopics={subject.topics}
-                  search={q}
-                  defaultExpanded={defaultExpanded}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Fixed footer */}
-      <footer className="shrink-0 border-t border-border/30 px-6 py-2 flex items-center justify-between bg-background">
-        <button
-          onClick={onBack}
-          className="group flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <ArrowLeft size={14} className="transition-transform group-hover:-translate-x-0.5" />
-          Subjects
-        </button>
         <SubjectActions
           subject={subject}
           onDelete={() => { deleteSubject(subject.id); onBack(); }}
-          side="top"
+          onRename={openRename}
         />
-      </footer>
+      </div>
+
+      {/* Search + controls */}
+      <div className="mt-6 flex items-center gap-3 shrink-0">
+        <div className="relative flex-1 max-w-xs">
+          <MagnifyingGlass size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground/40" />
+          <Input
+            value={topicSearch}
+            onChange={(e) => setTopicSearch(e.target.value)}
+            placeholder="Search topics..."
+            className="pl-8 h-8 text-sm"
+          />
+        </div>
+        <div className="flex items-center gap-1 text-xs text-muted-foreground/50">
+          <button onClick={expandAll} className="hover:text-foreground transition-colors px-1.5 py-0.5 rounded hover:bg-accent/50">Expand all</button>
+          <span className="text-muted-foreground/20">·</span>
+          <button onClick={collapseAll} className="hover:text-foreground transition-colors px-1.5 py-0.5 rounded hover:bg-accent/50">Collapse all</button>
+        </div>
+      </div>
+
+      {/* Topic tree */}
+      <div className="mt-5 flex-1 min-h-0 overflow-auto">
+        {filteredRoots.length === 0 ? (
+          <p className="text-sm text-muted-foreground/40 py-8 text-center">
+            {q ? "No topics match your search." : "No topics defined for this subject."}
+          </p>
+        ) : (
+          <div className="space-y-2">
+            {filteredRoots.map(root => (
+              <DetailUnit
+                key={`${root.id}-${expandKey}`}
+                root={root}
+                allTopics={subject.topics}
+                search={q}
+                defaultExpanded={defaultExpanded}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Back button at bottom of content */}
+        <div className="mt-8 pb-2">
+          <button
+            onClick={onBack}
+            className="group flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft size={14} className="transition-transform group-hover:-translate-x-0.5" />
+            Back to Subjects
+          </button>
+        </div>
+      </div>
+
+      {/* Rename dialog */}
+      <AlertDialog open={renameOpen} onOpenChange={setRenameOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Rename subject</AlertDialogTitle>
+            <AlertDialogDescription>
+              Enter a new name for this subject.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <Input
+            value={renameValue}
+            onChange={(e) => setRenameValue(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter") handleRename(); }}
+            className="text-sm"
+            autoFocus
+          />
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleRename}>Save</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
@@ -384,10 +412,11 @@ function DetailUnit({ root, allTopics, search, defaultExpanded }: {
   const isExpanded = isSearching ? true : expanded;
 
   return (
-    <div className="rounded-lg bg-muted/50 border border-border/40 overflow-hidden">
+    <div className="rounded-lg border border-border/50 overflow-hidden">
+      {/* Unit header — darker surface */}
       <button
         onClick={() => setExpanded(!expanded)}
-        className="flex items-center gap-3 w-full text-left px-4 py-3 hover:bg-accent/30 transition-colors"
+        className="flex items-center gap-3 w-full text-left px-4 py-3 bg-muted/80 hover:bg-muted transition-colors"
       >
         <TreeToggle expanded={isExpanded} size={18} />
         <span className="text-xs font-mono text-muted-foreground/50 shrink-0">{root.code}</span>
@@ -397,8 +426,9 @@ function DetailUnit({ root, allTopics, search, defaultExpanded }: {
         </span>
       </button>
 
+      {/* Topic list — lighter surface for contrast */}
       {isExpanded && filteredChildren.length > 0 && (
-        <div className="border-t border-border/20 px-4 py-1.5">
+        <div className="border-t border-border/30 bg-card px-4 py-1.5">
           {filteredChildren.map(child => (
             <DetailTopic key={child.id} topic={child} allTopics={allTopics} search={search} />
           ))}

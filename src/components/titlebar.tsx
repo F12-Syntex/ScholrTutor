@@ -7,6 +7,7 @@ import { X } from "@phosphor-icons/react/dist/ssr/X";
 import { SidebarSimple } from "@phosphor-icons/react/dist/ssr/SidebarSimple";
 import { CaretRight } from "@phosphor-icons/react/dist/ssr/CaretRight";
 import { useSidebar } from "@/components/ui/sidebar";
+import { useBreadcrumb } from "@/lib/breadcrumb";
 
 const pageTitles: Record<string, string> = {
   "/": "Dashboard",
@@ -21,6 +22,7 @@ const pageTitles: Record<string, string> = {
 export function Titlebar() {
   const { toggleSidebar } = useSidebar();
   const pathname = usePathname();
+  const { subtitle } = useBreadcrumb();
   const title = pageTitles[pathname] ?? "";
   const handleMinimize = () => window.electron?.window.minimize();
   const handleMaximize = () => window.electron?.window.maximize();
@@ -50,6 +52,12 @@ export function Titlebar() {
         <span className="text-xs font-medium text-muted-foreground/80 truncate">
           {title}
         </span>
+        {subtitle && (
+          <>
+            <CaretRight size={10} className="mx-0.5 text-muted-foreground/30 shrink-0" />
+            <span className="text-xs text-muted-foreground/60 truncate">{subtitle}</span>
+          </>
+        )}
       </div>
 
       {/* Center: draggable spacer */}

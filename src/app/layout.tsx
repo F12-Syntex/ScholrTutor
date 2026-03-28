@@ -7,6 +7,7 @@ import { Titlebar } from "@/components/titlebar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SettingsProvider } from "@/lib/settings";
 import { SubjectsProvider } from "@/lib/subjects";
+import { BreadcrumbProvider } from "@/lib/breadcrumb";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
@@ -31,6 +32,7 @@ export default function RootLayout({
         <ThemeProvider>
           <SettingsProvider>
           <SubjectsProvider>
+          <BreadcrumbProvider>
           <TooltipProvider>
             <SidebarProvider className="flex-col">
               <Titlebar />
@@ -44,6 +46,7 @@ export default function RootLayout({
               </div>
             </SidebarProvider>
           </TooltipProvider>
+          </BreadcrumbProvider>
           </SubjectsProvider>
           </SettingsProvider>
         </ThemeProvider>
