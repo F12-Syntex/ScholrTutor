@@ -322,6 +322,34 @@
     @apply text-pretty;
   }
 
+  /* Session log mention chips */
+  .mention-chip {
+    display: inline;
+    padding: 1px 6px;
+    margin: 0 1px;
+    border-radius: 4px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    vertical-align: baseline;
+    white-space: nowrap;
+  }
+  .mention-chip[data-mention-type="student"] {
+    background: color-mix(in srgb, var(--mention-student) 15%, transparent);
+    color: var(--mention-student);
+  }
+  .mention-chip[data-mention-type="topic"] {
+    background: color-mix(in srgb, var(--mention-topic) 15%, transparent);
+    color: var(--mention-topic);
+  }
+
+  /* ContentEditable placeholder */
+  .session-editor:empty::before {
+    content: attr(data-placeholder);
+    color: var(--muted-foreground);
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
   /* ── Custom scrollbar ── */
   * {
     scrollbar-width: thin;
