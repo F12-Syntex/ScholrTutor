@@ -304,19 +304,28 @@ function SubjectDetail({ subject, onBack }: { subject: Subject; onBack: () => vo
 
   return (
     <div className="p-8 h-full flex flex-col">
-      {/* Header */}
-      <div className="flex items-start justify-between shrink-0">
-        <div>
-          <h1 className="text-3xl font-medium tracking-tight">{subject.name}</h1>
-          <p className="mt-1.5 text-sm text-muted-foreground">
-            {roots.length} units · {subject.topics.length} topics
-          </p>
+      {/* Back + Header */}
+      <div className="shrink-0">
+        <button
+          onClick={onBack}
+          className="group flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4"
+        >
+          <ArrowLeft size={14} className="transition-transform group-hover:-translate-x-0.5" />
+          Back
+        </button>
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl font-medium tracking-tight">{subject.name}</h1>
+            <p className="mt-1.5 text-sm text-muted-foreground">
+              {roots.length} units · {subject.topics.length} topics
+            </p>
+          </div>
+          <SubjectActions
+            subject={subject}
+            onDelete={() => { deleteSubject(subject.id); onBack(); }}
+            onRename={openRename}
+          />
         </div>
-        <SubjectActions
-          subject={subject}
-          onDelete={() => { deleteSubject(subject.id); onBack(); }}
-          onRename={openRename}
-        />
       </div>
 
       {/* Search + controls */}
@@ -357,16 +366,6 @@ function SubjectDetail({ subject, onBack }: { subject: Subject; onBack: () => vo
           </div>
         )}
 
-        {/* Back button at bottom of content */}
-        <div className="mt-8 pb-2">
-          <button
-            onClick={onBack}
-            className="group flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <ArrowLeft size={14} className="transition-transform group-hover:-translate-x-0.5" />
-            Back to Subjects
-          </button>
-        </div>
       </div>
 
       {/* Rename dialog */}
