@@ -11,6 +11,7 @@ import { CircleNotch } from "@phosphor-icons/react/dist/ssr/CircleNotch";
 import { Check } from "@phosphor-icons/react/dist/ssr/Check";
 import { DotsThreeVertical } from "@phosphor-icons/react/dist/ssr/DotsThreeVertical";
 import { DownloadSimple } from "@phosphor-icons/react/dist/ssr/DownloadSimple";
+import { ArrowLeft } from "@phosphor-icons/react/dist/ssr/ArrowLeft";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,7 +32,7 @@ import {
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 
-// ── Types — simplified: just major.minor ──
+// ── Types ──
 
 type ParsedSubject = {
   name: string;
@@ -42,6 +43,79 @@ type ParsedSubject = {
 
 type FlowStage = "list" | "processing" | "review";
 const ACCEPTED_TYPES = ".pdf,.json,.md,.txt";
+
+// ── Shared helpers ──
+
+function exportSubjectJSON(subject: Subject) {
+  const roots = subject.topics.filter(t => !t.parentCode)
+    .sort((a, b) => a.code.localeCompare(b.code, undefined, { numeric: true }));
+  const data = {
+    name: subject.name,
+    examBoard: subject.examBoard,
+    level: subject.level,
+    units: roots.map(root => ({
+      code: root.code,
+      title: root.title,
+      topics: subject.topics
+        .filter(t => t.parentCode === root.code)
+        .sort((a, b) => a.code.localeCompare(b.code, undefined, { numeric: true }))
+        .map(t => ({ code: t.code, title: t.title })),
+    })),
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${subject.name.toLowerCase().replace(/\s+/g, "-")}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function SubjectActions({ subject, onDelete }: { subject: Subject; onDelete: () => void }) {
+  const [deleteOpen, setDeleteOpen] = useState(false);
+
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          className="p-1.5 rounded-md text-muted-foreground/40 hover:text-muted-foreground hover:bg-accent/50 transition-all outline-none"
+        >
+          <DotsThreeVertical size={18} weight="bold" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={() => exportSubjectJSON(subject)}>
+            <DownloadSimple size={14} />
+            Export JSON
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem variant="destructive" onClick={() => setDeleteOpen(true)}>
+            <Trash size={14} />
+            Delete
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete subject?</AlertDialogTitle>
+            <AlertDialogDescription>
+              <span className="text-foreground font-medium">{subject.name}</span> and
+              all {subject.topics.length} topics will be permanently deleted.
+              This cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction variant="destructive" onClick={onDelete}>
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+}
 
 // ── Tree toggle (+/−) ──
 
@@ -57,7 +131,27 @@ function TreeToggle({ expanded, size = 16 }: { expanded: boolean; size?: number 
   );
 }
 
-// ── Drop row (looks like an empty subject row) ──
+// ═══════════════════════════════════════════════════════════
+// LIST VIEW — subject rows + import flow
+// ═══════════════════════════════════════════════════════════
+
+function SubjectRow({ subject, onClick }: { subject: Subject; onClick: () => void }) {
+  const { deleteSubject } = useSubjects();
+
+  return (
+    <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-card border border-border/20 hover:border-border/40 transition-colors">
+      <div className="flex-1 min-w-0 flex items-center gap-3 cursor-pointer" onClick={onClick}>
+        <span className="text-sm font-medium truncate">{subject.name}</span>
+        <span className="text-[11px] text-muted-foreground/50 shrink-0">{subject.examBoard} · {subject.level}</span>
+      </div>
+      <span className="text-xs text-muted-foreground/40 shrink-0">{subject.topics.length} topics</span>
+      <Button variant="outline" size="xs" onClick={onClick}>View</Button>
+      <div onClick={(e) => e.stopPropagation()} className="shrink-0">
+        <SubjectActions subject={subject} onDelete={() => deleteSubject(subject.id)} />
+      </div>
+    </div>
+  );
+}
 
 function DropRow({ onFile }: { onFile: (file: File) => void }) {
   const [dragOver, setDragOver] = useState(false);
@@ -82,8 +176,6 @@ function DropRow({ onFile }: { onFile: (file: File) => void }) {
   );
 }
 
-// ── Processing row (inline, same height as a subject row) ──
-
 function ProcessingRow({ fileName }: { fileName: string }) {
   return (
     <div className="flex items-center gap-3 px-4 py-3.5 rounded-lg bg-card border border-border/20">
@@ -94,8 +186,6 @@ function ProcessingRow({ fileName }: { fileName: string }) {
   );
 }
 
-// ── Review row (inline, expands to show parsed result) ──
-
 function ReviewRow({ parsed, onSave, onCancel }: {
   parsed: ParsedSubject; onSave: (p: ParsedSubject) => void; onCancel: () => void;
 }) {
@@ -105,7 +195,6 @@ function ReviewRow({ parsed, onSave, onCancel }: {
 
   return (
     <div className="rounded-lg bg-card border border-primary/30 overflow-hidden">
-      {/* Header row */}
       <div className="flex items-center gap-3 px-4 py-3 cursor-pointer" onClick={() => setExpanded(!expanded)}>
         <TreeToggle expanded={expanded} size={16} />
         <div className="flex-1 min-w-0 flex items-center gap-2">
@@ -132,8 +221,6 @@ function ReviewRow({ parsed, onSave, onCancel }: {
           <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={onCancel}>Cancel</Button>
         </div>
       </div>
-
-      {/* Expanded: topic tree */}
       {expanded && (
         <div className="border-t border-border/10 px-4 py-2">
           {data.units.map((unit, ui) => (
@@ -170,128 +257,122 @@ function UnitPreview({ unit }: { unit: { code: string; title: string; topics: { 
   );
 }
 
-// ── Stored subject row ──
+// ═══════════════════════════════════════════════════════════
+// DETAIL VIEW — single subject with full topic tree
+// ═══════════════════════════════════════════════════════════
 
-function SubjectRow({ subject }: { subject: Subject }) {
+function SubjectDetail({ subject, onBack }: { subject: Subject; onBack: () => void }) {
   const { deleteSubject } = useSubjects();
-  const [expanded, setExpanded] = useState(false);
-  const [deleteOpen, setDeleteOpen] = useState(false);
 
-  const roots = subject.topics.filter((t) => !t.parentCode)
+  const roots = subject.topics
+    .filter(t => !t.parentCode)
     .sort((a, b) => a.code.localeCompare(b.code, undefined, { numeric: true }));
 
-  const handleExport = () => {
-    const data = {
-      name: subject.name,
-      examBoard: subject.examBoard,
-      level: subject.level,
-      units: roots.map(root => ({
-        code: root.code,
-        title: root.title,
-        topics: subject.topics
-          .filter(t => t.parentCode === root.code)
-          .sort((a, b) => a.code.localeCompare(b.code, undefined, { numeric: true }))
-          .map(t => ({ code: t.code, title: t.title })),
-      })),
-    };
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${subject.name.toLowerCase().replace(/\s+/g, "-")}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
   return (
-    <div>
-      <div className="group flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-accent/50 cursor-pointer transition-colors"
-        onClick={() => setExpanded(!expanded)}>
-        <TreeToggle expanded={expanded} size={18} />
-        <span className="text-sm font-medium truncate">{subject.name}</span>
-        <span className="text-[11px] text-muted-foreground/50 shrink-0">{subject.examBoard} · {subject.level}</span>
-        <span className="text-xs text-muted-foreground/40 ml-auto shrink-0">{subject.topics.length} topics</span>
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            onClick={(e: React.MouseEvent) => e.stopPropagation()}
-            className="opacity-0 group-hover:opacity-100 aria-expanded:opacity-100 p-1 rounded-md text-muted-foreground/40 hover:text-muted-foreground hover:bg-accent/50 transition-all shrink-0 outline-none"
-          >
-            <DotsThreeVertical size={16} weight="bold" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={handleExport}>
-              <DownloadSimple size={14} />
-              Export JSON
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive" onClick={() => setDeleteOpen(true)}>
-              <Trash size={14} />
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+    <div className="p-8 h-full flex flex-col">
+      {/* Back link */}
+      <button
+        onClick={onBack}
+        className="group flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors shrink-0 self-start mb-6"
+      >
+        <ArrowLeft size={14} className="transition-transform group-hover:-translate-x-0.5" />
+        Subjects
+      </button>
+
+      {/* Header */}
+      <div className="flex items-start justify-between shrink-0">
+        <div>
+          <h1 className="text-3xl font-medium tracking-tight">{subject.name}</h1>
+          <p className="mt-1.5 text-sm text-muted-foreground">
+            {subject.examBoard} · {subject.level} · {subject.topics.length} topics
+          </p>
+        </div>
+        <SubjectActions
+          subject={subject}
+          onDelete={() => { deleteSubject(subject.id); onBack(); }}
+        />
       </div>
 
-      {expanded && roots.length > 0 && (
-        <div className="ml-[21px] pl-3.5 border-l border-border/25 py-0.5 mb-1">
-          {roots.map((root) => (
-            <StoredUnit key={root.id} topic={root} allTopics={subject.topics} />
-          ))}
-        </div>
-      )}
+      {/* Separator */}
+      <div className="mt-6 border-t border-border/30 shrink-0" />
 
-      <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete subject?</AlertDialogTitle>
-            <AlertDialogDescription>
-              <span className="text-foreground font-medium">{subject.name}</span> and
-              all {subject.topics.length} topics will be permanently deleted.
-              This cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              variant="destructive"
-              onClick={() => deleteSubject(subject.id)}
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      {/* Topic tree */}
+      <div className="mt-6 flex-1 min-h-0 overflow-auto">
+        {roots.length === 0 ? (
+          <p className="text-sm text-muted-foreground/50">No topics defined for this subject.</p>
+        ) : (
+          <div className="space-y-5">
+            {roots.map(root => (
+              <DetailUnit key={root.id} root={root} allTopics={subject.topics} />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
-function StoredUnit({ topic, allTopics }: { topic: Topic; allTopics: Topic[] }) {
-  const children = allTopics.filter((t) => t.parentCode === topic.code)
+function DetailUnit({ root, allTopics }: { root: Topic; allTopics: Topic[] }) {
+  const children = allTopics
+    .filter(t => t.parentCode === root.code)
     .sort((a, b) => a.code.localeCompare(b.code, undefined, { numeric: true }));
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(true);
+
+  return (
+    <section>
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="flex items-center gap-3 w-full text-left py-1.5 rounded-lg hover:bg-accent/30 transition-colors px-2 -mx-2"
+      >
+        <TreeToggle expanded={expanded} size={18} />
+        <span className="text-xs font-mono text-muted-foreground/50 shrink-0">{root.code}</span>
+        <span className="text-[15px] font-medium tracking-tight">{root.title}</span>
+        <span className="text-xs text-muted-foreground/40 ml-auto shrink-0">
+          {children.length} {children.length === 1 ? "topic" : "topics"}
+        </span>
+      </button>
+
+      {expanded && children.length > 0 && (
+        <div className="mt-1 ml-[11px] pl-5 border-l border-border/25">
+          {children.map(child => (
+            <DetailTopic key={child.id} topic={child} allTopics={allTopics} />
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
+function DetailTopic({ topic, allTopics }: { topic: Topic; allTopics: Topic[] }) {
+  const children = allTopics
+    .filter(t => t.parentCode === topic.code)
+    .sort((a, b) => a.code.localeCompare(b.code, undefined, { numeric: true }));
+  const [expanded, setExpanded] = useState(true);
   const hasChildren = children.length > 0;
 
   return (
     <div>
       <div
-        className={`flex items-center gap-2 py-1 px-1.5 rounded-md transition-colors ${hasChildren ? "cursor-pointer hover:bg-accent/40" : ""}`}
+        className={`flex items-center gap-3 py-2 px-2 rounded-md transition-colors ${hasChildren ? "cursor-pointer hover:bg-accent/30" : "hover:bg-accent/20"}`}
         onClick={hasChildren ? () => setExpanded(!expanded) : undefined}
       >
         {hasChildren ? (
           <TreeToggle expanded={expanded} size={14} />
         ) : (
           <span className="w-3.5 flex items-center justify-center shrink-0">
-            <span className="size-1 rounded-full bg-muted-foreground/25" />
+            <span className="size-1.5 rounded-full bg-muted-foreground/20" />
           </span>
         )}
-        <span className="text-[11px] font-mono text-muted-foreground/40 shrink-0">{topic.code}</span>
-        <span className={`text-xs ${hasChildren ? "font-medium text-foreground/70" : "text-muted-foreground/60"}`}>{topic.title}</span>
-        {hasChildren && <span className="text-[10px] text-muted-foreground/30 ml-auto">{children.length}</span>}
+        <span className="text-xs font-mono text-muted-foreground/40 shrink-0">{topic.code}</span>
+        <span className="text-sm text-foreground/80">{topic.title}</span>
+        {hasChildren && (
+          <span className="text-xs text-muted-foreground/30 ml-auto shrink-0">{children.length}</span>
+        )}
       </div>
-      {expanded && children.length > 0 && (
-        <div className="ml-[8px] pl-3 border-l border-border/20">
-          {children.map((child) => (
-            <StoredUnit key={child.id} topic={child} allTopics={allTopics} />
+      {expanded && hasChildren && (
+        <div className="ml-[8px] pl-4 border-l border-border/15">
+          {children.map(child => (
+            <DetailTopic key={child.id} topic={child} allTopics={allTopics} />
           ))}
         </div>
       )}
@@ -301,8 +382,6 @@ function StoredUnit({ topic, allTopics }: { topic: Topic; allTopics: Topic[] }) 
 
 // ═══════════════════════════════════════════════════════════
 // PARSING PIPELINE
-// Phase 1: Schema detect → Phase 2: Transform (or AI fallback)
-// Simplified: just major.minor — code + title only
 // ═══════════════════════════════════════════════════════════
 
 function extractMeta(text: string): { name: string; board: string; level: "A-Level" | "GCSE" | "Other" } {
@@ -323,7 +402,6 @@ function tryParseJSON(raw: string): ParsedSubject | null {
     const data = JSON.parse(raw) as any;
     const spec = data.specification ?? data;
 
-    // Edexcel: themes[] → sections[] → subsections[]
     if (spec.themes && Array.isArray(spec.themes)) {
       const meta = extractMeta(spec.title ?? "");
       const units: ParsedSubject["units"] = [];
@@ -339,7 +417,6 @@ function tryParseJSON(raw: string): ParsedSubject | null {
       return { name: meta.name, examBoard: meta.board, level: meta.level, units };
     }
 
-    // AQA: topics{} with nested subtopics{}
     if (spec.topics && typeof spec.topics === "object" && !Array.isArray(spec.topics)) {
       const qual = spec.qualification ?? spec.title ?? "";
       const meta = extractMeta(qual);
@@ -359,7 +436,6 @@ function tryParseJSON(raw: string): ParsedSubject | null {
       return { name: meta.name, examBoard: meta.board, level: meta.level, units };
     }
 
-    // Our format: units[] with topics[]
     if (spec.units && Array.isArray(spec.units)) {
       return { name: spec.name ?? "", examBoard: spec.examBoard ?? "", level: spec.level ?? "Other", units: spec.units };
     }
@@ -409,18 +485,28 @@ async function extractFileText(file: File): Promise<string> {
   return text.replace(/\s+/g, " ").replace(/[^\x20-\x7E\n]/g, "");
 }
 
-// ── Page ──
+// ═══════════════════════════════════════════════════════════
+// PAGE
+// ═══════════════════════════════════════════════════════════
 
 export default function SubjectsPage() {
   const { subjects, addSubject, addTopic } = useSubjects();
   const { settings } = useSettings();
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [stage, setStage] = useState<FlowStage>("list");
   const [fileName, setFileName] = useState("");
   const [parsed, setParsed] = useState<ParsedSubject | null>(null);
   const [error, setError] = useState("");
   const fileRef = useRef<File | null>(null);
 
-  const handleFile = useCallback(async (file: File) => {
+  // ── Detail view ──
+  const selectedSubject = selectedId ? subjects.find(s => s.id === selectedId) : null;
+  if (selectedSubject) {
+    return <SubjectDetail subject={selectedSubject} onBack={() => setSelectedId(null)} />;
+  }
+
+  // ── List view ──
+  const handleFile = async (file: File) => {
     fileRef.current = file;
     setFileName(file.name);
     setStage("processing");
@@ -443,9 +529,9 @@ export default function SubjectsPage() {
       setError(err instanceof Error ? err.message : "Failed to parse.");
       setStage("list");
     }
-  }, [settings.openRouterApiKey, settings.aiModel]);
+  };
 
-  const handleSave = useCallback((data: ParsedSubject) => {
+  const handleSave = (data: ParsedSubject) => {
     const subject = addSubject({
       name: data.name, examBoard: data.examBoard, level: data.level,
       gradeBoundaries: [
@@ -463,7 +549,7 @@ export default function SubjectsPage() {
     }
     setParsed(null);
     setStage("list");
-  }, [addSubject, addTopic]);
+  };
 
   const isAdding = stage === "processing" || stage === "review";
 
@@ -486,8 +572,10 @@ export default function SubjectsPage() {
       )}
 
       <div className="mt-6 flex-1 min-h-0 overflow-auto">
-        <div className="space-y-0.5">
-          {subjects.map((s) => <SubjectRow key={s.id} subject={s} />)}
+        <div className="space-y-2">
+          {subjects.map(s => (
+            <SubjectRow key={s.id} subject={s} onClick={() => setSelectedId(s.id)} />
+          ))}
           {stage === "processing" && <ProcessingRow fileName={fileName} />}
           {stage === "review" && parsed && (
             <ReviewRow parsed={parsed} onSave={handleSave} onCancel={() => { setStage("list"); setParsed(null); }} />
