@@ -34,6 +34,7 @@ export interface Student {
   predictedGrade: string;
   targetGrade: string;
   isRegular: boolean;
+  isStarred: boolean;
   completedSessions: number;
   notes: StudentNote[];
   testResults: TestResult[];
@@ -55,6 +56,7 @@ function loadStudents(): Student[] {
     return (JSON.parse(raw) as Student[]).map(s => ({
       ...s,
       icon: s.icon ?? "",
+      isStarred: s.isStarred ?? false,
       completedSessions: s.completedSessions ?? 0,
       notes: s.notes ?? [],
       testResults: s.testResults ?? [],
@@ -79,7 +81,7 @@ function generateReferenceNumber(existing: Student[]): string {
 
 type StudentsContextValue = {
   students: Student[];
-  addStudent: (data: Omit<Student, "id" | "referenceNumber" | "createdAt" | "notes" | "testResults" | "completedSessions">) => Student;
+  addStudent: (data: Omit<Student, "id" | "referenceNumber" | "createdAt" | "notes" | "testResults" | "completedSessions" | "isStarred">) => Student;
   updateStudent: (id: string, data: Partial<Omit<Student, "id" | "createdAt">>) => void;
   deleteStudent: (id: string) => void;
   addNote: (studentId: string, content: string) => void;
@@ -98,13 +100,14 @@ export function StudentsProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const addStudent = useCallback(
-    (data: Omit<Student, "id" | "referenceNumber" | "createdAt" | "notes" | "testResults" | "completedSessions">) => {
+    (data: Omit<Student, "id" | "referenceNumber" | "createdAt" | "notes" | "testResults" | "completedSessions" | "isStarred">) => {
       let student: Student | undefined;
       setStudents((prev) => {
         student = {
           ...data,
           id: generateId(),
           referenceNumber: generateReferenceNumber(prev),
+          isStarred: false,
           completedSessions: 0,
           notes: [],
           testResults: [],

@@ -11,9 +11,11 @@ import { FileText } from "@phosphor-icons/react/dist/ssr/FileText";
 import { Books } from "@phosphor-icons/react/dist/ssr/Books";
 import { GearSix } from "@phosphor-icons/react/dist/ssr/GearSix";
 import { CaretRight } from "@phosphor-icons/react/dist/ssr/CaretRight";
+import { Star } from "@phosphor-icons/react/dist/ssr/Star";
 import { AppLogo } from "@/components/app-logo";
 import { MagnifyingGlass } from "@phosphor-icons/react/dist/ssr/MagnifyingGlass";
 import { useSubjects } from "@/lib/subjects";
+import { useStudents } from "@/lib/students";
 import type { Icon } from "@phosphor-icons/react/dist/lib/types";
 import {
   Sidebar,
@@ -55,7 +57,21 @@ function SearchButton() {
 function NavItems() {
   const pathname = usePathname();
   const { subjects } = useSubjects();
+  const { students } = useStudents();
   const [manualOpen, setManualOpen] = useState<Record<string, boolean>>({});
+
+  const toggle = (href: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setManualOpen(prev => ({ ...prev, [href]: !prev[href] }));
+  };
+
+  // Sort students: starred first, then alphabetical
+  const sortedStudents = [...students].sort((a, b) => {
+    if (a.isStarred && !b.isStarred) return -1;
+    if (!a.isStarred && b.isStarred) return 1;
+    return a.name.localeCompare(b.name);
+  });
 
   return (
     <SidebarMenu>
@@ -65,9 +81,12 @@ function NavItems() {
             ? pathname === "/"
             : pathname.startsWith(item.href);
 
-        const subItems =
-          item.href === "/subjects" && subjects.length > 0 ? subjects : null;
-        const isOpen = subItems && (isActive || manualOpen[item.href]);
+        // Determine sub-items
+        const hasSubjects = item.href === "/subjects" && subjects.length > 0;
+        const starredStudents = sortedStudents.filter(s => s.isStarred);
+        const hasStudents = item.href === "/students" && starredStudents.length > 0;
+        const hasChildren = hasSubjects || hasStudents;
+        const isOpen = hasChildren && (isActive || manualOpen[item.href]);
 
         return (
           <SidebarMenuItem key={item.href}>
@@ -81,17 +100,10 @@ function NavItems() {
                 className="shrink-0"
               />
               <span className="flex-1">{item.label}</span>
-              {subItems && (
+              {hasChildren && (
                 <span
                   role="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setManualOpen((prev) => ({
-                      ...prev,
-                      [item.href]: !prev[item.href],
-                    }));
-                  }}
+                  onClick={(e) => toggle(item.href, e)}
                   className="flex items-center justify-center size-5 rounded-sm text-muted-foreground/40 hover:text-muted-foreground hover:bg-sidebar-accent transition-all"
                 >
                   <CaretRight
@@ -102,15 +114,28 @@ function NavItems() {
               )}
             </SidebarMenuButton>
 
-            {isOpen && (
+            {/* Subject sub-items */}
+            {hasSubjects && isOpen && (
               <SidebarMenuSub>
                 {subjects.map((s) => (
                   <SidebarMenuSubItem key={s.id}>
-                    <SidebarMenuSubButton
-                      size="sm"
-                      render={<Link href="/subjects" />}
-                    >
+                    <SidebarMenuSubButton size="sm" render={<Link href="/subjects" />}>
                       <span className="truncate">{s.name}</span>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+                ))}
+              </SidebarMenuSub>
+            )}
+
+            {/* Starred student sub-items */}
+            {hasStudents && isOpen && (
+              <SidebarMenuSub>
+                {starredStudents.map((s) => (
+                  <SidebarMenuSubItem key={s.id}>
+                    <SidebarMenuSubButton size="sm" render={<Link href="/students" />}>
+                      <Star size={10} weight="fill" className="text-warning shrink-0" />
+                      <span className="truncate">{s.name}</span>
+                      <span className="text-[9px] font-mono text-muted-foreground/30 ml-auto shrink-0">{s.referenceNumber}</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
                 ))}

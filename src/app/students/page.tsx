@@ -13,6 +13,7 @@ import { DotsThreeVertical } from "@phosphor-icons/react/dist/ssr/DotsThreeVerti
 import { PencilSimple } from "@phosphor-icons/react/dist/ssr/PencilSimple";
 import { UserCircle } from "@phosphor-icons/react/dist/ssr/UserCircle";
 import { Notebook } from "@phosphor-icons/react/dist/ssr/Notebook";
+import { Star } from "@phosphor-icons/react/dist/ssr/Star";
 import { Exam } from "@phosphor-icons/react/dist/ssr/Exam";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -162,8 +163,18 @@ function StudentDetail({ student, onBack }: { student: Student; onBack: () => vo
         </button>
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-4">
-            <div className="size-14 rounded-full bg-muted flex items-center justify-center shrink-0">
-              <StudentIcon icon={student.icon} size={16} />
+            <div className="relative shrink-0">
+              <div className="size-14 rounded-full bg-muted flex items-center justify-center">
+                <StudentIcon icon={student.icon} size={16} />
+              </div>
+              <button
+                onClick={() => updateStudent(student.id, { isStarred: !student.isStarred })}
+                className={`absolute -top-1 -right-1 size-5 rounded-full flex items-center justify-center transition-colors ${
+                  student.isStarred ? "bg-warning text-warning-foreground" : "bg-muted hover:bg-accent text-muted-foreground/30 hover:text-muted-foreground"
+                }`}
+              >
+                <Star size={10} weight={student.isStarred ? "fill" : "regular"} />
+              </button>
             </div>
             <div>
               <h1 className="text-2xl font-medium tracking-tight">{student.name}</h1>
@@ -333,7 +344,7 @@ function StudentDetail({ student, onBack }: { student: Student; onBack: () => vo
 // ═══════════════════════════════════════════════════════════
 
 export default function StudentsPage() {
-  const { students, addStudent } = useStudents();
+  const { students, addStudent, updateStudent } = useStudents();
   const { subjects } = useSubjects();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
@@ -347,12 +358,16 @@ export default function StudentsPage() {
   const subjectMap = new Map(subjects.map(s => [s.id, s.name]));
 
   const q = search.toLowerCase();
-  const filtered = !q ? students : students.filter(s =>
+  const filtered = (!q ? students : students.filter(s =>
     s.name.toLowerCase().includes(q) ||
     s.referenceNumber.toLowerCase().includes(q) ||
     s.email.toLowerCase().includes(q) ||
     (subjectMap.get(s.subjectId) ?? "").toLowerCase().includes(q)
-  );
+  )).sort((a, b) => {
+    if (a.isStarred && !b.isStarred) return -1;
+    if (!a.isStarred && b.isStarred) return 1;
+    return a.name.localeCompare(b.name);
+  });
 
   return (
     <div className="p-8 h-full flex flex-col">
@@ -406,6 +421,12 @@ export default function StudentsPage() {
                       onClick={() => setSelectedId(s.id)}>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2.5">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); updateStudent(s.id, { isStarred: !s.isStarred }); }}
+                            className={`shrink-0 transition-colors ${s.isStarred ? "text-warning" : "text-muted-foreground/20 hover:text-muted-foreground/50"}`}
+                          >
+                            <Star size={14} weight={s.isStarred ? "fill" : "regular"} />
+                          </button>
                           <div className="size-7 rounded-full bg-muted flex items-center justify-center shrink-0">
                             <StudentIcon icon={s.icon} size={8} />
                           </div>
