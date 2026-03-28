@@ -136,13 +136,7 @@ function SubjectRow({ subject, onClick }: { subject: Subject; onClick: () => voi
       className="flex items-center gap-3 px-4 py-3 rounded-lg bg-muted/80 border border-border hover:bg-accent cursor-pointer transition-colors"
       onClick={onClick}
     >
-      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary shrink-0">
-        {subject.examBoard}
-      </span>
       <span className="text-sm font-medium truncate">{subject.name}</span>
-      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-foreground/5 text-muted-foreground shrink-0">
-        {subject.level}
-      </span>
       <span className="text-xs text-muted-foreground/40 ml-auto shrink-0">{subject.topics.length} topics</span>
       <div onClick={(e) => e.stopPropagation()} className="shrink-0">
         <SubjectActions subject={subject} onDelete={() => deleteSubject(subject.id)} />
@@ -262,9 +256,8 @@ function UnitPreview({ unit }: { unit: { code: string; title: string; topics: { 
 function SubjectDetail({ subject, onBack }: { subject: Subject; onBack: () => void }) {
   const { deleteSubject, updateSubject } = useSubjects();
 
-  // Editable fields
-  const [editName, setEditName] = useState(subject.name);
-  const [editBoard, setEditBoard] = useState(subject.examBoard);
+  // Editable title
+  const [editTitle, setEditTitle] = useState(subject.name);
 
   // Topic search + expand control
   const [topicSearch, setTopicSearch] = useState("");
@@ -283,20 +276,13 @@ function SubjectDetail({ subject, onBack }: { subject: Subject; onBack: () => vo
     matchesSearch(root) || subject.topics.some(t => t.parentCode === root.code && matchesSearch(t))
   );
 
-  const saveName = () => {
-    const trimmed = editName.trim();
-    if (trimmed && trimmed !== subject.name) updateSubject(subject.id, { name: trimmed });
-    else setEditName(subject.name);
-  };
-
-  const saveBoard = () => {
-    const trimmed = editBoard.trim();
-    if (trimmed && trimmed !== subject.examBoard) updateSubject(subject.id, { examBoard: trimmed });
-    else setEditBoard(subject.examBoard);
-  };
-
-  const handleLevel = (level: Subject["level"]) => {
-    updateSubject(subject.id, { level });
+  const saveTitle = () => {
+    const trimmed = editTitle.trim();
+    if (trimmed && trimmed !== subject.name) {
+      updateSubject(subject.id, { name: trimmed });
+    } else {
+      setEditTitle(subject.name);
+    }
   };
 
   const expandAll = () => { setDefaultExpanded(true); setExpandKey(k => k + 1); };
@@ -306,47 +292,18 @@ function SubjectDetail({ subject, onBack }: { subject: Subject; onBack: () => vo
     <div className="h-full flex flex-col">
       {/* Scrollable content */}
       <div className="flex-1 min-h-0 overflow-auto px-8 pt-8 pb-6">
-        {/* Editable name */}
+        {/* Editable title */}
         <input
-          value={editName}
-          onChange={(e) => setEditName(e.target.value)}
-          onBlur={saveName}
+          value={editTitle}
+          onChange={(e) => setEditTitle(e.target.value)}
+          onBlur={saveTitle}
           onKeyDown={(e) => { if (e.key === "Enter") e.currentTarget.blur(); }}
           className="text-2xl font-medium tracking-tight bg-transparent outline-none w-full border-b-2 border-transparent hover:border-border/30 focus:border-primary/40 pb-1 transition-colors placeholder:text-muted-foreground/30"
-          placeholder="Subject name"
+          placeholder="Subject title"
         />
-
-        {/* Tags + stats */}
-        <div className="mt-3 flex items-center gap-2 flex-wrap">
-          {/* Editable exam board tag */}
-          <div className="inline-flex items-center rounded-full bg-primary/10 overflow-hidden">
-            <input
-              value={editBoard}
-              onChange={(e) => setEditBoard(e.target.value)}
-              onBlur={saveBoard}
-              onKeyDown={(e) => { if (e.key === "Enter") e.currentTarget.blur(); }}
-              className="text-[11px] font-medium text-primary bg-transparent outline-none px-2.5 py-1 w-[var(--board-w)]"
-              style={{ "--board-w": `${Math.max(editBoard.length + 1, 4)}ch` } as React.CSSProperties}
-            />
-          </div>
-
-          {/* Level toggle */}
-          <div className="flex rounded-full border border-border/60 overflow-hidden">
-            {(["A-Level", "GCSE", "Other"] as const).map(l => (
-              <button key={l} onClick={() => handleLevel(l)}
-                className={`px-2.5 py-1 text-[10px] font-medium transition-colors ${
-                  subject.level === l
-                    ? "bg-foreground/8 text-foreground"
-                    : "text-muted-foreground/40 hover:text-muted-foreground hover:bg-accent/50"
-                }`}>{l}</button>
-            ))}
-          </div>
-
-          {/* Stats */}
-          <span className="text-xs text-muted-foreground/50 ml-auto">
-            {roots.length} units · {subject.topics.length} topics
-          </span>
-        </div>
+        <p className="mt-1.5 text-sm text-muted-foreground/50">
+          {roots.length} units · {subject.topics.length} topics
+        </p>
 
         {/* Separator */}
         <div className="mt-6 border-t border-border/30" />
@@ -645,7 +602,7 @@ export default function SubjectsPage() {
 
   const handleSave = (data: ParsedSubject) => {
     const subject = addSubject({
-      name: data.name, examBoard: data.examBoard, level: data.level,
+      name: `${data.examBoard} ${data.name} ${data.level}`, examBoard: data.examBoard, level: data.level,
       gradeBoundaries: [
         { grade: "A*", minPercent: 90 }, { grade: "A", minPercent: 80 },
         { grade: "B", minPercent: 70 }, { grade: "C", minPercent: 60 },
