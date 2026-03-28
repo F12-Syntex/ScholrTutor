@@ -45,15 +45,29 @@ export function extractMentions(text: string, students: Student[], subjects: Sub
   const mentions: MentionToken[] = [];
   const allTopics = subjects.flatMap(sub => sub.topics);
 
-  for (const m of text.matchAll(/@student:([^\n@]+?)(?=\s|$|@)/g)) {
+  for (const m of text.matchAll(/@student\(([^)]+)\)/g)) {
     const name = m[1].trim();
     const s = students.find(st => st.name.toLowerCase() === name.toLowerCase());
     if (s) mentions.push({ type: "student", id: s.id, label: s.name });
   }
+  for (const m of text.matchAll(/@topic\(([^)]+)\)/g)) {
+    const label = m[1].trim();
+    const t = allTopics.find(tp =>
+      `${tp.code} ${tp.title}`.toLowerCase() === label.toLowerCase() ||
+      tp.code === label.split(" ")[0]
+    );
+    if (t) mentions.push({ type: "topic", id: t.id, label: `${t.code} ${t.title}` });
+  }
+  // Also support old @student: format for backwards compat
+  for (const m of text.matchAll(/@student:([^\n@]+?)(?=\s|$|@)/g)) {
+    const name = m[1].trim();
+    const s = students.find(st => st.name.toLowerCase() === name.toLowerCase());
+    if (s && !mentions.some(x => x.id === s.id)) mentions.push({ type: "student", id: s.id, label: s.name });
+  }
   for (const m of text.matchAll(/@topic:([^\n@]+?)(?=\s|$|@)/g)) {
     const label = m[1].trim();
     const t = allTopics.find(tp => `${tp.code} ${tp.title}`.toLowerCase() === label.toLowerCase() || tp.code === label);
-    if (t) mentions.push({ type: "topic", id: t.id, label: `${t.code} ${t.title}` });
+    if (t && !mentions.some(x => x.id === t.id)) mentions.push({ type: "topic", id: t.id, label: `${t.code} ${t.title}` });
   }
   return mentions;
 }

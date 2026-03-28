@@ -1,27 +1,46 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useStudents } from "@/lib/students";
 import { useSubjects } from "@/lib/subjects";
 import { useSettings } from "@/lib/settings";
-import { parseSessionLog, extractMentions, saveSessionLog, type ParsedSessionData } from "@/lib/session-log";
+import { parseSessionLog, saveSessionLog, type ParsedSessionData } from "@/lib/session-log";
 import { CircleNotch } from "@phosphor-icons/react/dist/ssr/CircleNotch";
 import { PaperPlaneRight } from "@phosphor-icons/react/dist/ssr/PaperPlaneRight";
 import { Check } from "@phosphor-icons/react/dist/ssr/Check";
 import { X } from "@phosphor-icons/react/dist/ssr/X";
+import { Users } from "@phosphor-icons/react/dist/ssr/Users";
+import { Books } from "@phosphor-icons/react/dist/ssr/Books";
 import { Button } from "@/components/ui/button";
 
-type AutoItem = { id: string; label: string; sublabel: string };
-type Trigger = { type: "student" | "topic"; query: string; start: number } | null;
+// ── Mention tracking ──
 
-function detectTrigger(text: string, pos: number): Trigger {
+type MentionEntry = { type: "student" | "topic"; id: string; label: string };
+
+// ── Trigger detection ──
+
+type TriggerState =
+  | { phase: "category"; query: string; start: number }
+  | { phase: "items"; type: "student" | "topic"; query: string; start: number }
+  | null;
+
+function detectTrigger(text: string, pos: number): TriggerState {
   const before = text.slice(0, pos);
-  const sm = before.match(/@student:([^@\n]*)$/);
-  if (sm) return { type: "student", query: sm[1], start: pos - sm[0].length };
-  const tm = before.match(/@topic:([^@\n]*)$/);
-  if (tm) return { type: "topic", query: tm[1], start: pos - tm[0].length };
+
+  const sm = before.match(/@student\(([^)@]*)$/);
+  if (sm) return { phase: "items", type: "student", query: sm[1], start: pos - sm[0].length };
+
+  const tm = before.match(/@topic\(([^)@]*)$/);
+  if (tm) return { phase: "items", type: "topic", query: tm[1], start: pos - tm[0].length };
+
+  // Bare @ not yet committed to a type
+  const bare = before.match(/@([^@\s(]*)$/);
+  if (bare) return { phase: "category", query: bare[1], start: pos - bare[0].length };
+
   return null;
 }
+
+// ── Component ──
 
 export function SessionLogInput({ studentId, onLogSubmitted }: {
   studentId?: string;
@@ -35,40 +54,51 @@ export function SessionLogInput({ studentId, onLogSubmitted }: {
   const [stage, setStage] = useState<"idle" | "submitting" | "review">("idle");
   const [parsed, setParsed] = useState<ParsedSessionData | null>(null);
   const [error, setError] = useState("");
-  const [trigger, setTrigger] = useState<Trigger>(null);
+  const [trigger, setTrigger] = useState<TriggerState>(null);
   const [selectedIdx, setSelectedIdx] = useState(0);
+  const mentionMapRef = useRef(new Map<string, MentionEntry>());
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Build autocomplete items
-  const items: AutoItem[] = trigger ? (() => {
+  // ── Autocomplete items ──
+
+  const categories = [
+    { key: "student", label: "Student", icon: Users },
+    { key: "topic", label: "Topic", icon: Books },
+  ];
+
+  type AutoItem = { id: string; label: string; sublabel: string };
+
+  const items: AutoItem[] = trigger?.phase === "items" ? (() => {
     const q = trigger.query.toLowerCase();
     if (trigger.type === "student") {
       return students
         .filter(s => s.name.toLowerCase().includes(q) || s.referenceNumber.toLowerCase().includes(q))
-        .slice(0, 8)
+        .slice(0, 6)
         .map(s => ({ id: s.id, label: s.name, sublabel: s.referenceNumber }));
     }
-    // Scope topics to student's subject if on student page
-    let topicPool = subjects.flatMap(sub => sub.topics.map(t => ({ ...t, subName: sub.name })));
+    let pool = subjects.flatMap(sub => sub.topics.map(t => ({ ...t, subName: sub.name })));
     if (studentId) {
       const st = students.find(s => s.id === studentId);
       if (st?.subjectId) {
         const scoped = subjects.find(s => s.id === st.subjectId);
-        if (scoped) topicPool = scoped.topics.map(t => ({ ...t, subName: scoped.name }));
+        if (scoped) pool = scoped.topics.map(t => ({ ...t, subName: scoped.name }));
       }
     }
-    return topicPool
+    return pool
       .filter(t => t.title.toLowerCase().includes(q) || t.code.toLowerCase().includes(q))
-      .slice(0, 8)
+      .slice(0, 6)
       .map(t => ({ id: t.id, label: `${t.code} ${t.title}`, sublabel: t.subName }));
   })() : [];
 
-  const handleChange = useCallback((val: string) => {
-    setText(val);
-    // Trigger detection will run on next cursor event
-  }, []);
+  const filteredCategories = trigger?.phase === "category"
+    ? categories.filter(c => c.label.toLowerCase().includes(trigger.query.toLowerCase()))
+    : [];
 
-  const handleCursorChange = () => {
+  const totalItems = trigger?.phase === "category" ? filteredCategories.length : items.length;
+
+  // ── Cursor + trigger detection ──
+
+  const refreshTrigger = () => {
     const el = textareaRef.current;
     if (!el) return;
     const t = detectTrigger(text, el.selectionStart);
@@ -76,31 +106,66 @@ export function SessionLogInput({ studentId, onLogSubmitted }: {
     setSelectedIdx(0);
   };
 
-  const selectItem = (item: AutoItem) => {
+  // ── Selection handlers ──
+
+  const selectCategory = (key: string) => {
     if (!trigger || !textareaRef.current) return;
     const el = textareaRef.current;
     const before = text.slice(0, trigger.start);
     const after = text.slice(el.selectionStart);
-    const token = `@${trigger.type}:${item.label} `;
-    const newText = before + token + after;
+    const insert = `@${key}(`;
+    const newText = before + insert + after;
     setText(newText);
     setTrigger(null);
     setTimeout(() => {
-      const pos = before.length + token.length;
+      const pos = before.length + insert.length;
+      el.focus();
+      el.setSelectionRange(pos, pos);
+      // Re-detect to enter items phase
+      const t = detectTrigger(newText, pos);
+      setTrigger(t);
+      setSelectedIdx(0);
+    }, 0);
+  };
+
+  const selectItem = (item: AutoItem) => {
+    if (!trigger || trigger.phase !== "items" || !textareaRef.current) return;
+    const el = textareaRef.current;
+    const before = text.slice(0, trigger.start);
+    const after = text.slice(el.selectionStart);
+    const token = `@${trigger.type}(${item.label})`;
+    const newText = before + token + " " + after;
+    setText(newText);
+
+    // Track mention by ID
+    mentionMapRef.current.set(token, { type: trigger.type, id: item.id, label: item.label });
+
+    setTrigger(null);
+    setTimeout(() => {
+      const pos = before.length + token.length + 1;
       el.focus();
       el.setSelectionRange(pos, pos);
     }, 0);
   };
 
+  // ── Keyboard nav ──
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (trigger && items.length > 0) {
-      if (e.key === "ArrowDown") { e.preventDefault(); setSelectedIdx(i => Math.min(i + 1, items.length - 1)); return; }
+    if (trigger && totalItems > 0) {
+      if (e.key === "ArrowDown") { e.preventDefault(); setSelectedIdx(i => Math.min(i + 1, totalItems - 1)); return; }
       if (e.key === "ArrowUp") { e.preventDefault(); setSelectedIdx(i => Math.max(i - 1, 0)); return; }
-      if (e.key === "Enter" || e.key === "Tab") { e.preventDefault(); selectItem(items[selectedIdx]); return; }
+      if (e.key === "Enter" || e.key === "Tab") {
+        e.preventDefault();
+        if (trigger.phase === "category") selectCategory(filteredCategories[selectedIdx].key);
+        else selectItem(items[selectedIdx]);
+        return;
+      }
       if (e.key === "Escape") { setTrigger(null); return; }
     }
     if ((e.metaKey || e.ctrlKey) && e.key === "Enter") { e.preventDefault(); handleSubmit(); }
   };
+
+  // ── Submit ──
 
   const handleSubmit = async () => {
     if (!text.trim() || stage !== "idle") return;
@@ -110,16 +175,16 @@ export function SessionLogInput({ studentId, onLogSubmitted }: {
     try {
       const result = await parseSessionLog(text, students, subjects, settings.openRouterApiKey, settings.aiModel);
       if (result.students.length === 0) {
-        // No structured data extracted — save as raw note for the student if on student page
         if (studentId) {
           addNote(studentId, text.trim());
           saveSessionLog({ id: crypto.randomUUID(), rawText: text, parsedData: null, createdAt: new Date().toISOString() });
           setText("");
+          mentionMapRef.current.clear();
           setStage("idle");
           onLogSubmitted?.();
           return;
         }
-        throw new Error("Could not identify any students in the log. Use @student: to mention them.");
+        throw new Error("No students identified. Type @ to mention a student.");
       }
       setParsed(result);
       setStage("review");
@@ -140,63 +205,78 @@ export function SessionLogInput({ studentId, onLogSubmitted }: {
     }
     saveSessionLog({ id: crypto.randomUUID(), rawText: text, parsedData: parsed, createdAt: new Date().toISOString() });
     setText("");
+    mentionMapRef.current.clear();
     setParsed(null);
     setStage("idle");
     onLogSubmitted?.();
   };
 
-  const handleCancel = () => { setParsed(null); setStage("idle"); };
+  // ── Auto-resize ──
 
-  // Auto-resize textarea
   const autoResize = (el: HTMLTextAreaElement) => {
     el.style.height = "auto";
     el.style.height = Math.min(el.scrollHeight, 200) + "px";
   };
 
+  // Reset trigger when text changes externally
+  useEffect(() => { if (!text) setTrigger(null); }, [text]);
+
+  const showDropdown = trigger && totalItems > 0;
+
   return (
-    <div className="rounded-lg border border-border/50 overflow-hidden">
-      {/* Header */}
-      <div className="px-4 py-2 bg-muted/80 text-xs font-medium text-muted-foreground">Session Log</div>
+    <div className="rounded-lg border border-border/50 overflow-visible relative">
+      {/* Dropdown — positioned ABOVE the component */}
+      {showDropdown && (
+        <div className="absolute left-0 right-0 bottom-full mb-1 z-50">
+          <div className="mx-3 rounded-lg border border-border bg-popover shadow-lg overflow-hidden">
+            {trigger.phase === "category" ? (
+              filteredCategories.map((c, i) => (
+                <button
+                  key={c.key}
+                  onMouseDown={(e) => { e.preventDefault(); selectCategory(c.key); }}
+                  className={`flex items-center gap-2.5 w-full px-3 py-2 text-sm text-left transition-colors ${
+                    i === selectedIdx ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"
+                  }`}
+                >
+                  <c.icon size={15} className="text-muted-foreground/60 shrink-0" />
+                  <span>{c.label}</span>
+                  <span className="text-[10px] text-muted-foreground/40 ml-auto">@{c.key}()</span>
+                </button>
+              ))
+            ) : (
+              items.map((item, i) => (
+                <button
+                  key={item.id}
+                  onMouseDown={(e) => { e.preventDefault(); selectItem(item); }}
+                  className={`flex items-center gap-2 w-full px-3 py-2 text-sm text-left transition-colors ${
+                    i === selectedIdx ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"
+                  }`}
+                >
+                  <span className="truncate">{item.label}</span>
+                  <span className="text-[10px] text-muted-foreground/40 ml-auto shrink-0">{item.sublabel}</span>
+                </button>
+              ))
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Input area */}
-      <div className="relative bg-card">
+      <div className="bg-card rounded-t-lg">
         <textarea
           ref={textareaRef}
           value={text}
-          onChange={(e) => { handleChange(e.target.value); autoResize(e.target); }}
-          onKeyUp={handleCursorChange}
-          onClick={handleCursorChange}
+          onChange={(e) => { setText(e.target.value); autoResize(e.target); }}
+          onKeyUp={refreshTrigger}
+          onClick={refreshTrigger}
           onKeyDown={handleKeyDown}
           placeholder={studentId
-            ? "Log a session... e.g. We covered @topic: and did a test, got 18/25"
-            : "Log a session... e.g. @student:Name was focused today, we covered @topic: ..."
+            ? "Log a session... type @ to mention topics. Ctrl+Enter to submit."
+            : "Log a session... type @ to mention students or topics."
           }
           className="w-full px-4 py-3 text-sm bg-transparent outline-none resize-none placeholder:text-muted-foreground/40 min-h-[72px]"
           disabled={stage !== "idle"}
         />
-
-        {/* Autocomplete dropdown */}
-        {trigger && items.length > 0 && (
-          <div className="absolute left-4 right-4 bottom-0 translate-y-full z-50 rounded-lg border border-border bg-popover shadow-lg overflow-hidden max-h-52 overflow-auto">
-            {items.map((item, i) => (
-              <button
-                key={item.id}
-                onMouseDown={(e) => { e.preventDefault(); selectItem(item); }}
-                className={`flex items-center gap-2 w-full px-3 py-2 text-sm text-left transition-colors ${
-                  i === selectedIdx ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"
-                }`}
-              >
-                <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${
-                  trigger.type === "student" ? "bg-[var(--mention-student)]/15 text-[var(--mention-student)]" : "bg-[var(--mention-topic)]/15 text-[var(--mention-topic)]"
-                }`}>
-                  {trigger.type === "student" ? "@" : "#"}
-                </span>
-                <span className="truncate">{item.label}</span>
-                <span className="text-xs text-muted-foreground/50 ml-auto shrink-0">{item.sublabel}</span>
-              </button>
-            ))}
-          </div>
-        )}
       </div>
 
       {/* Error */}
@@ -224,9 +304,9 @@ export function SessionLogInput({ studentId, onLogSubmitted }: {
       )}
 
       {/* Footer */}
-      <div className="px-4 py-2 border-t border-border/20 flex items-center justify-between">
+      <div className="px-4 py-2 border-t border-border/20 flex items-center justify-between rounded-b-lg bg-muted/40">
         <span className="text-[10px] text-muted-foreground/40">
-          @student: and @topic: to mention · Ctrl+Enter to submit
+          Type <kbd className="px-1 py-0.5 rounded border border-border/50 bg-background/80 font-mono text-[9px]">@</kbd> to mention · Ctrl+Enter to submit
         </span>
         {stage === "idle" && (
           <Button variant="outline" size="xs" onClick={handleSubmit} disabled={!text.trim()}>
@@ -240,7 +320,7 @@ export function SessionLogInput({ studentId, onLogSubmitted }: {
         )}
         {stage === "review" && (
           <div className="flex gap-1.5">
-            <Button variant="ghost" size="xs" onClick={handleCancel}>
+            <Button variant="ghost" size="xs" onClick={() => { setParsed(null); setStage("idle"); }}>
               <X size={12} className="mr-1" /> Cancel
             </Button>
             <Button size="xs" onClick={handleConfirm}>
