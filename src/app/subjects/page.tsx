@@ -79,7 +79,7 @@ function SubjectActions({ subject, onDelete, onRename, side = "bottom" }: {
   const [deleteOpen, setDeleteOpen] = useState(false);
 
   return (
-    <>
+    <div className="flex items-center gap-1">
       <DropdownMenu>
         <DropdownMenuTrigger className="p-1.5 rounded-md text-muted-foreground/40 hover:text-muted-foreground hover:bg-accent/50 transition-all outline-none">
           <DotsThreeVertical size={16} weight="bold" />
@@ -93,12 +93,12 @@ function SubjectActions({ subject, onDelete, onRename, side = "bottom" }: {
           <DropdownMenuItem onClick={() => exportSubjectJSON(subject)}>
             <DownloadSimple size={14} /> Export JSON
           </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem variant="destructive" onClick={() => setDeleteOpen(true)}>
-            <Trash size={14} /> Delete
-          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      <button onClick={() => setDeleteOpen(true)}
+        className="p-1.5 rounded-md text-muted-foreground/30 hover:text-destructive hover:bg-destructive/10 transition-all">
+        <Trash size={14} />
+      </button>
 
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <AlertDialogContent>
@@ -116,7 +116,7 @@ function SubjectActions({ subject, onDelete, onRename, side = "bottom" }: {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </>
+    </div>
   );
 }
 

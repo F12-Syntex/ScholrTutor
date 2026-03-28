@@ -125,6 +125,8 @@ function StudentDetail({ student, onBack }: { student: Student; onBack: () => vo
   const [editEmail, setEditEmail] = useState(student.email);
   const [editRef, setEditRef] = useState(student.referenceNumber);
   const [editIcon, setEditIcon] = useState(student.icon);
+  const [deleteNoteId, setDeleteNoteId] = useState<string | null>(null);
+  const [deleteTestId, setDeleteTestId] = useState<string | null>(null);
 
   useEffect(() => {
     setSubtitle(student.name);
@@ -183,20 +185,22 @@ function StudentDetail({ student, onBack }: { student: Student; onBack: () => vo
               </p>
             </div>
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger className="p-1.5 rounded-md text-muted-foreground/40 hover:text-muted-foreground hover:bg-accent/50 transition-all outline-none">
-              <DotsThreeVertical size={18} weight="bold" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => { setEditName(student.name); setEditEmail(student.email); setEditRef(student.referenceNumber); setEditIcon(student.icon); setEditOpen(true); }}>
-                <PencilSimple size={14} /> Edit
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem variant="destructive" onClick={() => setDeleteOpen(true)}>
-                <Trash size={14} /> Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex items-center gap-1">
+            <DropdownMenu>
+              <DropdownMenuTrigger className="p-1.5 rounded-md text-muted-foreground/40 hover:text-muted-foreground hover:bg-accent/50 transition-all outline-none">
+                <DotsThreeVertical size={18} weight="bold" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => { setEditName(student.name); setEditEmail(student.email); setEditRef(student.referenceNumber); setEditIcon(student.icon); setEditOpen(true); }}>
+                  <PencilSimple size={14} /> Edit
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <button onClick={() => setDeleteOpen(true)}
+              className="p-1.5 rounded-md text-muted-foreground/30 hover:text-destructive hover:bg-destructive/10 transition-all">
+              <Trash size={16} />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -246,7 +250,7 @@ function StudentDetail({ student, onBack }: { student: Student; onBack: () => vo
                 <div key={n.id} className="group px-4 py-2.5">
                   <div className="flex items-start justify-between gap-2">
                     <p className="text-sm text-foreground/80 whitespace-pre-wrap">{n.content}</p>
-                    <button onClick={() => deleteNote(student.id, n.id)}
+                    <button onClick={() => setDeleteNoteId(n.id)}
                       className="opacity-0 group-hover:opacity-100 p-0.5 text-muted-foreground/30 hover:text-destructive transition-all shrink-0 mt-0.5">
                       <Trash size={12} />
                     </button>
@@ -275,7 +279,7 @@ function StudentDetail({ student, onBack }: { student: Student; onBack: () => vo
                       <span className="text-sm tabular-nums text-muted-foreground shrink-0">{r.scoreGot}/{r.scoreOf}</span>
                       <span className="text-xs text-muted-foreground/50 shrink-0">({Math.round((r.scoreGot / r.scoreOf) * 100)}%)</span>
                     </div>
-                    <button onClick={() => deleteTestResult(student.id, r.id)}
+                    <button onClick={() => setDeleteTestId(r.id)}
                       className="opacity-0 group-hover:opacity-100 p-0.5 text-muted-foreground/30 hover:text-destructive transition-all shrink-0">
                       <Trash size={12} />
                     </button>
@@ -332,6 +336,34 @@ function StudentDetail({ student, onBack }: { student: Student; onBack: () => vo
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handleEditSave}>Save</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Delete note confirmation */}
+      <AlertDialog open={!!deleteNoteId} onOpenChange={(v) => { if (!v) setDeleteNoteId(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete note?</AlertDialogTitle>
+            <AlertDialogDescription>This note will be permanently removed.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction variant="destructive" onClick={() => { if (deleteNoteId) deleteNote(student.id, deleteNoteId); setDeleteNoteId(null); }}>Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Delete test result confirmation */}
+      <AlertDialog open={!!deleteTestId} onOpenChange={(v) => { if (!v) setDeleteTestId(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete test result?</AlertDialogTitle>
+            <AlertDialogDescription>This test result will be permanently removed.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction variant="destructive" onClick={() => { if (deleteTestId) deleteTestResult(student.id, deleteTestId); setDeleteTestId(null); }}>Delete</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
