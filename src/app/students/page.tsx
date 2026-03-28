@@ -146,9 +146,9 @@ function StudentDetail({ student, onBack }: { student: Student; onBack: () => vo
   };
 
   const grades = [
-    { label: "Current", value: student.currentGrade },
-    { label: "Predicted", value: student.predictedGrade },
-    { label: "Target", value: student.targetGrade },
+    { label: "Current", value: student.currentGrade, key: "currentGrade" as const },
+    { label: "Predicted", value: student.predictedGrade, key: "predictedGrade" as const },
+    { label: "Target", value: student.targetGrade, key: "targetGrade" as const },
   ];
 
   return (
@@ -201,9 +201,14 @@ function StudentDetail({ student, onBack }: { student: Student; onBack: () => vo
             <div className="px-4 py-2 bg-muted/80 text-[10px] font-medium text-muted-foreground">Grades</div>
             <div className="bg-card flex divide-x divide-border/30">
               {grades.map(g => (
-                <div key={g.label} className="flex-1 px-2 py-2.5 text-center">
-                  <div className="text-[9px] text-muted-foreground/50">{g.label}</div>
-                  <div className="text-sm font-medium">{g.value || "—"}</div>
+                <div key={g.label} className="flex-1 px-2 py-2 text-center">
+                  <div className="text-[9px] text-muted-foreground/50 mb-0.5">{g.label}</div>
+                  <input
+                    value={g.value}
+                    onChange={(e) => updateStudent(student.id, { [g.key]: e.target.value })}
+                    placeholder="—"
+                    className="w-full text-sm font-medium text-center bg-transparent outline-none border-b border-transparent hover:border-border/40 focus:border-primary/40 transition-colors placeholder:text-muted-foreground/30"
+                  />
                 </div>
               ))}
             </div>
