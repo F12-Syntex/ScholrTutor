@@ -371,20 +371,68 @@ export function SessionLogInput({ studentId, onLogSubmitted }: {
 
       {/* Review */}
       {stage === "review" && parsed && (
-        <div className="border-t border-border/20 px-4 py-3 bg-muted/30 space-y-2">
-          <p className="text-xs font-medium text-muted-foreground">AI extracted:</p>
-          {parsed.students.map(sd => (
-            <div key={sd.studentId} className="text-xs space-y-0.5">
-              <span className="font-medium">{sd.studentName}</span>
-              {sd.notes.length > 0 && <p className="text-muted-foreground">{sd.notes.length} note{sd.notes.length > 1 ? "s" : ""}</p>}
-              {sd.testResults.length > 0 && (
-                <p className="text-muted-foreground">
-                  {sd.testResults.map(r => `${r.name}: ${r.scoreGot}/${r.scoreOf}`).join(", ")}
-                </p>
-              )}
-              {sd.incrementSession && <p className="text-muted-foreground">+1 session</p>}
-            </div>
-          ))}
+        <div className="border-t border-border/20 bg-muted/30">
+          <div className="px-4 py-2 text-[10px] font-medium text-muted-foreground/60 uppercase tracking-wider">
+            Review before saving
+          </div>
+          <div className="px-4 pb-3 space-y-3">
+            {parsed.students.map(sd => (
+              <div key={sd.studentId} className="rounded-md border border-border/40 bg-card overflow-hidden">
+                {/* Student header */}
+                <div className="px-3 py-2 bg-muted/50 flex items-center gap-2 border-b border-border/20">
+                  <span className="size-1.5 rounded-full bg-[var(--mention-student)]" />
+                  <span className="text-sm font-medium">{sd.studentName}</span>
+                  {sd.incrementSession && (
+                    <span className="ml-auto text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-primary/10 text-primary">+1 session</span>
+                  )}
+                </div>
+                <div className="px-3 py-2 space-y-2">
+                  {/* Notes */}
+                  {sd.notes.length > 0 && (
+                    <div>
+                      <p className="text-[10px] font-medium text-muted-foreground/50 mb-1">Notes</p>
+                      {sd.notes.map((note, i) => (
+                        <p key={i} className="text-xs text-foreground/70 pl-2 border-l-2 border-border/30 mb-1">{note}</p>
+                      ))}
+                    </div>
+                  )}
+                  {/* Test results */}
+                  {sd.testResults.length > 0 && (
+                    <div>
+                      <p className="text-[10px] font-medium text-muted-foreground/50 mb-1">Test Results</p>
+                      {sd.testResults.map((r, i) => (
+                        <div key={i} className="flex items-center gap-2 text-xs mb-1">
+                          <span className="text-foreground/70">{r.name}</span>
+                          <span className="font-medium tabular-nums">{r.scoreGot}/{r.scoreOf}</span>
+                          <span className="text-muted-foreground/50">({Math.round((r.scoreGot / r.scoreOf) * 100)}%)</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {/* Topics */}
+                  {sd.topicIds.length > 0 && (
+                    <div>
+                      <p className="text-[10px] font-medium text-muted-foreground/50 mb-1">Topics Covered</p>
+                      <div className="flex flex-wrap gap-1">
+                        {sd.topicIds.map(tid => {
+                          const topic = subjects.flatMap(s => s.topics).find(t => t.id === tid);
+                          return topic ? (
+                            <span key={tid} className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-[color-mix(in_srgb,var(--mention-topic)_15%,transparent)] text-[var(--mention-topic)]">
+                              {topic.code} {topic.title}
+                            </span>
+                          ) : null;
+                        })}
+                      </div>
+                    </div>
+                  )}
+                  {/* Empty state */}
+                  {sd.notes.length === 0 && sd.testResults.length === 0 && sd.topicIds.length === 0 && (
+                    <p className="text-xs text-muted-foreground/40">Session logged, no additional details extracted.</p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
