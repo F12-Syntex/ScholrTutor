@@ -9,8 +9,27 @@ import { Minus } from "@phosphor-icons/react/dist/ssr/Minus";
 import { UploadSimple } from "@phosphor-icons/react/dist/ssr/UploadSimple";
 import { CircleNotch } from "@phosphor-icons/react/dist/ssr/CircleNotch";
 import { Check } from "@phosphor-icons/react/dist/ssr/Check";
+import { DotsThreeVertical } from "@phosphor-icons/react/dist/ssr/DotsThreeVertical";
+import { DownloadSimple } from "@phosphor-icons/react/dist/ssr/DownloadSimple";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogAction,
+  AlertDialogCancel,
+} from "@/components/ui/alert-dialog";
 
 // ── Types — simplified: just major.minor ──
 
@@ -156,10 +175,33 @@ function UnitPreview({ unit }: { unit: { code: string; title: string; topics: { 
 function SubjectRow({ subject }: { subject: Subject }) {
   const { deleteSubject } = useSubjects();
   const [expanded, setExpanded] = useState(false);
-  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   const roots = subject.topics.filter((t) => !t.parentCode)
     .sort((a, b) => a.code.localeCompare(b.code, undefined, { numeric: true }));
+
+  const handleExport = () => {
+    const data = {
+      name: subject.name,
+      examBoard: subject.examBoard,
+      level: subject.level,
+      units: roots.map(root => ({
+        code: root.code,
+        title: root.title,
+        topics: subject.topics
+          .filter(t => t.parentCode === root.code)
+          .sort((a, b) => a.code.localeCompare(b.code, undefined, { numeric: true }))
+          .map(t => ({ code: t.code, title: t.title })),
+      })),
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${subject.name.toLowerCase().replace(/\s+/g, "-")}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div>
@@ -169,18 +211,27 @@ function SubjectRow({ subject }: { subject: Subject }) {
         <span className="text-sm font-medium truncate">{subject.name}</span>
         <span className="text-[11px] text-muted-foreground/50 shrink-0">{subject.examBoard} · {subject.level}</span>
         <span className="text-xs text-muted-foreground/40 ml-auto shrink-0">{subject.topics.length} topics</span>
-        {confirmDelete ? (
-          <div className="flex items-center gap-1.5 shrink-0" onClick={(e) => e.stopPropagation()}>
-            <button onClick={() => deleteSubject(subject.id)} className="text-[11px] font-medium text-destructive hover:underline">Delete</button>
-            <button onClick={() => setConfirmDelete(false)} className="text-[11px] text-muted-foreground hover:underline">Cancel</button>
-          </div>
-        ) : (
-          <button onClick={(e) => { e.stopPropagation(); setConfirmDelete(true); }}
-            className="opacity-0 group-hover:opacity-100 p-1 text-muted-foreground/30 hover:text-destructive transition-all shrink-0">
-            <Trash size={14} />
-          </button>
-        )}
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            onClick={(e: React.MouseEvent) => e.stopPropagation()}
+            className="opacity-0 group-hover:opacity-100 aria-expanded:opacity-100 p-1 rounded-md text-muted-foreground/40 hover:text-muted-foreground hover:bg-accent/50 transition-all shrink-0 outline-none"
+          >
+            <DotsThreeVertical size={16} weight="bold" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={handleExport}>
+              <DownloadSimple size={14} />
+              Export JSON
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem variant="destructive" onClick={() => setDeleteOpen(true)}>
+              <Trash size={14} />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
+
       {expanded && roots.length > 0 && (
         <div className="ml-[21px] pl-3.5 border-l border-border/25 py-0.5 mb-1">
           {roots.map((root) => (
@@ -188,6 +239,28 @@ function SubjectRow({ subject }: { subject: Subject }) {
           ))}
         </div>
       )}
+
+      <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete subject?</AlertDialogTitle>
+            <AlertDialogDescription>
+              <span className="text-foreground font-medium">{subject.name}</span> and
+              all {subject.topics.length} topics will be permanently deleted.
+              This cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              onClick={() => deleteSubject(subject.id)}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
