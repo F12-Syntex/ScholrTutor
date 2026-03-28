@@ -33,9 +33,6 @@ function LogCard({ log }: { log: SessionLogEntry }) {
               <div className="flex items-center gap-2">
                 <span className="size-1.5 rounded-full bg-[var(--mention-student)] shrink-0" />
                 <span className="text-xs font-medium">{sd.studentName}</span>
-                {sd.incrementSession && (
-                  <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-primary/10 text-primary">+1 session</span>
-                )}
               </div>
 
               {/* Notes */}

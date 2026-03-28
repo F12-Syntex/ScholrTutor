@@ -34,7 +34,7 @@ import {
 const navItems: { href: string; label: string; icon: Icon }[] = [
   { href: "/", label: "Dashboard", icon: SquaresFour },
   { href: "/students", label: "Students", icon: Users },
-  { href: "/session", label: "Session Log", icon: ChatText },
+  { href: "/session", label: "Session Times", icon: ChatText },
   { href: "/files", label: "Files", icon: FolderOpen },
   { href: "/summary", label: "Summary", icon: FileText },
   { href: "/subjects", label: "Subjects", icon: Books },

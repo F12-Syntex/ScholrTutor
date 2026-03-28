@@ -4,7 +4,7 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import { useStudents } from "@/lib/students";
 import { useSubjects } from "@/lib/subjects";
 import { useSettings } from "@/lib/settings";
-import { parseSessionLog, saveSessionLog, type ParsedSessionData } from "@/lib/session-log";
+import { parseSessionLog, saveSessionLog, resolveSessionSlot, type ParsedSessionData } from "@/lib/session-log";
 import { CircleNotch } from "@phosphor-icons/react/dist/ssr/CircleNotch";
 import { PaperPlaneRight } from "@phosphor-icons/react/dist/ssr/PaperPlaneRight";
 import { Check } from "@phosphor-icons/react/dist/ssr/Check";
@@ -257,7 +257,8 @@ export function SessionLogInput({ studentId, onLogSubmitted }: {
       if (result.students.length === 0) {
         if (studentId) {
           addNote(studentId, text.trim());
-          saveSessionLog({ id: crypto.randomUUID(), rawText: text, parsedData: null, createdAt: new Date().toISOString() });
+          const now = new Date();
+          saveSessionLog({ id: crypto.randomUUID(), rawText: text, parsedData: null, sessionSlot: resolveSessionSlot(now), createdAt: now.toISOString() });
           clearEditor();
           setStage("idle");
           onLogSubmitted?.();
@@ -280,9 +281,10 @@ export function SessionLogInput({ studentId, onLogSubmitted }: {
       if (!student) continue;
       for (const note of sd.notes) addNote(sd.studentId, note);
       for (const tr of sd.testResults) addTestResult(sd.studentId, tr);
-      if (sd.incrementSession) updateStudent(sd.studentId, { completedSessions: student.completedSessions + 1 });
+      updateStudent(sd.studentId, { completedSessions: student.completedSessions + 1 });
     }
-    saveSessionLog({ id: crypto.randomUUID(), rawText: rawText, parsedData: parsed, createdAt: new Date().toISOString() });
+    const now = new Date();
+    saveSessionLog({ id: crypto.randomUUID(), rawText: rawText, parsedData: parsed, sessionSlot: resolveSessionSlot(now), createdAt: now.toISOString() });
     clearEditor();
     setParsed(null);
     setStage("idle");
@@ -382,9 +384,6 @@ export function SessionLogInput({ studentId, onLogSubmitted }: {
                 <div className="px-3 py-2 bg-muted/50 flex items-center gap-2 border-b border-border/20">
                   <span className="size-1.5 rounded-full bg-[var(--mention-student)]" />
                   <span className="text-sm font-medium">{sd.studentName}</span>
-                  {sd.incrementSession && (
-                    <span className="ml-auto text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-primary/10 text-primary">+1 session</span>
-                  )}
                 </div>
                 <div className="px-3 py-2 space-y-2">
                   {/* Notes */}

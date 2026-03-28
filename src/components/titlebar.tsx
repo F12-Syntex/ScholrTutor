@@ -12,7 +12,7 @@ import { useBreadcrumb } from "@/lib/breadcrumb";
 const pageTitles: Record<string, string> = {
   "/": "Dashboard",
   "/students": "Students",
-  "/session": "Session Log",
+  "/session": "Session Times",
   "/files": "Files",
   "/summary": "Summary",
   "/subjects": "Subjects",

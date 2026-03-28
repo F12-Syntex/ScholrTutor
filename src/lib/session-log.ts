@@ -13,7 +13,6 @@ export interface ParsedStudentData {
   notes: string[];
   testResults: { name: string; scoreGot: number; scoreOf: number }[];
   topicIds: string[];
-  incrementSession: boolean;
 }
 
 export interface ParsedSessionData {
@@ -24,14 +23,86 @@ export interface SessionLogEntry {
   id: string;
   rawText: string;
   parsedData: ParsedSessionData | null;
+  sessionSlot: number; // 0-3 index into SESSION_SLOTS
   createdAt: string;
 }
+
+// ── Session time slots ──
+
+export const SESSION_SLOTS = [
+  { label: "Session 1", start: "09:00", end: "11:00" },
+  { label: "Session 2", start: "11:20", end: "13:20" },
+  { label: "Session 3", start: "14:10", end: "16:10" },
+  { label: "Session 4", start: "16:30", end: "18:30" },
+] as const;
+
+/** Convert "HH:MM" to minutes since midnight */
+function toMinutes(hhmm: string): number {
+  const [h, m] = hhmm.split(":").map(Number);
+  return h * 60 + m;
+}
+
+/**
+ * Resolve which session slot a timestamp belongs to.
+ * If the time falls between slots, it's attributed to the previous slot.
+ * Before slot 0 → slot 0. After slot 3 → slot 3.
+ */
+export function resolveSessionSlot(date: Date): number {
+  const mins = date.getHours() * 60 + date.getMinutes();
+
+  // Before first session starts → slot 0
+  if (mins < toMinutes(SESSION_SLOTS[0].start)) return 0;
+
+  // Check each slot
+  for (let i = 0; i < SESSION_SLOTS.length; i++) {
+    const slotStart = toMinutes(SESSION_SLOTS[i].start);
+    const slotEnd = toMinutes(SESSION_SLOTS[i].end);
+    if (mins >= slotStart && mins <= slotEnd) return i;
+  }
+
+  // Between slots: find which gap we're in → attribute to previous slot
+  for (let i = 0; i < SESSION_SLOTS.length - 1; i++) {
+    const thisEnd = toMinutes(SESSION_SLOTS[i].end);
+    const nextStart = toMinutes(SESSION_SLOTS[i + 1].start);
+    if (mins > thisEnd && mins < nextStart) return i;
+  }
+
+  // After last slot → last slot
+  return SESSION_SLOTS.length - 1;
+}
+
+/** Format a slot's time range for display */
+export function formatSlotTime(slotIndex: number): string {
+  const slot = SESSION_SLOTS[slotIndex];
+  if (!slot) return "";
+  const fmt = (hhmm: string) => {
+    const [h, m] = hhmm.split(":").map(Number);
+    const ampm = h >= 12 ? "PM" : "AM";
+    const h12 = h % 12 || 12;
+    return `${h12}:${String(m).padStart(2, "0")} ${ampm}`;
+  };
+  return `${fmt(slot.start)} – ${fmt(slot.end)}`;
+}
+
+/** Get date string as YYYY-MM-DD */
+export function toDateKey(date: Date): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
+// ── Storage ──
 
 const LOG_KEY = "scholrtutor-session-logs";
 
 export function loadSessionLogs(): SessionLogEntry[] {
   if (typeof window === "undefined") return [];
-  try { return JSON.parse(localStorage.getItem(LOG_KEY) || "[]"); } catch { return []; }
+  try {
+    const logs = JSON.parse(localStorage.getItem(LOG_KEY) || "[]") as SessionLogEntry[];
+    // Migrate old entries missing sessionSlot
+    return logs.map(l => ({
+      ...l,
+      sessionSlot: l.sessionSlot ?? resolveSessionSlot(new Date(l.createdAt)),
+    }));
+  } catch { return []; }
 }
 
 export function saveSessionLog(entry: SessionLogEntry) {
@@ -40,6 +111,8 @@ export function saveSessionLog(entry: SessionLogEntry) {
   if (logs.length > 200) logs.length = 200;
   localStorage.setItem(LOG_KEY, JSON.stringify(logs));
 }
+
+// ── Mention extraction ──
 
 export function extractMentions(text: string, students: Student[], subjects: Subject[]): MentionToken[] {
   const mentions: MentionToken[] = [];
@@ -58,7 +131,6 @@ export function extractMentions(text: string, students: Student[], subjects: Sub
     );
     if (t) mentions.push({ type: "topic", id: t.id, label: `${t.code} ${t.title}` });
   }
-  // Also support old @student: format for backwards compat
   for (const m of text.matchAll(/@student:([^\n@]+?)(?=\s|$|@)/g)) {
     const name = m[1].trim();
     const s = students.find(st => st.name.toLowerCase() === name.toLowerCase());
@@ -71,6 +143,8 @@ export function extractMentions(text: string, students: Student[], subjects: Sub
   }
   return mentions;
 }
+
+// ── AI parsing ──
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function parseSessionLog(
@@ -96,12 +170,11 @@ ${topicList || "(none)"}
 Rules:
 - Extract notes (observations about a student), test results (score/total), and topics covered
 - "got 10/25", "scored 18/20", "full marks" → test results. "full marks" means scoreGot === scoreOf
-- Set incrementSession: true if this log represents a completed session with the student
 - Associate topics and scores with the nearest mentioned student
 - If only one student is mentioned or implied, attribute everything to them
 
 Return ONLY valid JSON:
-{"students":[{"studentId":"<id>","studentName":"<name>","notes":["<text>"],"testResults":[{"name":"<description>","scoreGot":<n>,"scoreOf":<n>}],"topicIds":["<id>"],"incrementSession":true}]}`;
+{"students":[{"studentId":"<id>","studentName":"<name>","notes":["<text>"],"testResults":[{"name":"<description>","scoreGot":<n>,"scoreOf":<n>}],"topicIds":["<id>"]}]}`;
 
   const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
