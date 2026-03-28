@@ -1,242 +1,17 @@
 {
   "_export": "scholrtutor",
   "_version": "2.4",
-  "_date": "2026-03-28T08:37:11.708Z",
+  "_date": "2026-03-28T08:42:35.986Z",
   "scholrtutor-subjects": [
     {
-      "id": "ed9fd0d8-117d-4075-bc19-dc4630d93a28",
-      "name": "AQA Economics A-Level",
-      "examBoard": "AQA",
-      "level": "A-Level",
-      "gradeBoundaries": [
-        {
-          "grade": "A*",
-          "minPercent": 90
-        },
-        {
-          "grade": "A",
-          "minPercent": 80
-        },
-        {
-          "grade": "B",
-          "minPercent": 70
-        },
-        {
-          "grade": "C",
-          "minPercent": 60
-        },
-        {
-          "grade": "D",
-          "minPercent": 50
-        },
-        {
-          "grade": "E",
-          "minPercent": 40
-        },
-        {
-          "grade": "U",
-          "minPercent": 0
-        }
-      ],
-      "topics": [],
-      "createdAt": "2025-09-01T00:00:00.000Z"
-    },
-    {
-      "id": "f682fabd-ff74-4454-86bb-ccf9caf6dba9",
-      "name": "Edexcel Economics A-Level",
-      "examBoard": "Edexcel",
-      "level": "A-Level",
-      "gradeBoundaries": [
-        {
-          "grade": "A*",
-          "minPercent": 90
-        },
-        {
-          "grade": "A",
-          "minPercent": 80
-        },
-        {
-          "grade": "B",
-          "minPercent": 70
-        },
-        {
-          "grade": "C",
-          "minPercent": 60
-        },
-        {
-          "grade": "D",
-          "minPercent": 50
-        },
-        {
-          "grade": "E",
-          "minPercent": 40
-        },
-        {
-          "grade": "U",
-          "minPercent": 0
-        }
-      ],
-      "topics": [],
-      "createdAt": "2025-09-01T00:00:00.000Z"
-    },
-    {
-      "id": "9cab74c4-9a64-4b96-b228-946a461a0d7d",
-      "name": "Edexcel Economics AS-Level",
-      "examBoard": "Edexcel",
-      "level": "A-Level",
-      "gradeBoundaries": [
-        {
-          "grade": "A",
-          "minPercent": 80
-        },
-        {
-          "grade": "B",
-          "minPercent": 70
-        },
-        {
-          "grade": "C",
-          "minPercent": 60
-        },
-        {
-          "grade": "D",
-          "minPercent": 50
-        },
-        {
-          "grade": "E",
-          "minPercent": 40
-        },
-        {
-          "grade": "U",
-          "minPercent": 0
-        }
-      ],
-      "topics": [],
-      "createdAt": "2025-09-01T00:00:00.000Z"
-    },
-    {
-      "id": "577dcbed-af32-4289-954f-7f7e5d193201",
-      "name": "AQA Economics AS-Level",
-      "examBoard": "AQA",
-      "level": "A-Level",
-      "gradeBoundaries": [
-        {
-          "grade": "A",
-          "minPercent": 80
-        },
-        {
-          "grade": "B",
-          "minPercent": 70
-        },
-        {
-          "grade": "C",
-          "minPercent": 60
-        },
-        {
-          "grade": "D",
-          "minPercent": 50
-        },
-        {
-          "grade": "E",
-          "minPercent": 40
-        },
-        {
-          "grade": "U",
-          "minPercent": 0
-        }
-      ],
-      "topics": [],
-      "createdAt": "2025-09-01T00:00:00.000Z"
-    },
-    {
-      "id": "66c696e0-c586-4f6c-8d18-7e2cd0c48266",
-      "name": "AQA Economics GCSE",
-      "examBoard": "AQA",
-      "level": "GCSE",
-      "gradeBoundaries": [
-        {
-          "grade": "9",
-          "minPercent": 90
-        },
-        {
-          "grade": "8",
-          "minPercent": 80
-        },
-        {
-          "grade": "7",
-          "minPercent": 70
-        },
-        {
-          "grade": "6",
-          "minPercent": 60
-        },
-        {
-          "grade": "5",
-          "minPercent": 50
-        },
-        {
-          "grade": "4",
-          "minPercent": 40
-        },
-        {
-          "grade": "3",
-          "minPercent": 30
-        },
-        {
-          "grade": "U",
-          "minPercent": 0
-        }
-      ],
-      "topics": [],
-      "createdAt": "2025-09-01T00:00:00.000Z"
-    },
-    {
-      "id": "92bda106-a9a0-4792-89ac-03d0d7343507",
-      "name": "OCR Economics GCSE",
+      "name": "OCR Economics (A Level)",
       "examBoard": "OCR",
-      "level": "GCSE",
-      "gradeBoundaries": [
-        {
-          "grade": "9",
-          "minPercent": 90
-        },
-        {
-          "grade": "8",
-          "minPercent": 80
-        },
-        {
-          "grade": "7",
-          "minPercent": 70
-        },
-        {
-          "grade": "6",
-          "minPercent": 60
-        },
-        {
-          "grade": "5",
-          "minPercent": 50
-        },
-        {
-          "grade": "4",
-          "minPercent": 40
-        },
-        {
-          "grade": "3",
-          "minPercent": 30
-        },
-        {
-          "grade": "U",
-          "minPercent": 0
-        }
-      ],
-      "topics": [],
-      "createdAt": "2025-09-01T00:00:00.000Z"
-    },
-    {
-      "id": "92ab5f1e-a965-42e2-81e8-e31d7b656794",
-      "name": "OCL Economics AS-Level",
-      "examBoard": "OCL",
       "level": "A-Level",
       "gradeBoundaries": [
+        {
+          "grade": "A*",
+          "minPercent": 90
+        },
         {
           "grade": "A",
           "minPercent": 80
@@ -262,12 +37,1855 @@
           "minPercent": 0
         }
       ],
-      "topics": [],
-      "createdAt": "2025-09-01T00:00:00.000Z"
+      "id": "41b1b86d-9629-4ee2-9527-9e9ca8cdd074",
+      "topics": [
+        {
+          "code": "1",
+          "title": "Introduction to Microeconomics",
+          "parentCode": null,
+          "content": [],
+          "id": "26942608-720e-4fd5-ae77-28f0d44b1e22"
+        },
+        {
+          "code": "1.1",
+          "title": "The economic problem",
+          "parentCode": "1",
+          "content": [],
+          "id": "9113fe69-3ac4-474e-9b3c-ce143eca99a6"
+        },
+        {
+          "code": "1.2",
+          "title": "The allocation of resources",
+          "parentCode": "1",
+          "content": [],
+          "id": "418b137b-cd38-47d1-b0f1-009b8d4055c3"
+        },
+        {
+          "code": "1.3",
+          "title": "Opportunity cost",
+          "parentCode": "1",
+          "content": [],
+          "id": "97820997-912d-4719-9260-f9f1763dafd9"
+        },
+        {
+          "code": "2",
+          "title": "The role of markets",
+          "parentCode": null,
+          "content": [],
+          "id": "354db786-29f7-4c27-a864-e7b4e5a2ee65"
+        },
+        {
+          "code": "2.1",
+          "title": "Specialisation and trade",
+          "parentCode": "2",
+          "content": [],
+          "id": "c17c4ced-0c66-4c67-ad41-90c00035f57b"
+        },
+        {
+          "code": "2.2",
+          "title": "Demand",
+          "parentCode": "2",
+          "content": [],
+          "id": "d8658471-155d-4935-a4ea-924ba7f1bd68"
+        },
+        {
+          "code": "2.3",
+          "title": "Supply",
+          "parentCode": "2",
+          "content": [],
+          "id": "581baddf-12ea-4f1d-8c1d-8a7368efb458"
+        },
+        {
+          "code": "2.4",
+          "title": "Consumer and producer surplus",
+          "parentCode": "2",
+          "content": [],
+          "id": "2de20f1c-9c3f-4ece-8e8a-c42572945c3e"
+        },
+        {
+          "code": "2.5",
+          "title": "The interaction of markets",
+          "parentCode": "2",
+          "content": [],
+          "id": "fe980e93-384f-4a18-9c5d-109983d6982a"
+        },
+        {
+          "code": "2.6",
+          "title": "Elasticity",
+          "parentCode": "2",
+          "content": [],
+          "id": "b70b5064-1987-4b9c-a123-81bd2d5c43f7"
+        },
+        {
+          "code": "2.7",
+          "title": "The concept of the margin",
+          "parentCode": "2",
+          "content": [],
+          "id": "ce663bf2-36ee-47ff-a7a5-3b786c2f34ce"
+        },
+        {
+          "code": "2.8",
+          "title": "Market failure and externalities",
+          "parentCode": "2",
+          "content": [],
+          "id": "6eccd683-aad0-4d01-8ad1-0d4b587ff746"
+        },
+        {
+          "code": "2.9",
+          "title": "Information failure",
+          "parentCode": "2",
+          "content": [],
+          "id": "ed6e8461-1a73-4fd7-83b7-cffea179dd19"
+        },
+        {
+          "code": "2.10",
+          "title": "Public goods",
+          "parentCode": "2",
+          "content": [],
+          "id": "dc6f95cc-67b3-408a-a594-22162fc8e5f7"
+        },
+        {
+          "code": "2.11",
+          "title": "Government intervention",
+          "parentCode": "2",
+          "content": [],
+          "id": "34996d07-7abd-457f-8df2-eb07cffec4a5"
+        },
+        {
+          "code": "3",
+          "title": "Business Objectives",
+          "parentCode": null,
+          "content": [],
+          "id": "5d8d878f-b1a7-4c30-9290-a3df69c31a53"
+        },
+        {
+          "code": "3.1",
+          "title": "Business objectives",
+          "parentCode": "3",
+          "content": [],
+          "id": "ad1bfa14-9e11-4034-be93-8d54ee5ba26e"
+        },
+        {
+          "code": "3.2",
+          "title": "Costs and economies of scale",
+          "parentCode": "3",
+          "content": [],
+          "id": "047fd2b9-b0ee-46df-af35-247f30365f20"
+        },
+        {
+          "code": "3.3",
+          "title": "Revenue and profit",
+          "parentCode": "3",
+          "content": [],
+          "id": "73723481-60fe-42d2-a8ec-0e8f147f8790"
+        },
+        {
+          "code": "4",
+          "title": "Market structures",
+          "parentCode": null,
+          "content": [],
+          "id": "1acfa2dc-2f71-47b2-8bc4-d1a4f4170128"
+        },
+        {
+          "code": "4.1",
+          "title": "Perfect competition",
+          "parentCode": "4",
+          "content": [],
+          "id": "7cae349c-a61a-482a-90d7-1311cc264aca"
+        },
+        {
+          "code": "4.2",
+          "title": "Monopoly",
+          "parentCode": "4",
+          "content": [],
+          "id": "6e694a3c-3469-4f86-8f93-071c70716355"
+        },
+        {
+          "code": "4.3",
+          "title": "Monopolistic competition",
+          "parentCode": "4",
+          "content": [],
+          "id": "dfeb88e3-edf2-4c8c-83a8-569012ac043f"
+        },
+        {
+          "code": "4.4",
+          "title": "Oligopoly",
+          "parentCode": "4",
+          "content": [],
+          "id": "b281a0c8-b9ae-42cd-922b-c6b1541d80bd"
+        },
+        {
+          "code": "4.5",
+          "title": "Contestable markets",
+          "parentCode": "4",
+          "content": [],
+          "id": "ad4d091f-ed82-41d1-b6a8-d4f970d7a69e"
+        },
+        {
+          "code": "5",
+          "title": "The labour market",
+          "parentCode": null,
+          "content": [],
+          "id": "0b37ad0c-5b7c-4c3a-8c83-31289c855687"
+        },
+        {
+          "code": "5.1",
+          "title": "Demand for labour",
+          "parentCode": "5",
+          "content": [],
+          "id": "117c20c1-6c1a-4bf5-8308-2ff570722832"
+        },
+        {
+          "code": "5.2",
+          "title": "Supply of labour",
+          "parentCode": "5",
+          "content": [],
+          "id": "b8638311-f6a6-488c-a877-1b0d264c38bf"
+        },
+        {
+          "code": "5.3",
+          "title": "The interaction of labour markets",
+          "parentCode": "5",
+          "content": [],
+          "id": "4d3fd1f8-0c52-4fb6-a0d5-53978a1613ab"
+        },
+        {
+          "code": "1",
+          "title": "Aggregate demand and aggregate supply",
+          "parentCode": null,
+          "content": [],
+          "id": "d338ad74-3d78-4fb1-9e3f-ff26ca94ccd6"
+        },
+        {
+          "code": "1.1",
+          "title": "Circular flow of income",
+          "parentCode": "1",
+          "content": [],
+          "id": "b18e40fe-ae63-4694-8e0a-9215fed17d9e"
+        },
+        {
+          "code": "1.2",
+          "title": "Aggregate demand",
+          "parentCode": "1",
+          "content": [],
+          "id": "5e7c3205-eee8-4094-8fb5-bb58d6431367"
+        },
+        {
+          "code": "1.3",
+          "title": "Aggregate supply",
+          "parentCode": "1",
+          "content": [],
+          "id": "29f8a1b3-2e4b-4953-9f49-509df31cff9b"
+        },
+        {
+          "code": "1.4",
+          "title": "The interaction of aggregate demand and supply",
+          "parentCode": "1",
+          "content": [],
+          "id": "5273b964-8ae1-42b2-a7c6-440106f94605"
+        },
+        {
+          "code": "1.5",
+          "title": "The multiplier and the accelerator",
+          "parentCode": "1",
+          "content": [],
+          "id": "bbd346fa-6ba5-4eb1-bcc3-94ff99edabd7"
+        },
+        {
+          "code": "2",
+          "title": "Economic policy objectives",
+          "parentCode": null,
+          "content": [],
+          "id": "affacbca-98b9-4b02-bb59-111298c745c3"
+        },
+        {
+          "code": "2.1",
+          "title": "Economic growth",
+          "parentCode": "2",
+          "content": [],
+          "id": "a614f4d8-a8ca-4117-90fe-f1cd595541a3"
+        },
+        {
+          "code": "2.2",
+          "title": "Development",
+          "parentCode": "2",
+          "content": [],
+          "id": "afde32ad-ea2e-4985-abaf-dfeaa48dbd24"
+        },
+        {
+          "code": "2.3",
+          "title": "Employment",
+          "parentCode": "2",
+          "content": [],
+          "id": "ce9959c5-e751-4d9e-a5bb-2f1d0117817e"
+        },
+        {
+          "code": "2.4",
+          "title": "Inflation",
+          "parentCode": "2",
+          "content": [],
+          "id": "ea6cc63a-56ad-4f58-a8fd-a2e0fd6fefdc"
+        },
+        {
+          "code": "2.5",
+          "title": "Balance of payments",
+          "parentCode": "2",
+          "content": [],
+          "id": "582cd396-122e-426a-8724-70b13bbb7367"
+        },
+        {
+          "code": "2.6",
+          "title": "Trends in macroeconomic indicators",
+          "parentCode": "2",
+          "content": [],
+          "id": "3379a819-c7bb-4d62-a082-660da72218b9"
+        },
+        {
+          "code": "2.7",
+          "title": "Income distribution and welfare",
+          "parentCode": "2",
+          "content": [],
+          "id": "7d1db333-499f-4516-9aac-833c4eb538c8"
+        },
+        {
+          "code": "2.8",
+          "title": "The Phillips Curve",
+          "parentCode": "2",
+          "content": [],
+          "id": "f46e363f-61cf-4658-95b7-e784544236c8"
+        },
+        {
+          "code": "3",
+          "title": "Implementing policy",
+          "parentCode": null,
+          "content": [],
+          "id": "3e2eb234-bdb5-42ad-8372-92092f7d2b98"
+        },
+        {
+          "code": "3.1",
+          "title": "Fiscal policy",
+          "parentCode": "3",
+          "content": [],
+          "id": "c0f3ef15-ae0f-49a0-a2e2-8377e829ed98"
+        },
+        {
+          "code": "3.2",
+          "title": "Monetary policy",
+          "parentCode": "3",
+          "content": [],
+          "id": "85690b8c-8bab-4a38-bda0-8b2484c49cbb"
+        },
+        {
+          "code": "3.3",
+          "title": "Supply side policy",
+          "parentCode": "3",
+          "content": [],
+          "id": "971a24e5-bd50-4c40-9f1d-dc9ba6252d8d"
+        },
+        {
+          "code": "3.4",
+          "title": "Policy conflicts",
+          "parentCode": "3",
+          "content": [],
+          "id": "c7a90820-146e-4ac3-9734-2859d157f604"
+        },
+        {
+          "code": "4",
+          "title": "The global context",
+          "parentCode": null,
+          "content": [],
+          "id": "64800083-807d-445e-bb45-f2751fcf0ebc"
+        },
+        {
+          "code": "4.1",
+          "title": "International trade",
+          "parentCode": "4",
+          "content": [],
+          "id": "02d1f770-0810-4fcc-b356-470c7dc1ae85"
+        },
+        {
+          "code": "4.2",
+          "title": "Exchange rates",
+          "parentCode": "4",
+          "content": [],
+          "id": "a45f57f6-ed7e-46d7-88c4-d2dfd895f81b"
+        },
+        {
+          "code": "4.3",
+          "title": "Globalisation",
+          "parentCode": "4",
+          "content": [],
+          "id": "6d851938-2930-4678-ad06-d525621e4003"
+        },
+        {
+          "code": "4.4",
+          "title": "Trade policies and negotiations",
+          "parentCode": "4",
+          "content": [],
+          "id": "b17d8275-3cc4-40da-8d41-befc5177adbb"
+        },
+        {
+          "code": "5",
+          "title": "The financial sector",
+          "parentCode": null,
+          "content": [],
+          "id": "d963775d-5fdd-4604-b5a7-171670ac137c"
+        },
+        {
+          "code": "5.1",
+          "title": "Money and interest rates",
+          "parentCode": "5",
+          "content": [],
+          "id": "ab655a10-dadd-44cc-8fa7-bf56dc2b0d3f"
+        },
+        {
+          "code": "5.2",
+          "title": "The financial sector",
+          "parentCode": "5",
+          "content": [],
+          "id": "5190faf1-d4ba-4cb4-ba09-d685fcff94f7"
+        },
+        {
+          "code": "5.3",
+          "title": "Financial regulation",
+          "parentCode": "5",
+          "content": [],
+          "id": "1b47dc7a-28b8-4ad8-80b3-3cc13440ffb4"
+        }
+      ],
+      "createdAt": "2026-03-21T11:09:53.882Z"
     },
     {
-      "id": "0011effc-7a51-48de-9316-5daff4d78e49",
-      "name": "Edexcel Economics International A-Level",
+      "name": "Edexcel Business (A Level)",
+      "examBoard": "Pearson",
+      "level": "A-Level",
+      "gradeBoundaries": [
+        {
+          "grade": "A*",
+          "minPercent": 90
+        },
+        {
+          "grade": "A",
+          "minPercent": 80
+        },
+        {
+          "grade": "B",
+          "minPercent": 70
+        },
+        {
+          "grade": "C",
+          "minPercent": 60
+        },
+        {
+          "grade": "D",
+          "minPercent": 50
+        },
+        {
+          "grade": "E",
+          "minPercent": 40
+        },
+        {
+          "grade": "U",
+          "minPercent": 0
+        }
+      ],
+      "id": "43b0a45b-ef40-4c96-a072-14c96b82da56",
+      "topics": [
+        {
+          "code": "1.1",
+          "title": "Meeting customer needs",
+          "parentCode": null,
+          "content": [],
+          "id": "ddd89f54-38a6-45fb-a76e-a3d7c1acb090"
+        },
+        {
+          "code": "1.1.1",
+          "title": "The market",
+          "parentCode": "1.1",
+          "content": [],
+          "id": "3f2af3df-292c-49fb-8008-327602864b11"
+        },
+        {
+          "code": "1.1.2",
+          "title": "Market research",
+          "parentCode": "1.1",
+          "content": [],
+          "id": "7078477d-4dfd-4840-9bdd-1514b86c1d73"
+        },
+        {
+          "code": "1.1.3",
+          "title": "Market positioning",
+          "parentCode": "1.1",
+          "content": [],
+          "id": "2f4b4ddd-a7b3-446d-a59e-c5c1c0e34e20"
+        },
+        {
+          "code": "1.2",
+          "title": "Market",
+          "parentCode": null,
+          "content": [],
+          "id": "501cba53-d9cc-4eaa-a498-ff53c77b6e6a"
+        },
+        {
+          "code": "1.2.1",
+          "title": "Demand",
+          "parentCode": "1.2",
+          "content": [],
+          "id": "bca6b10d-17d9-41b3-b089-8ab0a5be7b62"
+        },
+        {
+          "code": "1.2.2",
+          "title": "Supply",
+          "parentCode": "1.2",
+          "content": [],
+          "id": "01aa2e96-718a-4d9b-8ac9-2775e3531774"
+        },
+        {
+          "code": "1.2.3",
+          "title": "Markets",
+          "parentCode": "1.2",
+          "content": [],
+          "id": "19c2ba46-8ee4-4d95-ae68-ac708a728ce8"
+        },
+        {
+          "code": "1.2.4",
+          "title": "Price elasticity of demand",
+          "parentCode": "1.2",
+          "content": [],
+          "id": "a4ecfc0c-cad9-4b24-9fb6-3c5ab8e9f829"
+        },
+        {
+          "code": "1.2.5",
+          "title": "Income elasticity of demand",
+          "parentCode": "1.2",
+          "content": [],
+          "id": "a7a7bf10-a9cc-45bf-94fa-3085c84a6bc6"
+        },
+        {
+          "code": "1.3",
+          "title": "Marketing mix and strategy",
+          "parentCode": null,
+          "content": [],
+          "id": "4340c876-12e2-4185-9aeb-5b3a062dda5f"
+        },
+        {
+          "code": "1.3.1",
+          "title": "Product/service design",
+          "parentCode": "1.3",
+          "content": [],
+          "id": "a9196b59-7de1-4a39-b991-0941e3c91fae"
+        },
+        {
+          "code": "1.3.2",
+          "title": "Branding and promotion",
+          "parentCode": "1.3",
+          "content": [],
+          "id": "89076722-04ca-45f8-be14-61b37752675d"
+        },
+        {
+          "code": "1.3.3",
+          "title": "Pricing strategies",
+          "parentCode": "1.3",
+          "content": [],
+          "id": "f5b028cf-0398-4e17-8d09-28ff7cd6f292"
+        },
+        {
+          "code": "1.3.4",
+          "title": "Distribution",
+          "parentCode": "1.3",
+          "content": [],
+          "id": "8f496efc-6def-46a4-9418-0e24912a9a6b"
+        },
+        {
+          "code": "1.3.5",
+          "title": "Marketing strategy",
+          "parentCode": "1.3",
+          "content": [],
+          "id": "cf23b9cb-c3ee-42a7-9cc3-b60bea2c3404"
+        },
+        {
+          "code": "1.4",
+          "title": "Managing people",
+          "parentCode": null,
+          "content": [],
+          "id": "7b59b29c-ba58-486f-a6b3-98ff0a12d5a3"
+        },
+        {
+          "code": "1.4.1",
+          "title": "Approaches to staffing",
+          "parentCode": "1.4",
+          "content": [],
+          "id": "d0b2e8fc-4f9a-4b8e-a0ee-791d8a5be4d1"
+        },
+        {
+          "code": "1.4.2",
+          "title": "Recruitment, selection and training",
+          "parentCode": "1.4",
+          "content": [],
+          "id": "b8a1e4db-d054-4aad-b1b5-40a9ef9bf223"
+        },
+        {
+          "code": "1.4.3",
+          "title": "Organisational design",
+          "parentCode": "1.4",
+          "content": [],
+          "id": "cc5ff2d5-1d65-4ad4-8883-258ad35e40fe"
+        },
+        {
+          "code": "1.4.4",
+          "title": "Motivation in theory and practice",
+          "parentCode": "1.4",
+          "content": [],
+          "id": "3c3c504e-502a-4024-b9e8-71459e7b4235"
+        },
+        {
+          "code": "1.4.5",
+          "title": "Leadership",
+          "parentCode": "1.4",
+          "content": [],
+          "id": "69db71f1-bc2c-4745-b773-5184afa16d5d"
+        },
+        {
+          "code": "1.5",
+          "title": "Entrepreneurs and leaders",
+          "parentCode": null,
+          "content": [],
+          "id": "7af5c298-505d-4c05-8310-95dc56899766"
+        },
+        {
+          "code": "1.5.1",
+          "title": "Role of an entrepreneur",
+          "parentCode": "1.5",
+          "content": [],
+          "id": "49fd8c1c-d071-49ca-bbeb-737d22c0e79b"
+        },
+        {
+          "code": "1.5.2",
+          "title": "Entrepreneurial motives and characteristics",
+          "parentCode": "1.5",
+          "content": [],
+          "id": "fc396ee0-a69d-4535-912e-adc681caa24c"
+        },
+        {
+          "code": "1.5.3",
+          "title": "Business objectives",
+          "parentCode": "1.5",
+          "content": [],
+          "id": "f4dffc39-f3d8-433b-86be-58a38e810d01"
+        },
+        {
+          "code": "1.5.4",
+          "title": "Forms of business",
+          "parentCode": "1.5",
+          "content": [],
+          "id": "3069f6e0-63b6-49ea-9157-c32e5b4490a0"
+        },
+        {
+          "code": "1.5.5",
+          "title": "Business choices",
+          "parentCode": "1.5",
+          "content": [],
+          "id": "d47f53f3-1f4e-44e1-9d5a-57a7780c727c"
+        },
+        {
+          "code": "1.5.6",
+          "title": "Moving from entrepreneur to leader",
+          "parentCode": "1.5",
+          "content": [],
+          "id": "ea15d5aa-b8b3-4d44-a65c-4a71983c9963"
+        },
+        {
+          "code": "2.1",
+          "title": "Raising finance",
+          "parentCode": null,
+          "content": [],
+          "id": "933f4f52-e37f-4bff-abfc-15ef3ebf38be"
+        },
+        {
+          "code": "2.1.1",
+          "title": "Internal finance",
+          "parentCode": "2.1",
+          "content": [],
+          "id": "337d17a1-603c-40f4-a643-0fe88cb34b08"
+        },
+        {
+          "code": "2.1.2",
+          "title": "External finance",
+          "parentCode": "2.1",
+          "content": [],
+          "id": "d8ff9ad7-807a-4103-bc84-645794e28490"
+        },
+        {
+          "code": "2.1.3",
+          "title": "Liability",
+          "parentCode": "2.1",
+          "content": [],
+          "id": "006dd8c5-feab-4565-a82f-aadb50536520"
+        },
+        {
+          "code": "2.1.4",
+          "title": "Planning",
+          "parentCode": "2.1",
+          "content": [],
+          "id": "63462b3d-b0df-4981-8c22-f586cc10da73"
+        },
+        {
+          "code": "2.2",
+          "title": "Financial planning",
+          "parentCode": null,
+          "content": [],
+          "id": "e52de002-d39b-4531-ab2c-5f135476b0a4"
+        },
+        {
+          "code": "2.2.1",
+          "title": "Sales forecasting",
+          "parentCode": "2.2",
+          "content": [],
+          "id": "7a0050ac-d958-4579-88a2-bb7ed955bcbb"
+        },
+        {
+          "code": "2.2.2",
+          "title": "Sales, revenue and costs",
+          "parentCode": "2.2",
+          "content": [],
+          "id": "9f0c9add-c633-4609-be7d-a4c260631268"
+        },
+        {
+          "code": "2.2.3",
+          "title": "Break-even",
+          "parentCode": "2.2",
+          "content": [],
+          "id": "a7b3a49f-82b9-4761-8614-d8d237bb769a"
+        },
+        {
+          "code": "2.2.4",
+          "title": "Budgets",
+          "parentCode": "2.2",
+          "content": [],
+          "id": "7b7acaa3-c5f4-4bad-b21a-5f55ec7490b1"
+        },
+        {
+          "code": "2.3",
+          "title": "Managing finance",
+          "parentCode": null,
+          "content": [],
+          "id": "f4b4c2b8-d728-41a7-a4f5-71c3a69c3e89"
+        },
+        {
+          "code": "2.3.1",
+          "title": "Profit",
+          "parentCode": "2.3",
+          "content": [],
+          "id": "45c00d65-ca5a-4181-bb16-227a436491d2"
+        },
+        {
+          "code": "2.3.2",
+          "title": "Liquidity",
+          "parentCode": "2.3",
+          "content": [],
+          "id": "cf8d219e-8a97-452a-8ebb-7a1e50bdff4d"
+        },
+        {
+          "code": "2.3.3",
+          "title": "Business failure",
+          "parentCode": "2.3",
+          "content": [],
+          "id": "42a457b2-5b92-43b9-aeb2-51eec667ebcf"
+        },
+        {
+          "code": "2.4",
+          "title": "Resource management",
+          "parentCode": null,
+          "content": [],
+          "id": "169be108-cc91-4b07-b264-a7d9bafcca9f"
+        },
+        {
+          "code": "2.4.1",
+          "title": "Production, productivity and efficiency",
+          "parentCode": "2.4",
+          "content": [],
+          "id": "434919b0-f3bf-42c2-a5b0-dd9ea09588f9"
+        },
+        {
+          "code": "2.4.2",
+          "title": "Capacity utilisation",
+          "parentCode": "2.4",
+          "content": [],
+          "id": "238973b0-27e4-4e96-8f4d-041f9b951d4a"
+        },
+        {
+          "code": "2.4.3",
+          "title": "Stock control",
+          "parentCode": "2.4",
+          "content": [],
+          "id": "60e471a0-9103-4545-880c-37a315cf330d"
+        },
+        {
+          "code": "2.4.4",
+          "title": "Quality management",
+          "parentCode": "2.4",
+          "content": [],
+          "id": "a1dc8f1b-2d88-47f9-9211-fd3bea4a4823"
+        },
+        {
+          "code": "2.5",
+          "title": "External influences",
+          "parentCode": null,
+          "content": [],
+          "id": "4332a89a-cef5-4c82-b8e6-5dac685d897f"
+        },
+        {
+          "code": "2.5.1",
+          "title": "Economic influences",
+          "parentCode": "2.5",
+          "content": [],
+          "id": "570325d1-545f-473e-aeb3-6364821d84f4"
+        },
+        {
+          "code": "2.5.2",
+          "title": "Legislation",
+          "parentCode": "2.5",
+          "content": [],
+          "id": "26adc7f0-2148-4078-a39a-6689914db178"
+        },
+        {
+          "code": "2.5.3",
+          "title": "The competitive environment",
+          "parentCode": "2.5",
+          "content": [],
+          "id": "c309ca67-7b54-4754-af3b-a3fca0db76c5"
+        },
+        {
+          "code": "3.1",
+          "title": "Business objectives and strategy",
+          "parentCode": null,
+          "content": [],
+          "id": "51e2b633-30cf-45d1-a55b-0a18b9968033"
+        },
+        {
+          "code": "3.1.1",
+          "title": "Corporate objectives",
+          "parentCode": "3.1",
+          "content": [],
+          "id": "8091e5e6-2262-49db-87dd-668c2dcdee4b"
+        },
+        {
+          "code": "3.1.2",
+          "title": "Theories of corporate strategy",
+          "parentCode": "3.1",
+          "content": [],
+          "id": "a84e4214-c267-4c0b-a844-68a4dc0f68cd"
+        },
+        {
+          "code": "3.1.3",
+          "title": "SWOT analysis",
+          "parentCode": "3.1",
+          "content": [],
+          "id": "4ca15334-1020-45d0-a9bd-9a7802fc5f79"
+        },
+        {
+          "code": "3.1.4",
+          "title": "Impact of external influences",
+          "parentCode": "3.1",
+          "content": [],
+          "id": "308e3893-eee5-4691-8192-088fbb4da625"
+        },
+        {
+          "code": "3.2",
+          "title": "Business growth",
+          "parentCode": null,
+          "content": [],
+          "id": "3995b0fe-24c4-4959-954b-0884284aab28"
+        },
+        {
+          "code": "3.2.1",
+          "title": "Growth",
+          "parentCode": "3.2",
+          "content": [],
+          "id": "b68c5f6f-a4f6-4e2c-8e23-080ff4cea555"
+        },
+        {
+          "code": "3.2.2",
+          "title": "Mergers and takeovers",
+          "parentCode": "3.2",
+          "content": [],
+          "id": "ebbb48c1-a617-4027-b133-746180e2b6d7"
+        },
+        {
+          "code": "3.2.3",
+          "title": "Organic growth",
+          "parentCode": "3.2",
+          "content": [],
+          "id": "5a9f9329-50d3-4002-844a-0c66f65e9fc0"
+        },
+        {
+          "code": "3.2.4",
+          "title": "Reasons for staying small",
+          "parentCode": "3.2",
+          "content": [],
+          "id": "4fce6baa-a75a-499e-8fdc-32b642b5cadb"
+        },
+        {
+          "code": "3.3",
+          "title": "Decision-making techniques",
+          "parentCode": null,
+          "content": [],
+          "id": "7d046644-74e9-4222-ab47-b17c289dd59c"
+        },
+        {
+          "code": "3.3.1",
+          "title": "Quantitative sales forecasting",
+          "parentCode": "3.3",
+          "content": [],
+          "id": "8a66cf1c-a812-494a-8d9f-ab64dc3bb8b8"
+        },
+        {
+          "code": "3.3.2",
+          "title": "Investment appraisal",
+          "parentCode": "3.3",
+          "content": [],
+          "id": "ff25feed-decf-4f50-a92e-00842a809210"
+        },
+        {
+          "code": "3.3.3",
+          "title": "Decision trees",
+          "parentCode": "3.3",
+          "content": [],
+          "id": "f5327987-0132-453c-b4c1-53af5fbd26d1"
+        },
+        {
+          "code": "3.3.4",
+          "title": "Critical Path Analysis",
+          "parentCode": "3.3",
+          "content": [],
+          "id": "b3d450ae-0a3a-4282-a239-e18b88d6e118"
+        },
+        {
+          "code": "3.4",
+          "title": "Influences on business decisions",
+          "parentCode": null,
+          "content": [],
+          "id": "a049946c-6d51-4f4f-a817-24ac7b23c294"
+        },
+        {
+          "code": "3.4.1",
+          "title": "Corporate influences",
+          "parentCode": "3.4",
+          "content": [],
+          "id": "f8af0426-11a7-43dc-8987-e1e755f91766"
+        },
+        {
+          "code": "3.4.2",
+          "title": "Corporate culture",
+          "parentCode": "3.4",
+          "content": [],
+          "id": "6cec13a5-43e5-4638-849d-264c9a545f33"
+        },
+        {
+          "code": "3.4.3",
+          "title": "Shareholders versus stakeholders",
+          "parentCode": "3.4",
+          "content": [],
+          "id": "85a9d149-f9a1-4771-8991-d1efbe331c28"
+        },
+        {
+          "code": "3.4.4",
+          "title": "Business ethics",
+          "parentCode": "3.4",
+          "content": [],
+          "id": "c172def9-935e-4736-a6fa-a47cf74beaf0"
+        },
+        {
+          "code": "3.5",
+          "title": "Assessing competitiveness",
+          "parentCode": null,
+          "content": [],
+          "id": "c5d800f8-9598-4642-81d8-68d4e6760d9b"
+        },
+        {
+          "code": "3.5.1",
+          "title": "Interpretation of financial statements",
+          "parentCode": "3.5",
+          "content": [],
+          "id": "628f1cc6-81cb-4def-bb42-501988a2795d"
+        },
+        {
+          "code": "3.5.2",
+          "title": "Ratio analysis",
+          "parentCode": "3.5",
+          "content": [],
+          "id": "35cfeaf8-b4df-40b3-888e-ae0a5d144f1a"
+        },
+        {
+          "code": "3.5.3",
+          "title": "Human resources",
+          "parentCode": "3.5",
+          "content": [],
+          "id": "1af78a14-ab08-442b-9cbb-4c2a937cfef1"
+        },
+        {
+          "code": "3.6",
+          "title": "Managing change",
+          "parentCode": null,
+          "content": [],
+          "id": "88ba86f2-7a6f-4797-a4b7-f5b005bef218"
+        },
+        {
+          "code": "3.6.1",
+          "title": "Causes and effects of change",
+          "parentCode": "3.6",
+          "content": [],
+          "id": "1eb0c39e-a8f0-4ae0-9c61-1defdd5ceb15"
+        },
+        {
+          "code": "3.6.2",
+          "title": "Key factors in change",
+          "parentCode": "3.6",
+          "content": [],
+          "id": "739023b5-4715-4bd3-bd40-47811594cb3e"
+        },
+        {
+          "code": "3.6.3",
+          "title": "Scenario planning",
+          "parentCode": "3.6",
+          "content": [],
+          "id": "8ff1aa6d-3368-4de3-9dfc-83e51d42849e"
+        },
+        {
+          "code": "4.1",
+          "title": "Globalisation",
+          "parentCode": null,
+          "content": [],
+          "id": "1ee359fd-2bf0-45cc-ac7c-bcbeb8a34f18"
+        },
+        {
+          "code": "4.1.1",
+          "title": "Growing economies",
+          "parentCode": "4.1",
+          "content": [],
+          "id": "6a80921b-c620-4b90-848d-ade97ea95003"
+        },
+        {
+          "code": "4.1.2",
+          "title": "International trade and business growth",
+          "parentCode": "4.1",
+          "content": [],
+          "id": "9cdb609e-f92e-4c62-adc4-28c1a5bbba59"
+        },
+        {
+          "code": "4.1.3",
+          "title": "Factors contributing to increased globalisation",
+          "parentCode": "4.1",
+          "content": [],
+          "id": "b77cb65f-5070-4a58-ac0d-e1fb33d8b09e"
+        },
+        {
+          "code": "4.1.4",
+          "title": "Protectionism",
+          "parentCode": "4.1",
+          "content": [],
+          "id": "70ae9b09-eb47-41ca-bf12-998ac2a8c5fd"
+        },
+        {
+          "code": "4.1.5",
+          "title": "Trading blocs",
+          "parentCode": "4.1",
+          "content": [],
+          "id": "91d299dc-61cf-4736-95e8-038e272d204d"
+        },
+        {
+          "code": "4.2",
+          "title": "Global markets and business expansion",
+          "parentCode": null,
+          "content": [],
+          "id": "a3470faa-4d12-430b-ab38-d2c44c603de6"
+        },
+        {
+          "code": "4.2.1",
+          "title": "Conditions that prompt trade",
+          "parentCode": "4.2",
+          "content": [],
+          "id": "80dc6f06-33ac-4a89-b597-2b6fc8ac6099"
+        },
+        {
+          "code": "4.2.2",
+          "title": "Assessment of a country as a market",
+          "parentCode": "4.2",
+          "content": [],
+          "id": "88518373-8cba-4c2e-8dc7-e22604b798c6"
+        },
+        {
+          "code": "4.2.3",
+          "title": "Assessment of a country as a production location",
+          "parentCode": "4.2",
+          "content": [],
+          "id": "69bb6ce2-4f8f-4e80-a19a-92ed1987245e"
+        },
+        {
+          "code": "4.2.4",
+          "title": "Reasons for global mergers or joint ventures",
+          "parentCode": "4.2",
+          "content": [],
+          "id": "abfedf14-9c64-4299-9e9f-d3bad97357e9"
+        },
+        {
+          "code": "4.2.5",
+          "title": "Global competitiveness",
+          "parentCode": "4.2",
+          "content": [],
+          "id": "1600d5fb-53be-42eb-88ea-49cb8f7ddb08"
+        },
+        {
+          "code": "4.3",
+          "title": "Global marketing",
+          "parentCode": null,
+          "content": [],
+          "id": "c3717746-3e55-4884-9e58-cff571041b8e"
+        },
+        {
+          "code": "4.3.1",
+          "title": "Marketing",
+          "parentCode": "4.3",
+          "content": [],
+          "id": "f6815355-bab8-426f-b852-f925d6392e08"
+        },
+        {
+          "code": "4.3.2",
+          "title": "Niche markets",
+          "parentCode": "4.3",
+          "content": [],
+          "id": "9864c145-31d1-425d-81db-6933b1753b30"
+        },
+        {
+          "code": "4.3.3",
+          "title": "Cultural/social factors",
+          "parentCode": "4.3",
+          "content": [],
+          "id": "39cbae9a-dceb-4623-a747-144e54a5a552"
+        },
+        {
+          "code": "4.4",
+          "title": "Global industries and companies (multinational corporations)",
+          "parentCode": null,
+          "content": [],
+          "id": "eda29783-db56-45da-9050-7bc49e10293b"
+        },
+        {
+          "code": "4.4.1",
+          "title": "The impact of MNCs",
+          "parentCode": "4.4",
+          "content": [],
+          "id": "ddadf480-02d3-444a-8348-fa88d09a12af"
+        },
+        {
+          "code": "4.4.2",
+          "title": "Ethics",
+          "parentCode": "4.4",
+          "content": [],
+          "id": "581ea325-965d-470e-a90b-bac00b1ee1c5"
+        },
+        {
+          "code": "4.4.3",
+          "title": "Controlling MNCs",
+          "parentCode": "4.4",
+          "content": [],
+          "id": "d923b4ba-56e8-41be-ad9e-0a6d6423edc5"
+        }
+      ],
+      "createdAt": "2026-03-21T11:10:22.281Z"
+    },
+    {
+      "name": "AQA Economics (A Level)",
+      "examBoard": "AQA",
+      "level": "A-Level",
+      "gradeBoundaries": [
+        {
+          "grade": "A*",
+          "minPercent": 90
+        },
+        {
+          "grade": "A",
+          "minPercent": 80
+        },
+        {
+          "grade": "B",
+          "minPercent": 70
+        },
+        {
+          "grade": "C",
+          "minPercent": 60
+        },
+        {
+          "grade": "D",
+          "minPercent": 50
+        },
+        {
+          "grade": "E",
+          "minPercent": 40
+        },
+        {
+          "grade": "U",
+          "minPercent": 0
+        }
+      ],
+      "id": "0853f904-fe4e-4a4e-8501-b8004361d6ec",
+      "topics": [
+        {
+          "code": "1.1.1",
+          "title": "Economic Methodology and the Economic Problem",
+          "parentCode": null,
+          "content": [],
+          "id": "096423bf-d5ee-49a5-aa5c-2412f6292810"
+        },
+        {
+          "code": "1.1.1.1",
+          "title": "Economic Methodology",
+          "parentCode": "1.1.1",
+          "content": [],
+          "id": "b911f7ad-f890-4c0e-a9a8-8d42f77d2116"
+        },
+        {
+          "code": "1.1.1.2",
+          "title": "The Nature and Purpose of Economic Activity",
+          "parentCode": "1.1.1",
+          "content": [],
+          "id": "98f64011-71e3-4862-b072-324d1b7459ef"
+        },
+        {
+          "code": "1.1.1.3",
+          "title": "Economic Resources",
+          "parentCode": "1.1.1",
+          "content": [],
+          "id": "c7a006f9-a0f7-4ed9-8708-b43a662eddbb"
+        },
+        {
+          "code": "1.1.1.4",
+          "title": "Scarcity, Choice and the Allocation of Resources",
+          "parentCode": "1.1.1",
+          "content": [],
+          "id": "b0efd6fc-dcdc-419c-a0b5-3935496c7bb2"
+        },
+        {
+          "code": "1.1.1.5",
+          "title": "Production Possibility Diagrams",
+          "parentCode": "1.1.1",
+          "content": [],
+          "id": "d59e6f09-e817-4528-88ee-4eec501756ea"
+        },
+        {
+          "code": "1.1.2",
+          "title": "Individual Economic Decision Making",
+          "parentCode": null,
+          "content": [],
+          "id": "6d196245-661b-4873-9b3d-4d42919bd8d0"
+        },
+        {
+          "code": "1.1.2.1",
+          "title": "Consumer Behaviour",
+          "parentCode": "1.1.2",
+          "content": [],
+          "id": "f275ac7d-835e-4ae1-90eb-2d29a0b34b50"
+        },
+        {
+          "code": "1.1.2.2",
+          "title": "Imperfect Information",
+          "parentCode": "1.1.2",
+          "content": [],
+          "id": "0c634f6d-0fbc-420d-8e4b-3b21bbfb8497"
+        },
+        {
+          "code": "1.1.2.3",
+          "title": "Aspects of Behavioural Economic Theory",
+          "parentCode": "1.1.2",
+          "content": [],
+          "id": "9cd7e1a5-52cb-4098-a4bb-9860f9a6a8dc"
+        },
+        {
+          "code": "1.1.2.4",
+          "title": "Behavioural Economics and Economic Policy",
+          "parentCode": "1.1.2",
+          "content": [],
+          "id": "b2b86837-cb60-43ed-a6c6-b74f9e682b65"
+        },
+        {
+          "code": "1.1.3",
+          "title": "Price Determination in a Competitive Market",
+          "parentCode": null,
+          "content": [],
+          "id": "65a9be26-7531-4d16-ab3d-890be83ce059"
+        },
+        {
+          "code": "1.1.3.1",
+          "title": "The Determinants of the Demand for Goods and Services",
+          "parentCode": "1.1.3",
+          "content": [],
+          "id": "25a56424-7166-446a-b166-9280dd2175bc"
+        },
+        {
+          "code": "1.1.3.2",
+          "title": "Price, Income and Cross Elasticities of Demand",
+          "parentCode": "1.1.3",
+          "content": [],
+          "id": "c7830c1f-f10b-46c2-91b6-08bdc4b4e64a"
+        },
+        {
+          "code": "1.1.3.3",
+          "title": "The Determinants of the Supply of Goods and Services",
+          "parentCode": "1.1.3",
+          "content": [],
+          "id": "f1bfe2d8-cfd7-48bf-b9f8-b87c31864854"
+        },
+        {
+          "code": "1.1.3.4",
+          "title": "Price Elasticity of Supply",
+          "parentCode": "1.1.3",
+          "content": [],
+          "id": "cf30827f-aad6-4074-a146-4a619a933299"
+        },
+        {
+          "code": "1.1.3.5",
+          "title": "The Determination of Equilibrium Market Prices",
+          "parentCode": "1.1.3",
+          "content": [],
+          "id": "9683d266-0bd4-4237-827b-8576f76c47e8"
+        },
+        {
+          "code": "1.1.3.6",
+          "title": "The Interrelationship Between Markets",
+          "parentCode": "1.1.3",
+          "content": [],
+          "id": "2d91280b-75f6-4128-b4d4-6ca7b49b775c"
+        },
+        {
+          "code": "1.1.4",
+          "title": "Production, Costs and Revenue",
+          "parentCode": null,
+          "content": [],
+          "id": "c0c74411-8fe2-4b71-8bdc-027defc4ee9c"
+        },
+        {
+          "code": "1.1.1.1",
+          "title": "Production and Productivity",
+          "parentCode": "1.1.4",
+          "content": [],
+          "id": "e492f05c-4bf1-4c38-b60e-25ec4afcd797"
+        },
+        {
+          "code": "1.1.1.2",
+          "title": "Specialisation, Division of Labour and Exchange",
+          "parentCode": "1.1.4",
+          "content": [],
+          "id": "5aca7c33-0adf-4505-ae9f-f1e681c3b7eb"
+        },
+        {
+          "code": "1.1.4.3",
+          "title": "The Law of Diminishing Returns and Returns to Scale",
+          "parentCode": "1.1.4",
+          "content": [],
+          "id": "4d661c5d-e0c8-4c08-9a65-3cb3dd80bd6a"
+        },
+        {
+          "code": "1.1.4.4",
+          "title": "Costs of Production",
+          "parentCode": "1.1.4",
+          "content": [],
+          "id": "eaba6f3c-c2ad-4358-916b-a3bb4032ce4b"
+        },
+        {
+          "code": "1.1.4.5",
+          "title": "Economies and Diseconomies of Scale",
+          "parentCode": "1.1.4",
+          "content": [],
+          "id": "4ea32b6f-83bb-43bc-87b0-94bb509dd90b"
+        },
+        {
+          "code": "1.1.4.6",
+          "title": "Marginal, Average and Total Revenue",
+          "parentCode": "1.1.4",
+          "content": [],
+          "id": "9a9e0adb-474d-4bd8-8de5-881f3d04ac1c"
+        },
+        {
+          "code": "1.1.4.7",
+          "title": "Profit",
+          "parentCode": "1.1.4",
+          "content": [],
+          "id": "85786dbf-a504-4ded-a333-cfe42dd3b377"
+        },
+        {
+          "code": "1.1.4.8",
+          "title": "Technological Change",
+          "parentCode": "1.1.4",
+          "content": [],
+          "id": "1d78bdb6-6745-44bc-8436-ce6ed8c176bd"
+        },
+        {
+          "code": "1.1.5",
+          "title": "Perfect Competition, Imperfectly Competitive Markets and Monopoly",
+          "parentCode": null,
+          "content": [],
+          "id": "e19f42b5-9d98-4cf7-9884-87aec61df4b7"
+        },
+        {
+          "code": "1.1.5.1",
+          "title": "Market Structures",
+          "parentCode": "1.1.5",
+          "content": [],
+          "id": "a5d8ace0-bb12-48fe-8dd3-7f44d98ad6de"
+        },
+        {
+          "code": "1.1.5.2",
+          "title": "The Objectives of Firms",
+          "parentCode": "1.1.5",
+          "content": [],
+          "id": "c514634e-dbe1-4360-9e1e-207717daabd3"
+        },
+        {
+          "code": "1.1.5.3",
+          "title": "Perfect Competition",
+          "parentCode": "1.1.5",
+          "content": [],
+          "id": "a1fd547d-4793-4c8c-b5be-ceb10d6bacab"
+        },
+        {
+          "code": "1.1.5.4",
+          "title": "Monopolistic Competition",
+          "parentCode": "1.1.5",
+          "content": [],
+          "id": "1bd19bad-0758-4d53-8a6c-c15b2fc21e31"
+        },
+        {
+          "code": "1.1.5.5",
+          "title": "Oligopoly",
+          "parentCode": "1.1.5",
+          "content": [],
+          "id": "dbe2308b-b13c-4924-aabb-cf7ea9ae4c2d"
+        },
+        {
+          "code": "1.1.5.6",
+          "title": "Monopoly and Monopoly Power",
+          "parentCode": "1.1.5",
+          "content": [],
+          "id": "94df3a70-37f2-46a4-8303-bea24f22b47a"
+        },
+        {
+          "code": "1.1.5.7",
+          "title": "Price Discrimination",
+          "parentCode": "1.1.5",
+          "content": [],
+          "id": "cf0304d2-d1d5-4b8b-b196-f5d474a52198"
+        },
+        {
+          "code": "1.1.5.8",
+          "title": "The Dynamics of Competition and Competitive Market Processes",
+          "parentCode": "1.1.5",
+          "content": [],
+          "id": "16e187ed-4eee-429a-901e-7af39d05145e"
+        },
+        {
+          "code": "1.1.5.9",
+          "title": "Contestable and Non-Contestable Markets",
+          "parentCode": "1.1.5",
+          "content": [],
+          "id": "85960ab7-3367-4ef7-9c52-81152c87f57d"
+        },
+        {
+          "code": "1.1.5.10",
+          "title": "Market Structure, Static Efficiency, Dynamic Efficiency and Resource Allocation",
+          "parentCode": "1.1.5",
+          "content": [],
+          "id": "689f1d2b-bd91-442c-a9f3-f1345c879075"
+        },
+        {
+          "code": "1.1.5.11",
+          "title": "Consumer and Producer Surplus",
+          "parentCode": "1.1.5",
+          "content": [],
+          "id": "7f10be77-6a51-42cf-9384-7d9a841e6e3a"
+        },
+        {
+          "code": "1.1.6",
+          "title": "The Labour Market",
+          "parentCode": null,
+          "content": [],
+          "id": "26710b70-47de-4151-87bd-96d79f0d76fb"
+        },
+        {
+          "code": "1.1.6.1",
+          "title": "The Demand for Labour, Marginal Productivity Theory",
+          "parentCode": "1.1.6",
+          "content": [],
+          "id": "79b761e0-356f-4807-b6ac-1356fc166b28"
+        },
+        {
+          "code": "1.1.6.2",
+          "title": "Influences upon the Supply of Labour to Different Markets",
+          "parentCode": "1.1.6",
+          "content": [],
+          "id": "02e51b0c-1240-4206-ac31-ba3b3520bf9b"
+        },
+        {
+          "code": "1.1.6.3",
+          "title": "The Determination of Relative Wage Rates and Levels of Employment in Perfectly Competitive Labour Markets",
+          "parentCode": "1.1.6",
+          "content": [],
+          "id": "26b78163-5e8c-40c9-b17b-245ea7d8f260"
+        },
+        {
+          "code": "1.1.6.4",
+          "title": "The Determination of Relative Wage Rates and Levels of Employment in Imperfectly Competitive Labour Markets",
+          "parentCode": "1.1.6",
+          "content": [],
+          "id": "ac9165bf-2974-4ce8-8d2b-33a210e60547"
+        },
+        {
+          "code": "1.1.6.5",
+          "title": "The Influence of Trade Unions in Determining Wages and Levels of Employment",
+          "parentCode": "1.1.6",
+          "content": [],
+          "id": "6fea1666-179c-4605-9b81-cc78c5eedbd9"
+        },
+        {
+          "code": "1.1.6.6",
+          "title": "The National Minimum Wage",
+          "parentCode": "1.1.6",
+          "content": [],
+          "id": "b02de7b8-d4b5-4efe-b476-d62041ae80b3"
+        },
+        {
+          "code": "1.1.6.7",
+          "title": "Discrimination in the Labour Market",
+          "parentCode": "1.1.6",
+          "content": [],
+          "id": "aae56b43-b8db-4953-ae3a-759707ecd44a"
+        },
+        {
+          "code": "1.1.7",
+          "title": "The Distribution of Income and Wealth: Poverty and Inequality",
+          "parentCode": null,
+          "content": [],
+          "id": "7da3c01f-6ede-4753-88c7-2d87011bf661"
+        },
+        {
+          "code": "1.1.7.1",
+          "title": "The Distribution of Income and Wealth",
+          "parentCode": "1.1.7",
+          "content": [],
+          "id": "68345ee9-522e-47a6-9c1c-7ee6404590ec"
+        },
+        {
+          "code": "1.1.7.2",
+          "title": "The Problem of Poverty",
+          "parentCode": "1.1.7",
+          "content": [],
+          "id": "057ca860-feaf-4976-8b28-0ef94f7a4a91"
+        },
+        {
+          "code": "1.1.7.3",
+          "title": "Government Policies to Alleviate Poverty and to Influence the Distribution of Income and Wealth",
+          "parentCode": "1.1.7",
+          "content": [],
+          "id": "4adf7721-c500-4a5b-a2b3-3c59d515240d"
+        },
+        {
+          "code": "1.1.8",
+          "title": "The Market Mechanism, Market Failure and Government Intervention in Markets",
+          "parentCode": null,
+          "content": [],
+          "id": "f08cfd2b-36aa-4cb8-b713-350be3950010"
+        },
+        {
+          "code": "1.1.8.1",
+          "title": "How Markets and Prices Allocate Resources",
+          "parentCode": "1.1.8",
+          "content": [],
+          "id": "513111a8-a6b0-4b84-a129-e9c6a2d6b440"
+        },
+        {
+          "code": "1.1.8.2",
+          "title": "The Meaning of Market Failure",
+          "parentCode": "1.1.8",
+          "content": [],
+          "id": "f6b49141-0e50-4345-9a5e-c4d994988f4d"
+        },
+        {
+          "code": "1.1.8.3",
+          "title": "Public Goods, Private Goods and Quasi-Public Goods",
+          "parentCode": "1.1.8",
+          "content": [],
+          "id": "e6cd5de2-3eab-4b8b-88ff-b0b6821855ca"
+        },
+        {
+          "code": "1.1.8.4",
+          "title": "Positive and Negative Externalities in Consumption and Production",
+          "parentCode": "1.1.8",
+          "content": [],
+          "id": "29efff4c-34ea-4744-ac0c-6536c642169e"
+        },
+        {
+          "code": "1.1.8.5",
+          "title": "Merit and Demerit Goods",
+          "parentCode": "1.1.8",
+          "content": [],
+          "id": "70af39ab-4553-4042-a397-ac1f137dbd12"
+        },
+        {
+          "code": "1.1.8.6",
+          "title": "Market Imperfections",
+          "parentCode": "1.1.8",
+          "content": [],
+          "id": "fe133261-dfc9-4ad7-a2c9-bcf0dfc17b50"
+        },
+        {
+          "code": "1.1.8.7",
+          "title": "Competition Policy",
+          "parentCode": "1.1.8",
+          "content": [],
+          "id": "5d238249-0dec-45ce-90f0-9d812ea1207f"
+        },
+        {
+          "code": "1.1.8.8",
+          "title": "Public Ownership, Privatisation, Regulation and Deregulation of Markets",
+          "parentCode": "1.1.8",
+          "content": [],
+          "id": "a3a36f2b-db4b-4874-aaee-bba6ba26c48f"
+        },
+        {
+          "code": "1.1.8.9",
+          "title": "Government Intervention in Markets",
+          "parentCode": "1.1.8",
+          "content": [],
+          "id": "f487d3d1-0877-41d0-aa2b-389cf8ab990f"
+        },
+        {
+          "code": "1.1.8.10",
+          "title": "Government Failure",
+          "parentCode": "1.1.8",
+          "content": [],
+          "id": "3c80d85e-d0a0-40f6-bb40-3357da108117"
+        },
+        {
+          "code": "1.2.1",
+          "title": "The Measurement of Macroeconomic Performance",
+          "parentCode": null,
+          "content": [],
+          "id": "c18383bd-f97f-4261-985c-654d1782cae3"
+        },
+        {
+          "code": "1.2.1.1",
+          "title": "The Objectives of Government Economic Policy",
+          "parentCode": "1.2.1",
+          "content": [],
+          "id": "ee2c4336-2b50-4676-9f62-4a7ddd6c62dd"
+        },
+        {
+          "code": "1.2.1.2",
+          "title": "Macroeconomic Indicators",
+          "parentCode": "1.2.1",
+          "content": [],
+          "id": "9bb2624e-006d-471d-8bcd-2e4abb4e7c7a"
+        },
+        {
+          "code": "1.2.1.3",
+          "title": "Uses of Index Numbers",
+          "parentCode": "1.2.1",
+          "content": [],
+          "id": "dd810f08-d590-407e-95c3-20d63aa0a82d"
+        },
+        {
+          "code": "1.2.1.4",
+          "title": "Uses of National Income Data",
+          "parentCode": "1.2.1",
+          "content": [],
+          "id": "0e145fe1-1f4e-4506-8127-4bca68b0727c"
+        },
+        {
+          "code": "1.2.2",
+          "title": "How the Macroeconomy Works: The Circular Flow of Income, AD/AS Analysis and Related Concepts",
+          "parentCode": null,
+          "content": [],
+          "id": "6fdd9027-6f7a-483e-be89-1a6c9a933874"
+        },
+        {
+          "code": "1.2.2.1",
+          "title": "The Circular Flow of Income",
+          "parentCode": "1.2.2",
+          "content": [],
+          "id": "0108faaa-3401-4f3e-9902-2dcb23518b58"
+        },
+        {
+          "code": "1.2.2.2",
+          "title": "Aggregate Demand and Aggregate Supply Analysis",
+          "parentCode": "1.2.2",
+          "content": [],
+          "id": "c2fb1a1c-83ca-4ad3-91dc-6cc1bba8cdff"
+        },
+        {
+          "code": "1.2.2.3",
+          "title": "The Determinants of Aggregate Demand",
+          "parentCode": "1.2.2",
+          "content": [],
+          "id": "1ebf72b1-2ce4-4b90-a314-a4c40d117f79"
+        },
+        {
+          "code": "1.2.2.4",
+          "title": "Aggregate Demand and the Level of Economic Activity",
+          "parentCode": "1.2.2",
+          "content": [],
+          "id": "f54b730a-56f4-4918-8daa-efbb5e20a5de"
+        },
+        {
+          "code": "1.2.2.5",
+          "title": "Determinants of Short-Run Aggregate Supply",
+          "parentCode": "1.2.2",
+          "content": [],
+          "id": "c73b6b0a-d3f6-48a0-8705-d2dea66d298a"
+        },
+        {
+          "code": "1.2.2.6",
+          "title": "Determinants of Long-Run Aggregate Supply",
+          "parentCode": "1.2.2",
+          "content": [],
+          "id": "157ce161-ffc5-4fd4-a7f3-f32f478a6afd"
+        },
+        {
+          "code": "1.2.3",
+          "title": "Economic Performance",
+          "parentCode": null,
+          "content": [],
+          "id": "6f087a07-7d7c-4a33-9eff-eac955cc3e82"
+        },
+        {
+          "code": "1.2.3.1",
+          "title": "Economic Growth and the Economic Cycle",
+          "parentCode": "1.2.3",
+          "content": [],
+          "id": "4374e0e6-45a6-4df6-8ea0-e95dd54a60e7"
+        },
+        {
+          "code": "1.2.3.2",
+          "title": "Employment and Unemployment",
+          "parentCode": "1.2.3",
+          "content": [],
+          "id": "8f27996c-4af3-4393-a766-05426bce60cc"
+        },
+        {
+          "code": "1.2.3.3",
+          "title": "Inflation and Deflation",
+          "parentCode": "1.2.3",
+          "content": [],
+          "id": "2bfee2b5-4aff-464f-8daf-859641696d8c"
+        },
+        {
+          "code": "1.2.3.4",
+          "title": "Possible Conflicts Between Macroeconomic Policy Objectives",
+          "parentCode": "1.2.3",
+          "content": [],
+          "id": "84319567-224a-45af-b317-7c8ba1ae9cbc"
+        },
+        {
+          "code": "1.2.4",
+          "title": "Financial Markets and Monetary Policy",
+          "parentCode": null,
+          "content": [],
+          "id": "0a96b623-4727-4df6-bcdf-186163d24ac2"
+        },
+        {
+          "code": "1.2.1.1",
+          "title": "The Structure of Financial Markets and Financial Assets",
+          "parentCode": "1.2.4",
+          "content": [],
+          "id": "671367cd-0071-4751-84e2-632ec7d2fa0a"
+        },
+        {
+          "code": "1.2.1.2",
+          "title": "Commercial Banks and Investment Banks",
+          "parentCode": "1.2.4",
+          "content": [],
+          "id": "f88c00c1-83bb-44f6-8429-28c973ab3caa"
+        },
+        {
+          "code": "1.2.4.3",
+          "title": "Central Banks and Monetary Policy",
+          "parentCode": "1.2.4",
+          "content": [],
+          "id": "d663337f-bf42-4099-9f2c-dc6e38426955"
+        },
+        {
+          "code": "1.2.4.4",
+          "title": "The Regulation of the Financial System",
+          "parentCode": "1.2.4",
+          "content": [],
+          "id": "07e8cc9a-b358-4903-86e7-d87c7c8fb36c"
+        },
+        {
+          "code": "1.2.5",
+          "title": "Fiscal Policy and Supply-Side Policies",
+          "parentCode": null,
+          "content": [],
+          "id": "80f884eb-ed20-45a9-85ee-1f1c050e953e"
+        },
+        {
+          "code": "1.2.5.1",
+          "title": "Fiscal Policy",
+          "parentCode": "1.2.5",
+          "content": [],
+          "id": "dae58c61-1f81-40cc-a0fd-ca21a235742c"
+        },
+        {
+          "code": "1.2.5.2",
+          "title": "Supply-Side Policies",
+          "parentCode": "1.2.5",
+          "content": [],
+          "id": "d9e40043-2bed-4bf5-ad90-f7854579f768"
+        },
+        {
+          "code": "1.2.6",
+          "title": "The International Economy",
+          "parentCode": null,
+          "content": [],
+          "id": "6d4c1669-d46a-4661-8ec6-6c3df0338c58"
+        },
+        {
+          "code": "1.2.6.1",
+          "title": "Globalisation",
+          "parentCode": "1.2.6",
+          "content": [],
+          "id": "50dbf1f5-4f3c-4a12-b38b-2883fa4ac7a2"
+        },
+        {
+          "code": "1.2.6.2",
+          "title": "Trade",
+          "parentCode": "1.2.6",
+          "content": [],
+          "id": "6a3215ed-62d1-435a-ad25-bc6298358b10"
+        },
+        {
+          "code": "1.2.6.3",
+          "title": "The Balance of Payments",
+          "parentCode": "1.2.6",
+          "content": [],
+          "id": "86ea3295-35d3-4b47-8d29-305d094bb4fe"
+        },
+        {
+          "code": "1.2.6.4",
+          "title": "Exchange Rate Systems",
+          "parentCode": "1.2.6",
+          "content": [],
+          "id": "4a17ad45-66fb-4e28-8fca-3d34470590da"
+        },
+        {
+          "code": "1.2.6.5",
+          "title": "Economic Growth and Development",
+          "parentCode": "1.2.6",
+          "content": [],
+          "id": "c056ea0f-89a9-4de2-aed6-e1c0cb0af160"
+        }
+      ],
+      "createdAt": "2026-03-28T06:34:51.853Z"
+    },
+    {
+      "name": "Edexcel Economics (A Level)",
       "examBoard": "Edexcel",
       "level": "A-Level",
       "gradeBoundaries": [
@@ -300,148 +1918,776 @@
           "minPercent": 0
         }
       ],
-      "topics": [],
-      "createdAt": "2025-09-01T00:00:00.000Z"
-    },
-    {
-      "id": "aed60fd1-5b88-4c11-bc6b-401ee9287345",
-      "name": "Edexcel Economics IGCSE",
-      "examBoard": "Edexcel",
-      "level": "GCSE",
-      "gradeBoundaries": [
+      "id": "1bd16777-3dc9-4038-aa8d-4695b9e486ff",
+      "topics": [
         {
-          "grade": "9",
-          "minPercent": 90
+          "code": "1.1",
+          "title": "Nature of economics",
+          "parentCode": null,
+          "content": [],
+          "id": "273de245-9cd3-4bb5-8a96-1a26e5aaf402"
         },
         {
-          "grade": "8",
-          "minPercent": 80
+          "code": "1.1.1",
+          "title": "Economics as a social science",
+          "parentCode": "1.1",
+          "content": [],
+          "id": "6b3be7ec-71e7-4848-af21-5cbd14a92950"
         },
         {
-          "grade": "7",
-          "minPercent": 70
+          "code": "1.1.2",
+          "title": "Positive and normative economic statements",
+          "parentCode": "1.1",
+          "content": [],
+          "id": "e8556b76-cdf0-4d68-b0b4-41957bea93ca"
         },
         {
-          "grade": "6",
-          "minPercent": 60
+          "code": "1.1.3",
+          "title": "The economic problem",
+          "parentCode": "1.1",
+          "content": [],
+          "id": "fb4d1517-7c3b-4514-9921-4f6667261af8"
         },
         {
-          "grade": "5",
-          "minPercent": 50
+          "code": "1.1.4",
+          "title": "Production possibility frontiers",
+          "parentCode": "1.1",
+          "content": [],
+          "id": "4d9cd696-06a7-4191-994e-7db606e805d4"
         },
         {
-          "grade": "4",
-          "minPercent": 40
+          "code": "1.1.5",
+          "title": "Specialisation and the division of labour",
+          "parentCode": "1.1",
+          "content": [],
+          "id": "9e66dd20-65ee-4eef-806f-02d5c2f53a2d"
         },
         {
-          "grade": "3",
-          "minPercent": 30
+          "code": "1.1.6",
+          "title": "Free market economies, mixed economy and command economy",
+          "parentCode": "1.1",
+          "content": [],
+          "id": "284370d4-eede-4215-9812-6c57c6d7a6f1"
         },
         {
-          "grade": "U",
-          "minPercent": 0
+          "code": "1.2",
+          "title": "How markets work",
+          "parentCode": null,
+          "content": [],
+          "id": "93712196-1939-423c-be6d-905b2b03c34e"
+        },
+        {
+          "code": "1.2.1",
+          "title": "Rational decision making",
+          "parentCode": "1.2",
+          "content": [],
+          "id": "9237d40b-d23d-4d87-82c8-42513e0cee76"
+        },
+        {
+          "code": "1.2.2",
+          "title": "Demand",
+          "parentCode": "1.2",
+          "content": [],
+          "id": "552d0db3-a822-405c-9250-bda33f3f0c20"
+        },
+        {
+          "code": "1.2.3",
+          "title": "Price, income and cross elasticities of demand",
+          "parentCode": "1.2",
+          "content": [],
+          "id": "d6a04fdc-acec-4901-aada-56b87ae048f1"
+        },
+        {
+          "code": "1.2.4",
+          "title": "Supply",
+          "parentCode": "1.2",
+          "content": [],
+          "id": "75bc148e-874f-44f1-a687-57e0cc41f159"
+        },
+        {
+          "code": "1.2.5",
+          "title": "Elasticity of supply",
+          "parentCode": "1.2",
+          "content": [],
+          "id": "873ff0c7-ffb5-4465-89fa-cf4fac1e7fb9"
+        },
+        {
+          "code": "1.2.6",
+          "title": "Price determination",
+          "parentCode": "1.2",
+          "content": [],
+          "id": "62be7af8-1123-4a85-8e08-83cc8a75639b"
+        },
+        {
+          "code": "1.2.7",
+          "title": "Price mechanism",
+          "parentCode": "1.2",
+          "content": [],
+          "id": "c293c040-eda1-464e-99eb-4245f202ce01"
+        },
+        {
+          "code": "1.2.8",
+          "title": "Consumer and producer surplus",
+          "parentCode": "1.2",
+          "content": [],
+          "id": "5aed739d-bf5d-436b-bbd3-e20354ac0b7e"
+        },
+        {
+          "code": "1.2.9",
+          "title": "Indirect taxes and subsidies",
+          "parentCode": "1.2",
+          "content": [],
+          "id": "b98833a1-3e1f-4061-b104-549f5588146b"
+        },
+        {
+          "code": "1.2.10",
+          "title": "Alternative views of consumer behaviour",
+          "parentCode": "1.2",
+          "content": [],
+          "id": "664862c6-9492-488d-be43-f3033d95d49c"
+        },
+        {
+          "code": "1.3",
+          "title": "Market failure",
+          "parentCode": null,
+          "content": [],
+          "id": "341cd27f-aa0c-4260-9f18-da2436f56da1"
+        },
+        {
+          "code": "1.3.1",
+          "title": "Types of market failure",
+          "parentCode": "1.3",
+          "content": [],
+          "id": "99d1c9e1-8379-4c9f-b644-f7a9d4f5746c"
+        },
+        {
+          "code": "1.3.2",
+          "title": "Externalities",
+          "parentCode": "1.3",
+          "content": [],
+          "id": "db3109ca-e67f-4af4-b717-47b3b584714a"
+        },
+        {
+          "code": "1.3.3",
+          "title": "Public goods",
+          "parentCode": "1.3",
+          "content": [],
+          "id": "2f4cd987-2adb-477c-8d4f-f806ba32dc9d"
+        },
+        {
+          "code": "1.3.4",
+          "title": "Information gaps",
+          "parentCode": "1.3",
+          "content": [],
+          "id": "bac80d7f-1850-49fb-8d3d-feba57935449"
+        },
+        {
+          "code": "1.4",
+          "title": "Government intervention",
+          "parentCode": null,
+          "content": [],
+          "id": "8a879226-db61-4e21-b2fc-c691c684d4aa"
+        },
+        {
+          "code": "1.4.1",
+          "title": "Government intervention in markets",
+          "parentCode": "1.4",
+          "content": [],
+          "id": "a11b149c-73c8-4453-8d6d-35efa4a74e64"
+        },
+        {
+          "code": "1.4.2",
+          "title": "Government failure",
+          "parentCode": "1.4",
+          "content": [],
+          "id": "0898c0e4-856e-4fbb-b89d-2ba9781e39c1"
+        },
+        {
+          "code": "2.1",
+          "title": "Measures of economic performance",
+          "parentCode": null,
+          "content": [],
+          "id": "2f696b58-61e1-4dc8-8ea3-ccc44e1bc90a"
+        },
+        {
+          "code": "2.1.1",
+          "title": "Economic growth",
+          "parentCode": "2.1",
+          "content": [],
+          "id": "b53ac822-c9a0-47a5-a6f9-38752e98561a"
+        },
+        {
+          "code": "2.1.2",
+          "title": "Inflation",
+          "parentCode": "2.1",
+          "content": [],
+          "id": "f0fefa81-5560-4366-8349-93deabe5a6e9"
+        },
+        {
+          "code": "2.1.3",
+          "title": "Employment and unemployment",
+          "parentCode": "2.1",
+          "content": [],
+          "id": "5d3c0150-59d6-4381-a9b6-56f3736d00e5"
+        },
+        {
+          "code": "2.1.4",
+          "title": "Balance of payments",
+          "parentCode": "2.1",
+          "content": [],
+          "id": "a7a657d4-97f5-45d9-b3dd-885196ee756f"
+        },
+        {
+          "code": "2.2",
+          "title": "Aggregate demand (AD)",
+          "parentCode": null,
+          "content": [],
+          "id": "018025d2-bf8c-46a4-ae83-c859a98d390e"
+        },
+        {
+          "code": "2.2.1",
+          "title": "The characteristics of AD",
+          "parentCode": "2.2",
+          "content": [],
+          "id": "4cd2dd89-6505-4542-aa83-752aee0db402"
+        },
+        {
+          "code": "2.2.2",
+          "title": "Consumption (C)",
+          "parentCode": "2.2",
+          "content": [],
+          "id": "b3c0fb88-0690-4763-9605-759f7ef809c3"
+        },
+        {
+          "code": "2.2.3",
+          "title": "Investment (I)",
+          "parentCode": "2.2",
+          "content": [],
+          "id": "eec31240-6ff7-4438-8cb2-d025a77bd1eb"
+        },
+        {
+          "code": "2.2.4",
+          "title": "Government expenditure (G)",
+          "parentCode": "2.2",
+          "content": [],
+          "id": "04094428-9baa-4b49-9772-c473c1cb1149"
+        },
+        {
+          "code": "2.2.5",
+          "title": "Net trade (X-M)",
+          "parentCode": "2.2",
+          "content": [],
+          "id": "63c521f7-08ad-4e80-8bce-5074f7c86dbe"
+        },
+        {
+          "code": "2.3",
+          "title": "Aggregate supply (AS)",
+          "parentCode": null,
+          "content": [],
+          "id": "e2586dee-3895-4163-a8bb-38f832222e42"
+        },
+        {
+          "code": "2.3.1",
+          "title": "The characteristics of AS",
+          "parentCode": "2.3",
+          "content": [],
+          "id": "b9e22910-ef81-4434-a47e-9e2794214757"
+        },
+        {
+          "code": "2.3.2",
+          "title": "Short-run AS",
+          "parentCode": "2.3",
+          "content": [],
+          "id": "7dfc4f28-f2aa-490e-a663-a5bf328145e9"
+        },
+        {
+          "code": "2.3.3",
+          "title": "Long-run AS",
+          "parentCode": "2.3",
+          "content": [],
+          "id": "472e1183-a124-4024-bb41-6619c36e602c"
+        },
+        {
+          "code": "2.4",
+          "title": "National income",
+          "parentCode": null,
+          "content": [],
+          "id": "79c132db-65eb-4781-b9d0-296004077ef3"
+        },
+        {
+          "code": "2.4.1",
+          "title": "National income",
+          "parentCode": "2.4",
+          "content": [],
+          "id": "824c01b6-94f1-4529-9fec-8889a4b58a1c"
+        },
+        {
+          "code": "2.4.2",
+          "title": "Injections and withdrawals",
+          "parentCode": "2.4",
+          "content": [],
+          "id": "023020a0-311a-46fa-b791-bf816fc39ca9"
+        },
+        {
+          "code": "2.4.3",
+          "title": "Equilibrium levels of real national output",
+          "parentCode": "2.4",
+          "content": [],
+          "id": "d3bd093a-5e51-4d40-8229-e60a87228108"
+        },
+        {
+          "code": "2.4.4",
+          "title": "The multiplier",
+          "parentCode": "2.4",
+          "content": [],
+          "id": "92bb79de-b300-40ff-9731-2ff6333afd96"
+        },
+        {
+          "code": "2.5",
+          "title": "Economic growth",
+          "parentCode": null,
+          "content": [],
+          "id": "7a6a660c-39ca-4a9d-bf21-6c92764a2255"
+        },
+        {
+          "code": "2.5.1",
+          "title": "Causes of growth",
+          "parentCode": "2.5",
+          "content": [],
+          "id": "e0e99063-a927-4d9e-b7ca-5343961defd4"
+        },
+        {
+          "code": "2.5.2",
+          "title": "Output gaps",
+          "parentCode": "2.5",
+          "content": [],
+          "id": "7e21af3a-4456-4df4-a341-48ac35f5d151"
+        },
+        {
+          "code": "2.5.3",
+          "title": "Trade (business) cycle",
+          "parentCode": "2.5",
+          "content": [],
+          "id": "a669ac5c-f489-46c1-93ef-8de220b706f7"
+        },
+        {
+          "code": "2.5.4",
+          "title": "The impact of economic growth",
+          "parentCode": "2.5",
+          "content": [],
+          "id": "69786069-2311-46f9-9f98-bb6102e9c721"
+        },
+        {
+          "code": "2.6",
+          "title": "Macroeconomic objectives and policies",
+          "parentCode": null,
+          "content": [],
+          "id": "fc31d81c-7676-4c2b-8327-17ed382576ad"
+        },
+        {
+          "code": "2.6.1",
+          "title": "Possible macroeconomic objectives",
+          "parentCode": "2.6",
+          "content": [],
+          "id": "600898c5-1e51-49f0-89cf-d49e6a174945"
+        },
+        {
+          "code": "2.6.2",
+          "title": "Demand-side policies",
+          "parentCode": "2.6",
+          "content": [],
+          "id": "50d0e693-53eb-43f6-a3f1-1ebcab9d0b93"
+        },
+        {
+          "code": "2.6.3",
+          "title": "Supply-side policies",
+          "parentCode": "2.6",
+          "content": [],
+          "id": "27a7b9da-b880-404b-8ee8-ff24d9598446"
+        },
+        {
+          "code": "2.6.4",
+          "title": "Conflicts and trade-offs between objectives and policies",
+          "parentCode": "2.6",
+          "content": [],
+          "id": "4230ea28-0afb-4522-b8f4-9123298da66c"
+        },
+        {
+          "code": "3.1",
+          "title": "Business growth",
+          "parentCode": null,
+          "content": [],
+          "id": "22d93eec-7286-4d77-b147-7e06114379e1"
+        },
+        {
+          "code": "3.1.1",
+          "title": "Sizes and types of firms",
+          "parentCode": "3.1",
+          "content": [],
+          "id": "b2488e55-f1c5-4ae0-979c-c895d42a201f"
+        },
+        {
+          "code": "3.1.2",
+          "title": "Business growth",
+          "parentCode": "3.1",
+          "content": [],
+          "id": "d0fa2fef-ede8-43b0-9134-41e272ad426b"
+        },
+        {
+          "code": "3.1.3",
+          "title": "Demergers",
+          "parentCode": "3.1",
+          "content": [],
+          "id": "f98d2e66-b423-44c3-9514-e91e911fae82"
+        },
+        {
+          "code": "3.2",
+          "title": "Business objectives",
+          "parentCode": null,
+          "content": [],
+          "id": "ef42bb27-ff56-4889-9c54-d87ef685e8b9"
+        },
+        {
+          "code": "3.2.1",
+          "title": "Business objectives",
+          "parentCode": "3.2",
+          "content": [],
+          "id": "a99ac82a-248d-4116-baa8-f547ee91672b"
+        },
+        {
+          "code": "3.3",
+          "title": "Revenues, costs and profits",
+          "parentCode": null,
+          "content": [],
+          "id": "e433b4b0-71ce-4c21-93ff-0110bd2f7cdc"
+        },
+        {
+          "code": "3.3.1",
+          "title": "Revenue",
+          "parentCode": "3.3",
+          "content": [],
+          "id": "dd812883-68fb-4696-ab9d-116487cdd99c"
+        },
+        {
+          "code": "3.3.2",
+          "title": "Costs",
+          "parentCode": "3.3",
+          "content": [],
+          "id": "aa0b1503-f2a0-4f2c-81da-1405620ff4df"
+        },
+        {
+          "code": "3.3.3",
+          "title": "Economies and diseconomies of scale",
+          "parentCode": "3.3",
+          "content": [],
+          "id": "187fbc51-5cd3-4dfd-b605-003e166f608f"
+        },
+        {
+          "code": "3.3.4",
+          "title": "Normal profits, supernormal profits and losses",
+          "parentCode": "3.3",
+          "content": [],
+          "id": "9c8457a7-5efa-44e1-a28e-653ce8006132"
+        },
+        {
+          "code": "3.4",
+          "title": "Market structures",
+          "parentCode": null,
+          "content": [],
+          "id": "e5537a12-5bed-456b-b8d3-14c27cbfff5e"
+        },
+        {
+          "code": "3.4.1",
+          "title": "Efficiency",
+          "parentCode": "3.4",
+          "content": [],
+          "id": "5f844c90-db9e-4c0d-b2f6-9d6d771f661d"
+        },
+        {
+          "code": "3.4.2",
+          "title": "Perfect competition",
+          "parentCode": "3.4",
+          "content": [],
+          "id": "0bc0ddf3-49a7-47a4-9519-0fa7cb78e653"
+        },
+        {
+          "code": "3.4.3",
+          "title": "Monopolistic competition",
+          "parentCode": "3.4",
+          "content": [],
+          "id": "0c3afcae-437f-41e5-bcb0-db7e1878c256"
+        },
+        {
+          "code": "3.4.4",
+          "title": "Oligopoly",
+          "parentCode": "3.4",
+          "content": [],
+          "id": "25fdf136-f455-4ef5-8a3f-e8bde4eb6bb9"
+        },
+        {
+          "code": "3.4.5",
+          "title": "Monopoly",
+          "parentCode": "3.4",
+          "content": [],
+          "id": "8874bc4e-46f7-4ee7-a28f-43e7d5d71c0b"
+        },
+        {
+          "code": "3.4.6",
+          "title": "Monopsony",
+          "parentCode": "3.4",
+          "content": [],
+          "id": "70cb1481-bbea-47d8-bcbd-06ebffd0f4eb"
+        },
+        {
+          "code": "3.4.7",
+          "title": "Contestability",
+          "parentCode": "3.4",
+          "content": [],
+          "id": "64bc9f7d-8320-431f-bbf3-7916616d341b"
+        },
+        {
+          "code": "3.5",
+          "title": "Labour market",
+          "parentCode": null,
+          "content": [],
+          "id": "79e91f7c-4f99-4ff3-a451-44e1142c1dd0"
+        },
+        {
+          "code": "3.5.1",
+          "title": "Demand for labour",
+          "parentCode": "3.5",
+          "content": [],
+          "id": "14714935-6377-4340-bb37-0920302cf335"
+        },
+        {
+          "code": "3.5.2",
+          "title": "Supply of labour",
+          "parentCode": "3.5",
+          "content": [],
+          "id": "d9228f04-94be-4e09-a6a2-33c6f1da388c"
+        },
+        {
+          "code": "3.5.3",
+          "title": "Wage determination in competitive and non-competitive markets",
+          "parentCode": "3.5",
+          "content": [],
+          "id": "404453ac-0b89-470a-9ca7-29c3ac795e50"
+        },
+        {
+          "code": "3.6",
+          "title": "Government intervention",
+          "parentCode": null,
+          "content": [],
+          "id": "51f2b400-72e3-41f4-ae29-07de80819d66"
+        },
+        {
+          "code": "3.6.1",
+          "title": "Government intervention",
+          "parentCode": "3.6",
+          "content": [],
+          "id": "976a5ae4-6b6c-4fd3-a8af-db9c4d06a362"
+        },
+        {
+          "code": "3.6.2",
+          "title": "The impact of government intervention",
+          "parentCode": "3.6",
+          "content": [],
+          "id": "a4e16758-b9b4-4f23-8ece-907efcb80f2f"
+        },
+        {
+          "code": "4.1",
+          "title": "International economics",
+          "parentCode": null,
+          "content": [],
+          "id": "30e84c6e-10e8-43af-8f4b-5985875ae150"
+        },
+        {
+          "code": "4.1.1",
+          "title": "Globalisation",
+          "parentCode": "4.1",
+          "content": [],
+          "id": "5403c445-e50f-4f6e-a229-df27905c37e7"
+        },
+        {
+          "code": "4.1.2",
+          "title": "Specialisation and trade",
+          "parentCode": "4.1",
+          "content": [],
+          "id": "3251f35e-f35e-4f0d-a7f3-5213283481e7"
+        },
+        {
+          "code": "4.1.3",
+          "title": "Pattern of trade",
+          "parentCode": "4.1",
+          "content": [],
+          "id": "be86d94e-e71b-41fa-838d-9aca25899f77"
+        },
+        {
+          "code": "4.1.4",
+          "title": "Terms of trade",
+          "parentCode": "4.1",
+          "content": [],
+          "id": "850a2fd5-70f1-453b-9f87-88ea78ec2836"
+        },
+        {
+          "code": "4.1.5",
+          "title": "Trading blocs and the World Trade Organisation (WTO)",
+          "parentCode": "4.1",
+          "content": [],
+          "id": "7635d1f7-891c-4f9d-959f-ffe4fb56fcf0"
+        },
+        {
+          "code": "4.1.6",
+          "title": "Restrictions on free trade",
+          "parentCode": "4.1",
+          "content": [],
+          "id": "b56c4cb9-c7a6-4409-ba1f-bafb2971953c"
+        },
+        {
+          "code": "4.1.7",
+          "title": "Balance of payments",
+          "parentCode": "4.1",
+          "content": [],
+          "id": "b77e4f54-f8cb-4ae0-a370-088f13d66616"
+        },
+        {
+          "code": "4.1.8",
+          "title": "Exchange rates",
+          "parentCode": "4.1",
+          "content": [],
+          "id": "2bb0dfa0-35ae-4f8f-a417-869806f26284"
+        },
+        {
+          "code": "4.1.9",
+          "title": "International competitiveness",
+          "parentCode": "4.1",
+          "content": [],
+          "id": "1009b31a-6890-407c-84e0-1aa0b576f850"
+        },
+        {
+          "code": "4.2",
+          "title": "Poverty and inequality",
+          "parentCode": null,
+          "content": [],
+          "id": "8eb8feb9-7add-487d-b5d8-98d268eede5d"
+        },
+        {
+          "code": "4.2.1",
+          "title": "Absolute and relative poverty",
+          "parentCode": "4.2",
+          "content": [],
+          "id": "c5244795-f6dc-4d55-9115-0aa1492ced51"
+        },
+        {
+          "code": "4.2.2",
+          "title": "Inequality",
+          "parentCode": "4.2",
+          "content": [],
+          "id": "2595ba0a-d525-48b4-9bad-d1b2b19024c1"
+        },
+        {
+          "code": "4.3",
+          "title": "Emerging and developing economies",
+          "parentCode": null,
+          "content": [],
+          "id": "665c6597-531e-48f8-a1fb-3b4cd89d8a40"
+        },
+        {
+          "code": "4.3.1",
+          "title": "Measures of development",
+          "parentCode": "4.3",
+          "content": [],
+          "id": "7f0c90eb-10a1-42b1-9689-6cf8b3943627"
+        },
+        {
+          "code": "4.3.2",
+          "title": "Factors influencing growth and development",
+          "parentCode": "4.3",
+          "content": [],
+          "id": "de386fde-5a56-40d9-a723-5644390029a3"
+        },
+        {
+          "code": "4.3.3",
+          "title": "Strategies influencing growth and development",
+          "parentCode": "4.3",
+          "content": [],
+          "id": "f24e3cad-94da-4c18-be83-64dd9a86b515"
+        },
+        {
+          "code": "4.4",
+          "title": "The financial sector",
+          "parentCode": null,
+          "content": [],
+          "id": "f3e14599-10a2-4d19-b901-1cee7a86c2ca"
+        },
+        {
+          "code": "4.4.1",
+          "title": "Role of financial markets",
+          "parentCode": "4.4",
+          "content": [],
+          "id": "39174c2d-b519-45a8-b43b-ea2accc997e1"
+        },
+        {
+          "code": "4.4.2",
+          "title": "Market failure in the financial sector",
+          "parentCode": "4.4",
+          "content": [],
+          "id": "47664ee7-d8e2-4125-91a0-b2faccd4e078"
+        },
+        {
+          "code": "4.4.3",
+          "title": "Role of central banks",
+          "parentCode": "4.4",
+          "content": [],
+          "id": "ee2024c4-691d-4107-9c63-e287c594e44f"
+        },
+        {
+          "code": "4.5",
+          "title": "Role of the state in the macroeconomy",
+          "parentCode": null,
+          "content": [],
+          "id": "dd6f5b28-5491-4c19-b202-44b91005e844"
+        },
+        {
+          "code": "4.5.1",
+          "title": "Public expenditure",
+          "parentCode": "4.5",
+          "content": [],
+          "id": "ab13749a-f3fe-4e07-a4db-54c8e1663cba"
+        },
+        {
+          "code": "4.5.2",
+          "title": "Taxation",
+          "parentCode": "4.5",
+          "content": [],
+          "id": "434daf4b-04db-4842-9be7-db41a94d2a1d"
+        },
+        {
+          "code": "4.5.3",
+          "title": "Public sector finances",
+          "parentCode": "4.5",
+          "content": [],
+          "id": "00d2b575-16cb-4f77-88af-8647fff06163"
+        },
+        {
+          "code": "4.5.4",
+          "title": "Macroeconomic policies in a global context",
+          "parentCode": "4.5",
+          "content": [],
+          "id": "a63926ac-ac62-40c7-a1f7-f9a7ef8f73f2"
         }
       ],
-      "topics": [],
-      "createdAt": "2025-09-01T00:00:00.000Z"
-    },
-    {
-      "id": "adc5a9d2-cf1d-44c7-a72c-d488bf40c105",
-      "name": "Edexcel Business A-Level",
-      "examBoard": "Edexcel",
-      "level": "A-Level",
-      "gradeBoundaries": [
-        {
-          "grade": "A*",
-          "minPercent": 90
-        },
-        {
-          "grade": "A",
-          "minPercent": 80
-        },
-        {
-          "grade": "B",
-          "minPercent": 70
-        },
-        {
-          "grade": "C",
-          "minPercent": 60
-        },
-        {
-          "grade": "D",
-          "minPercent": 50
-        },
-        {
-          "grade": "E",
-          "minPercent": 40
-        },
-        {
-          "grade": "U",
-          "minPercent": 0
-        }
-      ],
-      "topics": [],
-      "createdAt": "2025-09-01T00:00:00.000Z"
-    },
-    {
-      "id": "66f91e10-858e-4ebb-876c-006ce0f46093",
-      "name": "Edexcel Business AS-Level",
-      "examBoard": "Edexcel",
-      "level": "A-Level",
-      "gradeBoundaries": [
-        {
-          "grade": "A",
-          "minPercent": 80
-        },
-        {
-          "grade": "B",
-          "minPercent": 70
-        },
-        {
-          "grade": "C",
-          "minPercent": 60
-        },
-        {
-          "grade": "D",
-          "minPercent": 50
-        },
-        {
-          "grade": "E",
-          "minPercent": 40
-        },
-        {
-          "grade": "U",
-          "minPercent": 0
-        }
-      ],
-      "topics": [],
-      "createdAt": "2025-09-01T00:00:00.000Z"
+      "createdAt": "2026-03-28T06:35:51.489Z"
     }
   ],
   "scholrtutor-students": [
     {
-      "id": "1fc76130-f82e-4676-9908-f97af0a34698",
-      "referenceNumber": "83774",
-      "name": "Hamad",
-      "email": "haamidhaamidhaamid@gmail.com",
-      "icon": "",
-      "subjectId": "",
-      "currentGrade": "",
-      "predictedGrade": "",
-      "targetGrade": "",
-      "isRegular": false,
-      "completedSessions": 0,
-      "notes": [],
-      "testResults": [],
-      "createdAt": "2025-09-01T00:00:00.000Z"
-    },
-    {
-      "id": "e88388f0-f7a6-486e-8bba-32b4b7cc22c0",
+      "id": "128edcdc-81b8-49f6-b3c8-3db7406c41c9",
       "referenceNumber": "rt0029",
       "name": "Hayat",
       "email": "hayatabdi2005@icloud.com",
       "icon": "",
-      "subjectId": "ed9fd0d8-117d-4075-bc19-dc4630d93a28",
+      "subjectId": "0853f904-fe4e-4a4e-8501-b8004361d6ec",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -452,76 +2698,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "25fef83f-4d9a-41bb-a69f-1e926735ee43",
-      "referenceNumber": "8602",
-      "name": "Iman",
-      "email": "imaninyaat2406@hotmail.com",
-      "icon": "",
-      "subjectId": "",
-      "currentGrade": "",
-      "predictedGrade": "",
-      "targetGrade": "",
-      "isRegular": false,
-      "completedSessions": 0,
-      "notes": [],
-      "testResults": [],
-      "createdAt": "2025-09-01T00:00:00.000Z"
-    },
-    {
-      "id": "d72a4023-07ea-4e3b-b46e-8ff9c7dd0ef4",
-      "referenceNumber": "g642",
-      "name": "Ezraasu",
-      "email": "ezraasumadu@gmail.com",
-      "icon": "",
-      "subjectId": "",
-      "currentGrade": "",
-      "predictedGrade": "",
-      "targetGrade": "",
-      "isRegular": false,
-      "completedSessions": 0,
-      "notes": [],
-      "testResults": [],
-      "createdAt": "2025-09-01T00:00:00.000Z"
-    },
-    {
-      "id": "eedca879-35dd-4dc0-9800-71a29ad602f8",
-      "referenceNumber": "9498",
-      "name": "Keli",
-      "email": "kelikjay@gmail.com",
-      "icon": "",
-      "subjectId": "",
-      "currentGrade": "",
-      "predictedGrade": "",
-      "targetGrade": "",
-      "isRegular": false,
-      "completedSessions": 0,
-      "notes": [],
-      "testResults": [],
-      "createdAt": "2025-09-01T00:00:00.000Z"
-    },
-    {
-      "id": "de981135-ce19-471d-9aeb-4fb5ee2473cf",
-      "referenceNumber": "g7329",
-      "name": "Somaya",
-      "email": "sumeyam9505@gmail.com",
-      "icon": "",
-      "subjectId": "",
-      "currentGrade": "",
-      "predictedGrade": "",
-      "targetGrade": "",
-      "isRegular": false,
-      "completedSessions": 0,
-      "notes": [],
-      "testResults": [],
-      "createdAt": "2025-09-01T00:00:00.000Z"
-    },
-    {
-      "id": "a46e1fbd-c9a0-4f59-ab7c-748207c1a56c",
+      "id": "b0758aed-0b3d-4812-948c-819d87adb55f",
       "referenceNumber": "te117",
       "name": "Ebamiyo",
       "email": "",
       "icon": "",
-      "subjectId": "92ab5f1e-a965-42e2-81e8-e31d7b656794",
+      "subjectId": "41b1b86d-9629-4ee2-9527-9e9ca8cdd074",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -532,44 +2714,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "8a553441-2710-4e26-ba15-b42fe61cbc41",
-      "referenceNumber": "g6709",
-      "name": "Abdikhaoiq",
-      "email": "agadeer@cityacademy.co.uk",
-      "icon": "",
-      "subjectId": "",
-      "currentGrade": "",
-      "predictedGrade": "",
-      "targetGrade": "",
-      "isRegular": false,
-      "completedSessions": 0,
-      "notes": [],
-      "testResults": [],
-      "createdAt": "2025-09-01T00:00:00.000Z"
-    },
-    {
-      "id": "7777e443-f8cf-4525-910f-ef264957fe6d",
-      "referenceNumber": "ST-009",
-      "name": "Ebamiyosanu",
-      "email": "ebamiyosanu@gmail.com",
-      "icon": "",
-      "subjectId": "",
-      "currentGrade": "",
-      "predictedGrade": "",
-      "targetGrade": "",
-      "isRegular": false,
-      "completedSessions": 0,
-      "notes": [],
-      "testResults": [],
-      "createdAt": "2025-09-01T00:00:00.000Z"
-    },
-    {
-      "id": "9e2e3843-827b-47fe-a7e6-75feace2911e",
+      "id": "7d30f87c-0a0c-46a5-aa89-1aa2e1ea4204",
       "referenceNumber": "a3806",
       "name": "Cataline",
       "email": "catalinacircu07@gmail.com",
       "icon": "",
-      "subjectId": "f682fabd-ff74-4454-86bb-ccf9caf6dba9",
+      "subjectId": "1bd16777-3dc9-4038-aa8d-4695b9e486ff",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -580,12 +2730,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "29d2b155-0cc4-4d16-b502-121e6c9fabeb",
+      "id": "0d7ff7b7-3da2-4104-bc72-f49d51d1cc24",
       "referenceNumber": "83a24",
       "name": "Bianca",
       "email": "bia.mano1225@gmail.com",
       "icon": "",
-      "subjectId": "f682fabd-ff74-4454-86bb-ccf9caf6dba9",
+      "subjectId": "1bd16777-3dc9-4038-aa8d-4695b9e486ff",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -596,12 +2746,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "b05a284a-43c3-4091-923f-ef6218a40b28",
+      "id": "ad63034e-b91f-4382-b975-5bcb45f44a81",
       "referenceNumber": "h0053",
       "name": "Waseela H",
       "email": "",
       "icon": "",
-      "subjectId": "aed60fd1-5b88-4c11-bc6b-401ee9287345",
+      "subjectId": "1bd16777-3dc9-4038-aa8d-4695b9e486ff",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -612,12 +2762,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "3256f73c-f793-4ab8-94b9-5382b2d9529d",
-      "referenceNumber": "ST-013",
+      "id": "bc6c860a-32ad-4bc1-ab81-470593d06133",
+      "referenceNumber": "ST-006",
       "name": "Israa",
       "email": "",
       "icon": "",
-      "subjectId": "ed9fd0d8-117d-4075-bc19-dc4630d93a28",
+      "subjectId": "0853f904-fe4e-4a4e-8501-b8004361d6ec",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -625,7 +2775,7 @@
       "completedSessions": 0,
       "notes": [
         {
-          "id": "1f69bb5c-d665-4937-bd0e-900ab7f8652b",
+          "id": "fad8ccbe-e0c0-46df-a401-02882cb96449",
           "content": "Sunday student",
           "createdAt": "2025-09-01T00:00:00.000Z"
         }
@@ -634,12 +2784,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "388bfbe2-4a1b-4670-8538-cc09b50f8697",
+      "id": "c67514c2-be53-4266-bbfa-09358d78e9d3",
       "referenceNumber": "usfl486",
       "name": "Fatima",
       "email": "",
       "icon": "",
-      "subjectId": "0011effc-7a51-48de-9316-5daff4d78e49",
+      "subjectId": "1bd16777-3dc9-4038-aa8d-4695b9e486ff",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -650,12 +2800,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "2e415d7f-2146-4828-879d-f0a2587263ff",
+      "id": "e134e68b-dc7d-4d64-b02d-01e9df7a285e",
       "referenceNumber": "a3742",
       "name": "Temi",
       "email": "",
       "icon": "",
-      "subjectId": "f682fabd-ff74-4454-86bb-ccf9caf6dba9",
+      "subjectId": "1bd16777-3dc9-4038-aa8d-4695b9e486ff",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -666,12 +2816,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "3bf6ea35-3da3-4c0b-a47e-f1a79ed721ba",
+      "id": "b598ec61-55a3-475f-9436-72de9b27d8c8",
       "referenceNumber": "8447",
       "name": "Ali",
       "email": "",
       "icon": "",
-      "subjectId": "ed9fd0d8-117d-4075-bc19-dc4630d93a28",
+      "subjectId": "0853f904-fe4e-4a4e-8501-b8004361d6ec",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -682,12 +2832,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "bdedcbcc-40c5-4719-bac6-0403e5d37d65",
+      "id": "98a693c3-22e4-4ce2-a53b-b810630f67f6",
       "referenceNumber": "a3a62",
       "name": "Vithun",
       "email": "",
       "icon": "",
-      "subjectId": "f682fabd-ff74-4454-86bb-ccf9caf6dba9",
+      "subjectId": "1bd16777-3dc9-4038-aa8d-4695b9e486ff",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -698,12 +2848,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "1c81066d-cc57-4d5e-be7b-8e06730e8f05",
+      "id": "014e7ec6-bcfc-43d8-a84f-2edd26361d9f",
       "referenceNumber": "a3740",
       "name": "Isra",
       "email": "",
       "icon": "",
-      "subjectId": "f682fabd-ff74-4454-86bb-ccf9caf6dba9",
+      "subjectId": "1bd16777-3dc9-4038-aa8d-4695b9e486ff",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -714,12 +2864,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "ee5dc38b-e31e-47ff-b7ce-c1a44408dc76",
+      "id": "7d19ee1f-bf78-4e3c-9861-a4a2c4d9f518",
       "referenceNumber": "g7697",
       "name": "Joseph",
       "email": "josephamissah804@gmail.com",
       "icon": "",
-      "subjectId": "f682fabd-ff74-4454-86bb-ccf9caf6dba9",
+      "subjectId": "1bd16777-3dc9-4038-aa8d-4695b9e486ff",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -730,12 +2880,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "bd62cac0-c078-4ad9-82d4-9a9cb7e5ddcc",
+      "id": "9f718d20-abf3-4d88-bfa4-5d34191ca5dd",
       "referenceNumber": "6406",
       "name": "Yusuf",
       "email": "",
       "icon": "",
-      "subjectId": "66c696e0-c586-4f6c-8d18-7e2cd0c48266",
+      "subjectId": "0853f904-fe4e-4a4e-8501-b8004361d6ec",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -746,12 +2896,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "7c28284b-926f-4da7-a642-568e15029848",
+      "id": "55120d8d-01ab-4406-8fb2-75bec8b42a21",
       "referenceNumber": "a3871",
       "name": "Tahiya",
       "email": "",
       "icon": "",
-      "subjectId": "ed9fd0d8-117d-4075-bc19-dc4630d93a28",
+      "subjectId": "0853f904-fe4e-4a4e-8501-b8004361d6ec",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -759,7 +2909,7 @@
       "completedSessions": 0,
       "notes": [
         {
-          "id": "69c336d3-2e6b-4793-b182-a07d9d565c0c",
+          "id": "a5361d52-ab73-4892-868a-3c2b32ae462d",
           "content": "Sunday student",
           "createdAt": "2025-09-01T00:00:00.000Z"
         }
@@ -768,12 +2918,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "bc3becba-2d26-4f15-9cc4-e30c4a25cd05",
+      "id": "7fb0efa5-5efd-438b-a6de-70c7905bc02c",
       "referenceNumber": "g7338",
       "name": "Muhsin",
       "email": "",
       "icon": "",
-      "subjectId": "ed9fd0d8-117d-4075-bc19-dc4630d93a28",
+      "subjectId": "0853f904-fe4e-4a4e-8501-b8004361d6ec",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -784,12 +2934,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "d2ec385b-80a3-4760-b693-81a112514250",
+      "id": "bb8c6c91-dc8a-42ab-9314-e5c17837ae56",
       "referenceNumber": "7435",
       "name": "Yasser",
       "email": "",
       "icon": "",
-      "subjectId": "f682fabd-ff74-4454-86bb-ccf9caf6dba9",
+      "subjectId": "1bd16777-3dc9-4038-aa8d-4695b9e486ff",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -797,7 +2947,7 @@
       "completedSessions": 0,
       "notes": [
         {
-          "id": "82cd8763-834e-42cc-9e5a-7293640a3bee",
+          "id": "e416aa88-4e05-4c1c-8dd8-f916387b69d6",
           "content": "Done AS and year 1 content",
           "createdAt": "2025-09-01T00:00:00.000Z"
         }
@@ -806,12 +2956,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "c32bafe9-a6f1-464b-92c9-485b7ff68bfc",
+      "id": "3ec0f529-d90e-426e-9d26-f31891ff638d",
       "referenceNumber": "10279",
       "name": "Amira",
       "email": "",
       "icon": "",
-      "subjectId": "f682fabd-ff74-4454-86bb-ccf9caf6dba9",
+      "subjectId": "1bd16777-3dc9-4038-aa8d-4695b9e486ff",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -819,7 +2969,7 @@
       "completedSessions": 0,
       "notes": [
         {
-          "id": "64d4adb4-581e-460e-877f-58878d3d3245",
+          "id": "8d30ad8e-d411-4c92-868c-249df7e50ecb",
           "content": "Micro finished year 1",
           "createdAt": "2025-09-01T00:00:00.000Z"
         }
@@ -828,12 +2978,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "cc46e062-f206-42d7-8f3c-842ea71ba81f",
+      "id": "39198daf-739b-492f-b5f9-1bda48c235a1",
       "referenceNumber": "g6417",
       "name": "Daniel",
       "email": "",
       "icon": "",
-      "subjectId": "ed9fd0d8-117d-4075-bc19-dc4630d93a28",
+      "subjectId": "0853f904-fe4e-4a4e-8501-b8004361d6ec",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -841,19 +2991,19 @@
       "completedSessions": 1,
       "notes": [
         {
-          "id": "afef7961-e938-4ab5-a3c8-6333561c7da7",
+          "id": "ed6accde-096f-4f23-b8a3-26c75c2460d2",
           "content": "Doing supply side policies",
           "createdAt": "2025-09-01T00:00:00.000Z"
         },
         {
-          "id": "71805ce9-8ac9-4d9c-9c7d-7a8983318ef0",
-          "content": "4.3.2 Factors influencing growth and development — practice questions given",
+          "id": "0378f5c4-54e4-42f3-b819-42ade1d6e386",
+          "content": "4.3.2 Factors influencing growth and development — practice questions given.",
           "createdAt": "2026-01-04T00:00:00.000Z"
         }
       ],
       "testResults": [
         {
-          "id": "52eb870f-c70f-4135-89dd-a95e3cad4787",
+          "id": "e2328691-2349-4f44-b164-bd76136b718c",
           "name": "4.3.1 Measures of development",
           "scoreGot": 4,
           "scoreOf": 5,
@@ -863,12 +3013,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "b6795ad2-37f5-4fbe-9107-8a9c2777b0be",
-      "referenceNumber": "ST-026",
+      "id": "091de166-69fc-4868-be8d-e496251fcf56",
+      "referenceNumber": "ST-019",
       "name": "Samiyo",
       "email": "",
       "icon": "",
-      "subjectId": "f682fabd-ff74-4454-86bb-ccf9caf6dba9",
+      "subjectId": "1bd16777-3dc9-4038-aa8d-4695b9e486ff",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -879,12 +3029,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "ad4809ba-09c5-439f-a17c-d94f98a8c117",
+      "id": "29474523-78a5-4f66-a210-07c49197a447",
       "referenceNumber": "g7613",
       "name": "Sulaiman",
       "email": "",
       "icon": "",
-      "subjectId": "92bda106-a9a0-4792-89ac-03d0d7343507",
+      "subjectId": "41b1b86d-9629-4ee2-9527-9e9ca8cdd074",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -895,28 +3045,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "9c609aaf-ca0f-481e-b26c-2a66763472d8",
-      "referenceNumber": "usfl584",
-      "name": "Yusran",
-      "email": "",
-      "icon": "",
-      "subjectId": "",
-      "currentGrade": "",
-      "predictedGrade": "",
-      "targetGrade": "",
-      "isRegular": false,
-      "completedSessions": 0,
-      "notes": [],
-      "testResults": [],
-      "createdAt": "2025-09-01T00:00:00.000Z"
-    },
-    {
-      "id": "026b39cc-d47e-4822-b8e8-8f2a049533d9",
+      "id": "480528d4-36a3-42c6-b089-c3cb76adabd3",
       "referenceNumber": "10372",
       "name": "Aniello",
       "email": "",
       "icon": "",
-      "subjectId": "f682fabd-ff74-4454-86bb-ccf9caf6dba9",
+      "subjectId": "1bd16777-3dc9-4038-aa8d-4695b9e486ff",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -924,7 +3058,7 @@
       "completedSessions": 0,
       "notes": [
         {
-          "id": "d51d8dd8-baca-4d94-9522-5c87cf8fbb96",
+          "id": "30bec3ab-0711-4b58-bd11-1850b99a2518",
           "content": "In the start of year 2",
           "createdAt": "2025-09-01T00:00:00.000Z"
         }
@@ -933,34 +3067,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "dd214c68-63cf-4eab-88c7-4f98ad8e16b8",
-      "referenceNumber": "a3861",
-      "name": "Afra",
-      "email": "",
-      "icon": "",
-      "subjectId": "",
-      "currentGrade": "",
-      "predictedGrade": "",
-      "targetGrade": "",
-      "isRegular": false,
-      "completedSessions": 0,
-      "notes": [
-        {
-          "id": "9f0cb369-bd13-4144-845c-a5248670c2e8",
-          "content": "All of micro and bit macro",
-          "createdAt": "2025-09-01T00:00:00.000Z"
-        }
-      ],
-      "testResults": [],
-      "createdAt": "2025-09-01T00:00:00.000Z"
-    },
-    {
-      "id": "0c9be66c-ebba-45e4-8db5-802e635d7d8c",
+      "id": "c77d0ccf-9359-43ff-b05a-e7d712acb00b",
       "referenceNumber": "a3907",
       "name": "Jumal",
       "email": "",
       "icon": "",
-      "subjectId": "ed9fd0d8-117d-4075-bc19-dc4630d93a28",
+      "subjectId": "0853f904-fe4e-4a4e-8501-b8004361d6ec",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -968,8 +3080,8 @@
       "completedSessions": 1,
       "notes": [
         {
-          "id": "0c41fc26-4ab6-4a2f-b6ff-6bd69f984304",
-          "content": "Came about ~40 minutes late and asked to do a mock test.",
+          "id": "dd50c241-d761-44dc-bf9e-3641ae5f58e5",
+          "content": "Came ~40 minutes late and asked to do a mock test.",
           "createdAt": "2026-03-22T00:00:00.000Z"
         }
       ],
@@ -977,12 +3089,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "03d0a1eb-33f5-4ed2-8512-5fe2b72492d4",
+      "id": "29342417-7a81-48d6-bd30-46731c956014",
       "referenceNumber": "a3890",
       "name": "Hakim",
       "email": "",
       "icon": "",
-      "subjectId": "f682fabd-ff74-4454-86bb-ccf9caf6dba9",
+      "subjectId": "1bd16777-3dc9-4038-aa8d-4695b9e486ff",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -990,7 +3102,7 @@
       "completedSessions": 0,
       "notes": [
         {
-          "id": "0aeade8f-5c4b-41d5-b06b-2cff1a339bd0",
+          "id": "5f6b2791-46bc-4dc7-8d10-d8ed1853ddb5",
           "content": "Theme 1/2 done, starting market structures",
           "createdAt": "2025-09-01T00:00:00.000Z"
         }
@@ -999,12 +3111,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "3f162ac7-0391-455a-8522-d2f050f89efd",
+      "id": "091921ac-c52b-4fd6-ab7f-2286a262bcde",
       "referenceNumber": "g7364",
       "name": "Zaynab",
       "email": "",
       "icon": "",
-      "subjectId": "9cab74c4-9a64-4b96-b228-946a461a0d7d",
+      "subjectId": "1bd16777-3dc9-4038-aa8d-4695b9e486ff",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -1015,12 +3127,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "94ef2f47-1813-4e91-a3f1-2930372c26ed",
+      "id": "e1d5ac3c-2338-4ac0-aea4-cb6186a73781",
       "referenceNumber": "usfl484",
       "name": "Liban",
       "email": "",
       "icon": "",
-      "subjectId": "66f91e10-858e-4ebb-876c-006ce0f46093",
+      "subjectId": "43b0a45b-ef40-4c96-a072-14c96b82da56",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -1028,45 +3140,45 @@
       "completedSessions": 2,
       "notes": [
         {
-          "id": "e4aaf67a-be12-4f99-aeaf-bf150a267fbd",
-          "content": "Starting business AS level",
+          "id": "42969bd0-c369-4198-8d2c-a5ce7bb6134a",
+          "content": "Starting business AS level. Business student.",
           "createdAt": "2025-09-01T00:00:00.000Z"
         },
         {
-          "id": "93b79b16-80ca-49e2-9945-26cd4816c850",
+          "id": "0ad60d30-deb5-44e0-bb22-d19c6be2f5a5",
           "content": "Went over leadership content. Now doing a full 1.4 Managing People mock.",
           "createdAt": "2026-01-03T00:00:00.000Z"
         },
         {
-          "id": "4116f348-50fa-4519-9c24-bf804c9fb434",
-          "content": "Doing unit 1.3 mock. Came an hour late due to traffic. Poor reasoning and analysis on staffing test — needs to explain why and how.",
+          "id": "f1b3eb1d-d509-4916-86c9-b8fa8e446e8b",
+          "content": "Doing unit 1.3 mock. Came an hour late due to traffic. Poor reasoning and analysis on staffing test.",
           "createdAt": "2026-01-04T00:00:00.000Z"
         }
       ],
       "testResults": [
         {
-          "id": "0d238aea-19a1-4b64-a998-44619b9223b3",
+          "id": "c7b744eb-2f40-4118-bb13-0ed6d49193d1",
           "name": "Mock on 1.2 The market",
           "scoreGot": 15,
           "scoreOf": 18,
           "createdAt": "2025-12-21T00:00:00.000Z"
         },
         {
-          "id": "949cabac-dff2-4c44-8544-086298c860a5",
+          "id": "cefbb268-5779-40df-97a8-ed04352f0792",
           "name": "Pricing strategies",
           "scoreGot": 6,
           "scoreOf": 10,
           "createdAt": "2025-12-21T00:00:00.000Z"
         },
         {
-          "id": "3f350497-65f4-4f3e-a30c-11a8dd241fdd",
+          "id": "f93a7493-299d-49d3-a4e5-66120a16e7e7",
           "name": "1.4.1 Approaches to staffing",
           "scoreGot": 2,
           "scoreOf": 6,
           "createdAt": "2026-01-04T00:00:00.000Z"
         },
         {
-          "id": "4abedb23-89f3-46a0-ac15-ef6ada2ebe66",
+          "id": "532979cf-3067-4cc7-bca1-2ac2442d4e88",
           "name": "Roles of entrepreneurs MCQ",
           "scoreGot": 9,
           "scoreOf": 10,
@@ -1076,12 +3188,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "7956a11c-bcba-4c6b-8387-ba78b6c89fc3",
+      "id": "406672e7-8dc4-421a-b992-65b4c6b14f47",
       "referenceNumber": "a3740",
       "name": "Rahma",
       "email": "rahmamohamud2008@gmail.com",
       "icon": "",
-      "subjectId": "ed9fd0d8-117d-4075-bc19-dc4630d93a28",
+      "subjectId": "0853f904-fe4e-4a4e-8501-b8004361d6ec",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -1089,83 +3201,83 @@
       "completedSessions": 4,
       "notes": [
         {
-          "id": "453d568a-a748-43e3-b717-31e3bd49851d",
+          "id": "be3c256e-248b-4bce-9c98-304ed402b813",
           "content": "Economics",
           "createdAt": "2025-09-01T00:00:00.000Z"
         },
         {
-          "id": "0a43bc14-c285-4c4f-b543-26c04a6965d3",
-          "content": "10/13 did good overall, just needed more analysis and knowledge on the 8 marker. Doing 4.2 poverty and inequality, worksheet given",
+          "id": "b8f09a34-fbd1-4f37-9df7-1ed4f51226c4",
+          "content": "10/13 did good overall, needed more analysis on the 8 marker. Doing 4.2 poverty and inequality, worksheet given.",
           "createdAt": "2025-12-28T00:00:00.000Z"
         },
         {
-          "id": "38a95dc1-1cd8-4c36-ac58-b4d0e6f3697d",
+          "id": "e21c3cfd-2329-4b75-9ffc-e480c6ffa9ae",
           "content": "Completed Contestable Markets.",
           "createdAt": "2026-01-03T00:00:00.000Z"
         },
         {
-          "id": "884f1ab1-12c1-4b9d-8786-acabe36ead58",
-          "content": "Did monopolies and is now doing a test. Did well, but needs to focus more on analysis and structure of evaluation.",
+          "id": "0c4e1a11-8e40-4aed-9cc9-03b2c670af26",
+          "content": "Did monopolies. Did well, but needs more analysis and evaluation structure.",
           "createdAt": "2026-03-15T00:00:00.000Z"
         },
         {
-          "id": "18f8b234-c7a4-402a-83b7-046a4a65dbb3",
-          "content": "Some issues: wrong definition of monopsony for 4-marker. 10-marker had incomplete analysis chains, failure to explain efficiency types, lack of application. Finished 4.1.5.10.",
+          "id": "9a4513c7-2c47-4ed1-9d26-82e02440c58f",
+          "content": "Wrong monopsony definition on 4-marker. 10-marker had incomplete analysis chains. Finished 4.1.5.10.",
           "createdAt": "2026-03-22T00:00:00.000Z"
         }
       ],
       "testResults": [
         {
-          "id": "bfb4592d-0587-400c-8e9f-a6143a2333ae",
+          "id": "00f3d72c-66a8-45cf-83e0-91b38a7aaea8",
           "name": "Balance of payments",
           "scoreGot": 9,
           "scoreOf": 10,
           "createdAt": "2025-12-21T00:00:00.000Z"
         },
         {
-          "id": "2796ba96-ba52-43af-a960-3e2f0263e2a8",
+          "id": "4b2fbbf3-dbef-402e-9496-d6d606b35f41",
           "name": "Exchange rates",
           "scoreGot": 10,
           "scoreOf": 10,
           "createdAt": "2025-12-21T00:00:00.000Z"
         },
         {
-          "id": "7c8a823d-4f97-4812-a7ad-5d0013a3e06a",
+          "id": "00bdc783-0a97-415b-a5ee-020cd1e365e3",
           "name": "Topic test",
           "scoreGot": 10,
           "scoreOf": 13,
           "createdAt": "2025-12-28T00:00:00.000Z"
         },
         {
-          "id": "de775c04-9747-4859-9865-7142f4f66b95",
+          "id": "85ed8519-3dc7-4cd5-9d54-7102559a06d5",
           "name": "15-marker contestable markets",
           "scoreGot": 11,
           "scoreOf": 15,
           "createdAt": "2026-01-03T00:00:00.000Z"
         },
         {
-          "id": "8cd2f88b-09f7-4cfc-9002-5923460bd437",
+          "id": "fb50d00f-9328-4617-a905-4a8093e5763a",
           "name": "4.3.1 Measures of development",
           "scoreGot": 5,
           "scoreOf": 5,
           "createdAt": "2026-01-04T00:00:00.000Z"
         },
         {
-          "id": "bc4c0bea-fd8c-4c98-9c6d-571711b871a6",
+          "id": "91258d20-4bcc-4ddf-89ff-6a79ef30e1e2",
           "name": "4.3.2 Factors influencing growth and development",
           "scoreGot": 9,
           "scoreOf": 15,
           "createdAt": "2026-01-04T00:00:00.000Z"
         },
         {
-          "id": "5e576ff7-b818-41a6-ad83-14f6a58fb981",
+          "id": "7a552c58-bcd3-4962-a390-9876df480aae",
           "name": "Monopoly test",
           "scoreGot": 21,
           "scoreOf": 28,
           "createdAt": "2026-03-15T00:00:00.000Z"
         },
         {
-          "id": "0162c5b2-5adb-4dc7-a34a-603de315b76c",
+          "id": "d6c8d7fc-1c34-4fcb-90a6-4a59cc924d51",
           "name": "4.1.5.10 Market Structure, Static/Dynamic Efficiency",
           "scoreGot": 19,
           "scoreOf": 26,
@@ -1175,12 +3287,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "a3d14f71-f1ce-46d8-b183-d684e605857b",
+      "id": "602fc36c-fa6c-4db7-a22f-12d4a0fe34e4",
       "referenceNumber": "8771",
       "name": "Danielle",
       "email": "",
       "icon": "",
-      "subjectId": "f682fabd-ff74-4454-86bb-ccf9caf6dba9",
+      "subjectId": "1bd16777-3dc9-4038-aa8d-4695b9e486ff",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -1191,12 +3303,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "37eddcce-055c-4017-818b-82ceecb683d3",
+      "id": "722de5b0-1f85-4189-9286-3650b78fb876",
       "referenceNumber": "83932",
       "name": "Abyan",
       "email": "",
       "icon": "",
-      "subjectId": "adc5a9d2-cf1d-44c7-a72c-d488bf40c105",
+      "subjectId": "43b0a45b-ef40-4c96-a072-14c96b82da56",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -1204,36 +3316,36 @@
       "completedSessions": 3,
       "notes": [
         {
-          "id": "a5f052f4-6834-4859-8d4d-8264c8daab09",
-          "content": "Business",
+          "id": "d2c42391-c399-4fbc-889c-189d7231055f",
+          "content": "Business student",
           "createdAt": "2025-09-01T00:00:00.000Z"
         },
         {
-          "id": "9e99aa7d-a752-493e-a065-78dc579877b7",
+          "id": "05027224-79c7-4d9a-aae6-5a95b3e00726",
           "content": "Marketing mix and strategies - finished all of 1.3",
           "createdAt": "2025-12-28T00:00:00.000Z"
         },
         {
-          "id": "eb849f14-9e46-4c6f-aa14-914d7250c53b",
+          "id": "cb417ae4-41d0-41b8-bfd6-d8fe9873098c",
           "content": "Went over 1.4 content. Now doing a full 1.4 Managing People mock.",
           "createdAt": "2026-01-03T00:00:00.000Z"
         },
         {
-          "id": "d7898a7d-3c82-413f-bcc6-b15062a8f135",
-          "content": "Doing practice questions on 1.5.1 Role of an entrepreneur and 1.5.2 Entrepreneurial motives. Was about 30 minutes late due to missing bus.",
+          "id": "8925aef9-d6aa-4aaf-9ada-ac8e70913aa5",
+          "content": "Practice questions on 1.5.1 Role of an entrepreneur. ~30 min late.",
           "createdAt": "2026-03-22T00:00:00.000Z"
         }
       ],
       "testResults": [
         {
-          "id": "a6ad3a25-3a9e-4ccb-8c64-49c430e1f945",
+          "id": "c35e5791-7f69-47b3-825b-273088e581e2",
           "name": "Mock on 1.2 The market",
           "scoreGot": 15,
           "scoreOf": 18,
           "createdAt": "2025-12-21T00:00:00.000Z"
         },
         {
-          "id": "c187d635-784a-4d9d-af3d-80156d5a3546",
+          "id": "9002fc34-d03c-46eb-af83-e132c357b4f5",
           "name": "Pricing strategies",
           "scoreGot": 10,
           "scoreOf": 10,
@@ -1243,12 +3355,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "0fb617dd-e873-4482-b77d-8a778278c547",
+      "id": "7894e0d9-2f1a-48df-b679-2ab7339d76df",
       "referenceNumber": "g7422",
       "name": "Deniz",
       "email": "",
       "icon": "",
-      "subjectId": "577dcbed-af32-4289-954f-7f7e5d193201",
+      "subjectId": "0853f904-fe4e-4a4e-8501-b8004361d6ec",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -1256,7 +3368,7 @@
       "completedSessions": 0,
       "notes": [
         {
-          "id": "b18481bb-1baa-404e-8203-e11a8182087a",
+          "id": "7c682aaf-7b1a-454b-b778-9385d1354d5c",
           "content": "Economics",
           "createdAt": "2025-09-01T00:00:00.000Z"
         }
@@ -1265,12 +3377,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "a101294c-db7f-4e34-ad41-53a61590e91d",
-      "referenceNumber": "ST-039",
+      "id": "b12e0f26-a62e-4c43-b8db-333265eeff13",
+      "referenceNumber": "ST-030",
       "name": "Janiya",
       "email": "",
       "icon": "",
-      "subjectId": "9cab74c4-9a64-4b96-b228-946a461a0d7d",
+      "subjectId": "1bd16777-3dc9-4038-aa8d-4695b9e486ff",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -1278,7 +3390,7 @@
       "completedSessions": 0,
       "notes": [
         {
-          "id": "1a816b1a-c303-47ce-8224-ad41be08e06a",
+          "id": "1abd5e1b-bd91-4002-9727-2934e0f1a058",
           "content": "Economics, market failure / macro objectives",
           "createdAt": "2025-09-01T00:00:00.000Z"
         }
@@ -1287,12 +3399,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "881af990-2673-4811-8286-8279f3b455cf",
+      "id": "4bb4784b-5326-4ae2-8d8f-d188ab1291b6",
       "referenceNumber": "g6417",
       "name": "Jenny",
       "email": "",
       "icon": "",
-      "subjectId": "9cab74c4-9a64-4b96-b228-946a461a0d7d",
+      "subjectId": "1bd16777-3dc9-4038-aa8d-4695b9e486ff",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -1300,7 +3412,7 @@
       "completedSessions": 0,
       "notes": [
         {
-          "id": "9415cbda-cc3c-4ea8-a27b-a00d71ad3790",
+          "id": "c9579924-10e1-41a9-9ec9-6c51fdfb4028",
           "content": "Economics macro - components of AD",
           "createdAt": "2025-09-01T00:00:00.000Z"
         }
@@ -1309,12 +3421,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "cfeb985c-9488-4fca-afd8-524975d64a27",
+      "id": "44f31471-825a-4ee5-a14f-9c001c8af886",
       "referenceNumber": "a3952",
       "name": "Duru",
       "email": "",
       "icon": "",
-      "subjectId": "577dcbed-af32-4289-954f-7f7e5d193201",
+      "subjectId": "0853f904-fe4e-4a4e-8501-b8004361d6ec",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -1322,7 +3434,7 @@
       "completedSessions": 0,
       "notes": [
         {
-          "id": "c9a653de-e614-4f08-b314-f49aafb6a98e",
+          "id": "abcbca36-a8a8-4c01-be60-c91ac094a37a",
           "content": "Micro 1.1+1.3, macro monetary policies. 2 hours",
           "createdAt": "2025-09-01T00:00:00.000Z"
         }
@@ -1331,12 +3443,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "29829932-ab4a-45cb-9c60-700e074156df",
+      "id": "258b846e-9298-4ce9-9604-9fdbb2c0bbe3",
       "referenceNumber": "a3696a",
       "name": "Ayaan",
       "email": "",
       "icon": "",
-      "subjectId": "9cab74c4-9a64-4b96-b228-946a461a0d7d",
+      "subjectId": "1bd16777-3dc9-4038-aa8d-4695b9e486ff",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -1344,19 +3456,19 @@
       "completedSessions": 1,
       "notes": [
         {
-          "id": "e50eb436-33fd-4e51-8a47-fa833c796b77",
+          "id": "16f9ea3c-1e07-485f-90aa-a1b3554dbbf1",
           "content": "Just started economics. 4 hours",
           "createdAt": "2025-09-01T00:00:00.000Z"
         },
         {
-          "id": "feed4a64-00fa-4e55-b7b0-74c4c8b09638",
-          "content": "Covered all of elasticities, 6/16. Started market failure, now attempting open test.",
+          "id": "f69b2729-7fb7-418c-b2eb-b52c059d1eb7",
+          "content": "Covered all elasticities. Started market failure.",
           "createdAt": "2026-03-22T00:00:00.000Z"
         }
       ],
       "testResults": [
         {
-          "id": "5b5d623b-73f9-45d5-b500-8d3aaff6fca6",
+          "id": "b148a7b1-c4e4-4ca6-825f-68cf3647aa16",
           "name": "Elasticities topic test",
           "scoreGot": 6,
           "scoreOf": 16,
@@ -1366,12 +3478,12 @@
       "createdAt": "2025-09-01T00:00:00.000Z"
     },
     {
-      "id": "4022f714-bd81-45fd-b071-99e7275c1298",
+      "id": "0dc8fd45-3270-4b5a-85ea-8b4483d53521",
       "referenceNumber": "g6721",
       "name": "Waseela W",
       "email": "waseelaweli@gmail.com",
       "icon": "",
-      "subjectId": "92ab5f1e-a965-42e2-81e8-e31d7b656794",
+      "subjectId": "41b1b86d-9629-4ee2-9527-9e9ca8cdd074",
       "currentGrade": "",
       "predictedGrade": "",
       "targetGrade": "",
@@ -1379,25 +3491,47 @@
       "completedSessions": 1,
       "notes": [
         {
-          "id": "9ae9c14c-b32d-42f0-a95a-c6c211c88e2f",
+          "id": "f5455eb0-d090-4eea-8914-5158db1ddb78",
           "content": "Micro done except market failure. Macro done except inflation/govt intervention. Need international trade. 4 hours",
           "createdAt": "2025-09-01T00:00:00.000Z"
         },
         {
-          "id": "9137531e-c590-4735-b84b-da276c222d2d",
-          "content": "Covered all of elasticities, got 12/18 on topic test. Didn't attempt 6 marker properly, 2 MCQ mistakes. Started and finished market failure, attempting open test.",
+          "id": "cc51134e-ee75-49fa-bec6-96bdacb0a262",
+          "content": "Covered all elasticities. Didn't attempt 6 marker properly, 2 MCQ mistakes. Started and finished market failure.",
           "createdAt": "2026-03-22T00:00:00.000Z"
         }
       ],
       "testResults": [
         {
-          "id": "1e0b1305-ec04-49b9-9d53-845cd069c5da",
+          "id": "f8378eb1-bf35-49be-9090-0f03881b6395",
           "name": "Elasticities topic test",
           "scoreGot": 12,
           "scoreOf": 18,
           "createdAt": "2026-03-22T00:00:00.000Z"
         }
       ],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "a813233c-f608-40de-9363-655c4256713a",
+      "referenceNumber": "a3861",
+      "name": "Afra",
+      "email": "",
+      "icon": "",
+      "subjectId": "1bd16777-3dc9-4038-aa8d-4695b9e486ff",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [
+        {
+          "id": "a56d8d27-2860-4853-906e-a09d14069d6e",
+          "content": "All of micro and bit macro",
+          "createdAt": "2025-09-01T00:00:00.000Z"
+        }
+      ],
+      "testResults": [],
       "createdAt": "2025-09-01T00:00:00.000Z"
     }
   ],
