@@ -1,0 +1,1406 @@
+{
+  "_export": "scholrtutor",
+  "_version": "2.4",
+  "_date": "2026-03-28T08:37:11.708Z",
+  "scholrtutor-subjects": [
+    {
+      "id": "ed9fd0d8-117d-4075-bc19-dc4630d93a28",
+      "name": "AQA Economics A-Level",
+      "examBoard": "AQA",
+      "level": "A-Level",
+      "gradeBoundaries": [
+        {
+          "grade": "A*",
+          "minPercent": 90
+        },
+        {
+          "grade": "A",
+          "minPercent": 80
+        },
+        {
+          "grade": "B",
+          "minPercent": 70
+        },
+        {
+          "grade": "C",
+          "minPercent": 60
+        },
+        {
+          "grade": "D",
+          "minPercent": 50
+        },
+        {
+          "grade": "E",
+          "minPercent": 40
+        },
+        {
+          "grade": "U",
+          "minPercent": 0
+        }
+      ],
+      "topics": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "f682fabd-ff74-4454-86bb-ccf9caf6dba9",
+      "name": "Edexcel Economics A-Level",
+      "examBoard": "Edexcel",
+      "level": "A-Level",
+      "gradeBoundaries": [
+        {
+          "grade": "A*",
+          "minPercent": 90
+        },
+        {
+          "grade": "A",
+          "minPercent": 80
+        },
+        {
+          "grade": "B",
+          "minPercent": 70
+        },
+        {
+          "grade": "C",
+          "minPercent": 60
+        },
+        {
+          "grade": "D",
+          "minPercent": 50
+        },
+        {
+          "grade": "E",
+          "minPercent": 40
+        },
+        {
+          "grade": "U",
+          "minPercent": 0
+        }
+      ],
+      "topics": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "9cab74c4-9a64-4b96-b228-946a461a0d7d",
+      "name": "Edexcel Economics AS-Level",
+      "examBoard": "Edexcel",
+      "level": "A-Level",
+      "gradeBoundaries": [
+        {
+          "grade": "A",
+          "minPercent": 80
+        },
+        {
+          "grade": "B",
+          "minPercent": 70
+        },
+        {
+          "grade": "C",
+          "minPercent": 60
+        },
+        {
+          "grade": "D",
+          "minPercent": 50
+        },
+        {
+          "grade": "E",
+          "minPercent": 40
+        },
+        {
+          "grade": "U",
+          "minPercent": 0
+        }
+      ],
+      "topics": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "577dcbed-af32-4289-954f-7f7e5d193201",
+      "name": "AQA Economics AS-Level",
+      "examBoard": "AQA",
+      "level": "A-Level",
+      "gradeBoundaries": [
+        {
+          "grade": "A",
+          "minPercent": 80
+        },
+        {
+          "grade": "B",
+          "minPercent": 70
+        },
+        {
+          "grade": "C",
+          "minPercent": 60
+        },
+        {
+          "grade": "D",
+          "minPercent": 50
+        },
+        {
+          "grade": "E",
+          "minPercent": 40
+        },
+        {
+          "grade": "U",
+          "minPercent": 0
+        }
+      ],
+      "topics": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "66c696e0-c586-4f6c-8d18-7e2cd0c48266",
+      "name": "AQA Economics GCSE",
+      "examBoard": "AQA",
+      "level": "GCSE",
+      "gradeBoundaries": [
+        {
+          "grade": "9",
+          "minPercent": 90
+        },
+        {
+          "grade": "8",
+          "minPercent": 80
+        },
+        {
+          "grade": "7",
+          "minPercent": 70
+        },
+        {
+          "grade": "6",
+          "minPercent": 60
+        },
+        {
+          "grade": "5",
+          "minPercent": 50
+        },
+        {
+          "grade": "4",
+          "minPercent": 40
+        },
+        {
+          "grade": "3",
+          "minPercent": 30
+        },
+        {
+          "grade": "U",
+          "minPercent": 0
+        }
+      ],
+      "topics": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "92bda106-a9a0-4792-89ac-03d0d7343507",
+      "name": "OCR Economics GCSE",
+      "examBoard": "OCR",
+      "level": "GCSE",
+      "gradeBoundaries": [
+        {
+          "grade": "9",
+          "minPercent": 90
+        },
+        {
+          "grade": "8",
+          "minPercent": 80
+        },
+        {
+          "grade": "7",
+          "minPercent": 70
+        },
+        {
+          "grade": "6",
+          "minPercent": 60
+        },
+        {
+          "grade": "5",
+          "minPercent": 50
+        },
+        {
+          "grade": "4",
+          "minPercent": 40
+        },
+        {
+          "grade": "3",
+          "minPercent": 30
+        },
+        {
+          "grade": "U",
+          "minPercent": 0
+        }
+      ],
+      "topics": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "92ab5f1e-a965-42e2-81e8-e31d7b656794",
+      "name": "OCL Economics AS-Level",
+      "examBoard": "OCL",
+      "level": "A-Level",
+      "gradeBoundaries": [
+        {
+          "grade": "A",
+          "minPercent": 80
+        },
+        {
+          "grade": "B",
+          "minPercent": 70
+        },
+        {
+          "grade": "C",
+          "minPercent": 60
+        },
+        {
+          "grade": "D",
+          "minPercent": 50
+        },
+        {
+          "grade": "E",
+          "minPercent": 40
+        },
+        {
+          "grade": "U",
+          "minPercent": 0
+        }
+      ],
+      "topics": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "0011effc-7a51-48de-9316-5daff4d78e49",
+      "name": "Edexcel Economics International A-Level",
+      "examBoard": "Edexcel",
+      "level": "A-Level",
+      "gradeBoundaries": [
+        {
+          "grade": "A*",
+          "minPercent": 90
+        },
+        {
+          "grade": "A",
+          "minPercent": 80
+        },
+        {
+          "grade": "B",
+          "minPercent": 70
+        },
+        {
+          "grade": "C",
+          "minPercent": 60
+        },
+        {
+          "grade": "D",
+          "minPercent": 50
+        },
+        {
+          "grade": "E",
+          "minPercent": 40
+        },
+        {
+          "grade": "U",
+          "minPercent": 0
+        }
+      ],
+      "topics": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "aed60fd1-5b88-4c11-bc6b-401ee9287345",
+      "name": "Edexcel Economics IGCSE",
+      "examBoard": "Edexcel",
+      "level": "GCSE",
+      "gradeBoundaries": [
+        {
+          "grade": "9",
+          "minPercent": 90
+        },
+        {
+          "grade": "8",
+          "minPercent": 80
+        },
+        {
+          "grade": "7",
+          "minPercent": 70
+        },
+        {
+          "grade": "6",
+          "minPercent": 60
+        },
+        {
+          "grade": "5",
+          "minPercent": 50
+        },
+        {
+          "grade": "4",
+          "minPercent": 40
+        },
+        {
+          "grade": "3",
+          "minPercent": 30
+        },
+        {
+          "grade": "U",
+          "minPercent": 0
+        }
+      ],
+      "topics": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "adc5a9d2-cf1d-44c7-a72c-d488bf40c105",
+      "name": "Edexcel Business A-Level",
+      "examBoard": "Edexcel",
+      "level": "A-Level",
+      "gradeBoundaries": [
+        {
+          "grade": "A*",
+          "minPercent": 90
+        },
+        {
+          "grade": "A",
+          "minPercent": 80
+        },
+        {
+          "grade": "B",
+          "minPercent": 70
+        },
+        {
+          "grade": "C",
+          "minPercent": 60
+        },
+        {
+          "grade": "D",
+          "minPercent": 50
+        },
+        {
+          "grade": "E",
+          "minPercent": 40
+        },
+        {
+          "grade": "U",
+          "minPercent": 0
+        }
+      ],
+      "topics": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "66f91e10-858e-4ebb-876c-006ce0f46093",
+      "name": "Edexcel Business AS-Level",
+      "examBoard": "Edexcel",
+      "level": "A-Level",
+      "gradeBoundaries": [
+        {
+          "grade": "A",
+          "minPercent": 80
+        },
+        {
+          "grade": "B",
+          "minPercent": 70
+        },
+        {
+          "grade": "C",
+          "minPercent": 60
+        },
+        {
+          "grade": "D",
+          "minPercent": 50
+        },
+        {
+          "grade": "E",
+          "minPercent": 40
+        },
+        {
+          "grade": "U",
+          "minPercent": 0
+        }
+      ],
+      "topics": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    }
+  ],
+  "scholrtutor-students": [
+    {
+      "id": "1fc76130-f82e-4676-9908-f97af0a34698",
+      "referenceNumber": "83774",
+      "name": "Hamad",
+      "email": "haamidhaamidhaamid@gmail.com",
+      "icon": "",
+      "subjectId": "",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "e88388f0-f7a6-486e-8bba-32b4b7cc22c0",
+      "referenceNumber": "rt0029",
+      "name": "Hayat",
+      "email": "hayatabdi2005@icloud.com",
+      "icon": "",
+      "subjectId": "ed9fd0d8-117d-4075-bc19-dc4630d93a28",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "25fef83f-4d9a-41bb-a69f-1e926735ee43",
+      "referenceNumber": "8602",
+      "name": "Iman",
+      "email": "imaninyaat2406@hotmail.com",
+      "icon": "",
+      "subjectId": "",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "d72a4023-07ea-4e3b-b46e-8ff9c7dd0ef4",
+      "referenceNumber": "g642",
+      "name": "Ezraasu",
+      "email": "ezraasumadu@gmail.com",
+      "icon": "",
+      "subjectId": "",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "eedca879-35dd-4dc0-9800-71a29ad602f8",
+      "referenceNumber": "9498",
+      "name": "Keli",
+      "email": "kelikjay@gmail.com",
+      "icon": "",
+      "subjectId": "",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "de981135-ce19-471d-9aeb-4fb5ee2473cf",
+      "referenceNumber": "g7329",
+      "name": "Somaya",
+      "email": "sumeyam9505@gmail.com",
+      "icon": "",
+      "subjectId": "",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "a46e1fbd-c9a0-4f59-ab7c-748207c1a56c",
+      "referenceNumber": "te117",
+      "name": "Ebamiyo",
+      "email": "",
+      "icon": "",
+      "subjectId": "92ab5f1e-a965-42e2-81e8-e31d7b656794",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "8a553441-2710-4e26-ba15-b42fe61cbc41",
+      "referenceNumber": "g6709",
+      "name": "Abdikhaoiq",
+      "email": "agadeer@cityacademy.co.uk",
+      "icon": "",
+      "subjectId": "",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "7777e443-f8cf-4525-910f-ef264957fe6d",
+      "referenceNumber": "ST-009",
+      "name": "Ebamiyosanu",
+      "email": "ebamiyosanu@gmail.com",
+      "icon": "",
+      "subjectId": "",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "9e2e3843-827b-47fe-a7e6-75feace2911e",
+      "referenceNumber": "a3806",
+      "name": "Cataline",
+      "email": "catalinacircu07@gmail.com",
+      "icon": "",
+      "subjectId": "f682fabd-ff74-4454-86bb-ccf9caf6dba9",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "29d2b155-0cc4-4d16-b502-121e6c9fabeb",
+      "referenceNumber": "83a24",
+      "name": "Bianca",
+      "email": "bia.mano1225@gmail.com",
+      "icon": "",
+      "subjectId": "f682fabd-ff74-4454-86bb-ccf9caf6dba9",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "b05a284a-43c3-4091-923f-ef6218a40b28",
+      "referenceNumber": "h0053",
+      "name": "Waseela H",
+      "email": "",
+      "icon": "",
+      "subjectId": "aed60fd1-5b88-4c11-bc6b-401ee9287345",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "3256f73c-f793-4ab8-94b9-5382b2d9529d",
+      "referenceNumber": "ST-013",
+      "name": "Israa",
+      "email": "",
+      "icon": "",
+      "subjectId": "ed9fd0d8-117d-4075-bc19-dc4630d93a28",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [
+        {
+          "id": "1f69bb5c-d665-4937-bd0e-900ab7f8652b",
+          "content": "Sunday student",
+          "createdAt": "2025-09-01T00:00:00.000Z"
+        }
+      ],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "388bfbe2-4a1b-4670-8538-cc09b50f8697",
+      "referenceNumber": "usfl486",
+      "name": "Fatima",
+      "email": "",
+      "icon": "",
+      "subjectId": "0011effc-7a51-48de-9316-5daff4d78e49",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "2e415d7f-2146-4828-879d-f0a2587263ff",
+      "referenceNumber": "a3742",
+      "name": "Temi",
+      "email": "",
+      "icon": "",
+      "subjectId": "f682fabd-ff74-4454-86bb-ccf9caf6dba9",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "3bf6ea35-3da3-4c0b-a47e-f1a79ed721ba",
+      "referenceNumber": "8447",
+      "name": "Ali",
+      "email": "",
+      "icon": "",
+      "subjectId": "ed9fd0d8-117d-4075-bc19-dc4630d93a28",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "bdedcbcc-40c5-4719-bac6-0403e5d37d65",
+      "referenceNumber": "a3a62",
+      "name": "Vithun",
+      "email": "",
+      "icon": "",
+      "subjectId": "f682fabd-ff74-4454-86bb-ccf9caf6dba9",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "1c81066d-cc57-4d5e-be7b-8e06730e8f05",
+      "referenceNumber": "a3740",
+      "name": "Isra",
+      "email": "",
+      "icon": "",
+      "subjectId": "f682fabd-ff74-4454-86bb-ccf9caf6dba9",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "ee5dc38b-e31e-47ff-b7ce-c1a44408dc76",
+      "referenceNumber": "g7697",
+      "name": "Joseph",
+      "email": "josephamissah804@gmail.com",
+      "icon": "",
+      "subjectId": "f682fabd-ff74-4454-86bb-ccf9caf6dba9",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "bd62cac0-c078-4ad9-82d4-9a9cb7e5ddcc",
+      "referenceNumber": "6406",
+      "name": "Yusuf",
+      "email": "",
+      "icon": "",
+      "subjectId": "66c696e0-c586-4f6c-8d18-7e2cd0c48266",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "7c28284b-926f-4da7-a642-568e15029848",
+      "referenceNumber": "a3871",
+      "name": "Tahiya",
+      "email": "",
+      "icon": "",
+      "subjectId": "ed9fd0d8-117d-4075-bc19-dc4630d93a28",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [
+        {
+          "id": "69c336d3-2e6b-4793-b182-a07d9d565c0c",
+          "content": "Sunday student",
+          "createdAt": "2025-09-01T00:00:00.000Z"
+        }
+      ],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "bc3becba-2d26-4f15-9cc4-e30c4a25cd05",
+      "referenceNumber": "g7338",
+      "name": "Muhsin",
+      "email": "",
+      "icon": "",
+      "subjectId": "ed9fd0d8-117d-4075-bc19-dc4630d93a28",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "d2ec385b-80a3-4760-b693-81a112514250",
+      "referenceNumber": "7435",
+      "name": "Yasser",
+      "email": "",
+      "icon": "",
+      "subjectId": "f682fabd-ff74-4454-86bb-ccf9caf6dba9",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [
+        {
+          "id": "82cd8763-834e-42cc-9e5a-7293640a3bee",
+          "content": "Done AS and year 1 content",
+          "createdAt": "2025-09-01T00:00:00.000Z"
+        }
+      ],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "c32bafe9-a6f1-464b-92c9-485b7ff68bfc",
+      "referenceNumber": "10279",
+      "name": "Amira",
+      "email": "",
+      "icon": "",
+      "subjectId": "f682fabd-ff74-4454-86bb-ccf9caf6dba9",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [
+        {
+          "id": "64d4adb4-581e-460e-877f-58878d3d3245",
+          "content": "Micro finished year 1",
+          "createdAt": "2025-09-01T00:00:00.000Z"
+        }
+      ],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "cc46e062-f206-42d7-8f3c-842ea71ba81f",
+      "referenceNumber": "g6417",
+      "name": "Daniel",
+      "email": "",
+      "icon": "",
+      "subjectId": "ed9fd0d8-117d-4075-bc19-dc4630d93a28",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 1,
+      "notes": [
+        {
+          "id": "afef7961-e938-4ab5-a3c8-6333561c7da7",
+          "content": "Doing supply side policies",
+          "createdAt": "2025-09-01T00:00:00.000Z"
+        },
+        {
+          "id": "71805ce9-8ac9-4d9c-9c7d-7a8983318ef0",
+          "content": "4.3.2 Factors influencing growth and development — practice questions given",
+          "createdAt": "2026-01-04T00:00:00.000Z"
+        }
+      ],
+      "testResults": [
+        {
+          "id": "52eb870f-c70f-4135-89dd-a95e3cad4787",
+          "name": "4.3.1 Measures of development",
+          "scoreGot": 4,
+          "scoreOf": 5,
+          "createdAt": "2026-01-04T00:00:00.000Z"
+        }
+      ],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "b6795ad2-37f5-4fbe-9107-8a9c2777b0be",
+      "referenceNumber": "ST-026",
+      "name": "Samiyo",
+      "email": "",
+      "icon": "",
+      "subjectId": "f682fabd-ff74-4454-86bb-ccf9caf6dba9",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "ad4809ba-09c5-439f-a17c-d94f98a8c117",
+      "referenceNumber": "g7613",
+      "name": "Sulaiman",
+      "email": "",
+      "icon": "",
+      "subjectId": "92bda106-a9a0-4792-89ac-03d0d7343507",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "9c609aaf-ca0f-481e-b26c-2a66763472d8",
+      "referenceNumber": "usfl584",
+      "name": "Yusran",
+      "email": "",
+      "icon": "",
+      "subjectId": "",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "026b39cc-d47e-4822-b8e8-8f2a049533d9",
+      "referenceNumber": "10372",
+      "name": "Aniello",
+      "email": "",
+      "icon": "",
+      "subjectId": "f682fabd-ff74-4454-86bb-ccf9caf6dba9",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [
+        {
+          "id": "d51d8dd8-baca-4d94-9522-5c87cf8fbb96",
+          "content": "In the start of year 2",
+          "createdAt": "2025-09-01T00:00:00.000Z"
+        }
+      ],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "dd214c68-63cf-4eab-88c7-4f98ad8e16b8",
+      "referenceNumber": "a3861",
+      "name": "Afra",
+      "email": "",
+      "icon": "",
+      "subjectId": "",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [
+        {
+          "id": "9f0cb369-bd13-4144-845c-a5248670c2e8",
+          "content": "All of micro and bit macro",
+          "createdAt": "2025-09-01T00:00:00.000Z"
+        }
+      ],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "0c9be66c-ebba-45e4-8db5-802e635d7d8c",
+      "referenceNumber": "a3907",
+      "name": "Jumal",
+      "email": "",
+      "icon": "",
+      "subjectId": "ed9fd0d8-117d-4075-bc19-dc4630d93a28",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 1,
+      "notes": [
+        {
+          "id": "0c41fc26-4ab6-4a2f-b6ff-6bd69f984304",
+          "content": "Came about ~40 minutes late and asked to do a mock test.",
+          "createdAt": "2026-03-22T00:00:00.000Z"
+        }
+      ],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "03d0a1eb-33f5-4ed2-8512-5fe2b72492d4",
+      "referenceNumber": "a3890",
+      "name": "Hakim",
+      "email": "",
+      "icon": "",
+      "subjectId": "f682fabd-ff74-4454-86bb-ccf9caf6dba9",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [
+        {
+          "id": "0aeade8f-5c4b-41d5-b06b-2cff1a339bd0",
+          "content": "Theme 1/2 done, starting market structures",
+          "createdAt": "2025-09-01T00:00:00.000Z"
+        }
+      ],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "3f162ac7-0391-455a-8522-d2f050f89efd",
+      "referenceNumber": "g7364",
+      "name": "Zaynab",
+      "email": "",
+      "icon": "",
+      "subjectId": "9cab74c4-9a64-4b96-b228-946a461a0d7d",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "94ef2f47-1813-4e91-a3f1-2930372c26ed",
+      "referenceNumber": "usfl484",
+      "name": "Liban",
+      "email": "",
+      "icon": "",
+      "subjectId": "66f91e10-858e-4ebb-876c-006ce0f46093",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 2,
+      "notes": [
+        {
+          "id": "e4aaf67a-be12-4f99-aeaf-bf150a267fbd",
+          "content": "Starting business AS level",
+          "createdAt": "2025-09-01T00:00:00.000Z"
+        },
+        {
+          "id": "93b79b16-80ca-49e2-9945-26cd4816c850",
+          "content": "Went over leadership content. Now doing a full 1.4 Managing People mock.",
+          "createdAt": "2026-01-03T00:00:00.000Z"
+        },
+        {
+          "id": "4116f348-50fa-4519-9c24-bf804c9fb434",
+          "content": "Doing unit 1.3 mock. Came an hour late due to traffic. Poor reasoning and analysis on staffing test — needs to explain why and how.",
+          "createdAt": "2026-01-04T00:00:00.000Z"
+        }
+      ],
+      "testResults": [
+        {
+          "id": "0d238aea-19a1-4b64-a998-44619b9223b3",
+          "name": "Mock on 1.2 The market",
+          "scoreGot": 15,
+          "scoreOf": 18,
+          "createdAt": "2025-12-21T00:00:00.000Z"
+        },
+        {
+          "id": "949cabac-dff2-4c44-8544-086298c860a5",
+          "name": "Pricing strategies",
+          "scoreGot": 6,
+          "scoreOf": 10,
+          "createdAt": "2025-12-21T00:00:00.000Z"
+        },
+        {
+          "id": "3f350497-65f4-4f3e-a30c-11a8dd241fdd",
+          "name": "1.4.1 Approaches to staffing",
+          "scoreGot": 2,
+          "scoreOf": 6,
+          "createdAt": "2026-01-04T00:00:00.000Z"
+        },
+        {
+          "id": "4abedb23-89f3-46a0-ac15-ef6ada2ebe66",
+          "name": "Roles of entrepreneurs MCQ",
+          "scoreGot": 9,
+          "scoreOf": 10,
+          "createdAt": "2026-03-15T00:00:00.000Z"
+        }
+      ],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "7956a11c-bcba-4c6b-8387-ba78b6c89fc3",
+      "referenceNumber": "a3740",
+      "name": "Rahma",
+      "email": "rahmamohamud2008@gmail.com",
+      "icon": "",
+      "subjectId": "ed9fd0d8-117d-4075-bc19-dc4630d93a28",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 4,
+      "notes": [
+        {
+          "id": "453d568a-a748-43e3-b717-31e3bd49851d",
+          "content": "Economics",
+          "createdAt": "2025-09-01T00:00:00.000Z"
+        },
+        {
+          "id": "0a43bc14-c285-4c4f-b543-26c04a6965d3",
+          "content": "10/13 did good overall, just needed more analysis and knowledge on the 8 marker. Doing 4.2 poverty and inequality, worksheet given",
+          "createdAt": "2025-12-28T00:00:00.000Z"
+        },
+        {
+          "id": "38a95dc1-1cd8-4c36-ac58-b4d0e6f3697d",
+          "content": "Completed Contestable Markets.",
+          "createdAt": "2026-01-03T00:00:00.000Z"
+        },
+        {
+          "id": "884f1ab1-12c1-4b9d-8786-acabe36ead58",
+          "content": "Did monopolies and is now doing a test. Did well, but needs to focus more on analysis and structure of evaluation.",
+          "createdAt": "2026-03-15T00:00:00.000Z"
+        },
+        {
+          "id": "18f8b234-c7a4-402a-83b7-046a4a65dbb3",
+          "content": "Some issues: wrong definition of monopsony for 4-marker. 10-marker had incomplete analysis chains, failure to explain efficiency types, lack of application. Finished 4.1.5.10.",
+          "createdAt": "2026-03-22T00:00:00.000Z"
+        }
+      ],
+      "testResults": [
+        {
+          "id": "bfb4592d-0587-400c-8e9f-a6143a2333ae",
+          "name": "Balance of payments",
+          "scoreGot": 9,
+          "scoreOf": 10,
+          "createdAt": "2025-12-21T00:00:00.000Z"
+        },
+        {
+          "id": "2796ba96-ba52-43af-a960-3e2f0263e2a8",
+          "name": "Exchange rates",
+          "scoreGot": 10,
+          "scoreOf": 10,
+          "createdAt": "2025-12-21T00:00:00.000Z"
+        },
+        {
+          "id": "7c8a823d-4f97-4812-a7ad-5d0013a3e06a",
+          "name": "Topic test",
+          "scoreGot": 10,
+          "scoreOf": 13,
+          "createdAt": "2025-12-28T00:00:00.000Z"
+        },
+        {
+          "id": "de775c04-9747-4859-9865-7142f4f66b95",
+          "name": "15-marker contestable markets",
+          "scoreGot": 11,
+          "scoreOf": 15,
+          "createdAt": "2026-01-03T00:00:00.000Z"
+        },
+        {
+          "id": "8cd2f88b-09f7-4cfc-9002-5923460bd437",
+          "name": "4.3.1 Measures of development",
+          "scoreGot": 5,
+          "scoreOf": 5,
+          "createdAt": "2026-01-04T00:00:00.000Z"
+        },
+        {
+          "id": "bc4c0bea-fd8c-4c98-9c6d-571711b871a6",
+          "name": "4.3.2 Factors influencing growth and development",
+          "scoreGot": 9,
+          "scoreOf": 15,
+          "createdAt": "2026-01-04T00:00:00.000Z"
+        },
+        {
+          "id": "5e576ff7-b818-41a6-ad83-14f6a58fb981",
+          "name": "Monopoly test",
+          "scoreGot": 21,
+          "scoreOf": 28,
+          "createdAt": "2026-03-15T00:00:00.000Z"
+        },
+        {
+          "id": "0162c5b2-5adb-4dc7-a34a-603de315b76c",
+          "name": "4.1.5.10 Market Structure, Static/Dynamic Efficiency",
+          "scoreGot": 19,
+          "scoreOf": 26,
+          "createdAt": "2026-03-22T00:00:00.000Z"
+        }
+      ],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "a3d14f71-f1ce-46d8-b183-d684e605857b",
+      "referenceNumber": "8771",
+      "name": "Danielle",
+      "email": "",
+      "icon": "",
+      "subjectId": "f682fabd-ff74-4454-86bb-ccf9caf6dba9",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "37eddcce-055c-4017-818b-82ceecb683d3",
+      "referenceNumber": "83932",
+      "name": "Abyan",
+      "email": "",
+      "icon": "",
+      "subjectId": "adc5a9d2-cf1d-44c7-a72c-d488bf40c105",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 3,
+      "notes": [
+        {
+          "id": "a5f052f4-6834-4859-8d4d-8264c8daab09",
+          "content": "Business",
+          "createdAt": "2025-09-01T00:00:00.000Z"
+        },
+        {
+          "id": "9e99aa7d-a752-493e-a065-78dc579877b7",
+          "content": "Marketing mix and strategies - finished all of 1.3",
+          "createdAt": "2025-12-28T00:00:00.000Z"
+        },
+        {
+          "id": "eb849f14-9e46-4c6f-aa14-914d7250c53b",
+          "content": "Went over 1.4 content. Now doing a full 1.4 Managing People mock.",
+          "createdAt": "2026-01-03T00:00:00.000Z"
+        },
+        {
+          "id": "d7898a7d-3c82-413f-bcc6-b15062a8f135",
+          "content": "Doing practice questions on 1.5.1 Role of an entrepreneur and 1.5.2 Entrepreneurial motives. Was about 30 minutes late due to missing bus.",
+          "createdAt": "2026-03-22T00:00:00.000Z"
+        }
+      ],
+      "testResults": [
+        {
+          "id": "a6ad3a25-3a9e-4ccb-8c64-49c430e1f945",
+          "name": "Mock on 1.2 The market",
+          "scoreGot": 15,
+          "scoreOf": 18,
+          "createdAt": "2025-12-21T00:00:00.000Z"
+        },
+        {
+          "id": "c187d635-784a-4d9d-af3d-80156d5a3546",
+          "name": "Pricing strategies",
+          "scoreGot": 10,
+          "scoreOf": 10,
+          "createdAt": "2025-12-21T00:00:00.000Z"
+        }
+      ],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "0fb617dd-e873-4482-b77d-8a778278c547",
+      "referenceNumber": "g7422",
+      "name": "Deniz",
+      "email": "",
+      "icon": "",
+      "subjectId": "577dcbed-af32-4289-954f-7f7e5d193201",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [
+        {
+          "id": "b18481bb-1baa-404e-8203-e11a8182087a",
+          "content": "Economics",
+          "createdAt": "2025-09-01T00:00:00.000Z"
+        }
+      ],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "a101294c-db7f-4e34-ad41-53a61590e91d",
+      "referenceNumber": "ST-039",
+      "name": "Janiya",
+      "email": "",
+      "icon": "",
+      "subjectId": "9cab74c4-9a64-4b96-b228-946a461a0d7d",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [
+        {
+          "id": "1a816b1a-c303-47ce-8224-ad41be08e06a",
+          "content": "Economics, market failure / macro objectives",
+          "createdAt": "2025-09-01T00:00:00.000Z"
+        }
+      ],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "881af990-2673-4811-8286-8279f3b455cf",
+      "referenceNumber": "g6417",
+      "name": "Jenny",
+      "email": "",
+      "icon": "",
+      "subjectId": "9cab74c4-9a64-4b96-b228-946a461a0d7d",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [
+        {
+          "id": "9415cbda-cc3c-4ea8-a27b-a00d71ad3790",
+          "content": "Economics macro - components of AD",
+          "createdAt": "2025-09-01T00:00:00.000Z"
+        }
+      ],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "cfeb985c-9488-4fca-afd8-524975d64a27",
+      "referenceNumber": "a3952",
+      "name": "Duru",
+      "email": "",
+      "icon": "",
+      "subjectId": "577dcbed-af32-4289-954f-7f7e5d193201",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 0,
+      "notes": [
+        {
+          "id": "c9a653de-e614-4f08-b314-f49aafb6a98e",
+          "content": "Micro 1.1+1.3, macro monetary policies. 2 hours",
+          "createdAt": "2025-09-01T00:00:00.000Z"
+        }
+      ],
+      "testResults": [],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "29829932-ab4a-45cb-9c60-700e074156df",
+      "referenceNumber": "a3696a",
+      "name": "Ayaan",
+      "email": "",
+      "icon": "",
+      "subjectId": "9cab74c4-9a64-4b96-b228-946a461a0d7d",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 1,
+      "notes": [
+        {
+          "id": "e50eb436-33fd-4e51-8a47-fa833c796b77",
+          "content": "Just started economics. 4 hours",
+          "createdAt": "2025-09-01T00:00:00.000Z"
+        },
+        {
+          "id": "feed4a64-00fa-4e55-b7b0-74c4c8b09638",
+          "content": "Covered all of elasticities, 6/16. Started market failure, now attempting open test.",
+          "createdAt": "2026-03-22T00:00:00.000Z"
+        }
+      ],
+      "testResults": [
+        {
+          "id": "5b5d623b-73f9-45d5-b500-8d3aaff6fca6",
+          "name": "Elasticities topic test",
+          "scoreGot": 6,
+          "scoreOf": 16,
+          "createdAt": "2026-03-22T00:00:00.000Z"
+        }
+      ],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "4022f714-bd81-45fd-b071-99e7275c1298",
+      "referenceNumber": "g6721",
+      "name": "Waseela W",
+      "email": "waseelaweli@gmail.com",
+      "icon": "",
+      "subjectId": "92ab5f1e-a965-42e2-81e8-e31d7b656794",
+      "currentGrade": "",
+      "predictedGrade": "",
+      "targetGrade": "",
+      "isRegular": false,
+      "completedSessions": 1,
+      "notes": [
+        {
+          "id": "9ae9c14c-b32d-42f0-a95a-c6c211c88e2f",
+          "content": "Micro done except market failure. Macro done except inflation/govt intervention. Need international trade. 4 hours",
+          "createdAt": "2025-09-01T00:00:00.000Z"
+        },
+        {
+          "id": "9137531e-c590-4735-b84b-da276c222d2d",
+          "content": "Covered all of elasticities, got 12/18 on topic test. Didn't attempt 6 marker properly, 2 MCQ mistakes. Started and finished market failure, attempting open test.",
+          "createdAt": "2026-03-22T00:00:00.000Z"
+        }
+      ],
+      "testResults": [
+        {
+          "id": "1e0b1305-ec04-49b9-9d53-845cd069c5da",
+          "name": "Elasticities topic test",
+          "scoreGot": 12,
+          "scoreOf": 18,
+          "createdAt": "2026-03-22T00:00:00.000Z"
+        }
+      ],
+      "createdAt": "2025-09-01T00:00:00.000Z"
+    }
+  ],
+  "scholrtutor-session-logs": [],
+  "scholrtutor-settings": null
+}
