@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useStudents, type Student } from "@/lib/students";
 import { useSubjects } from "@/lib/subjects";
 import { useBreadcrumb } from "@/lib/breadcrumb";
+import { SessionLogInput } from "@/components/session-log-input";
 import { MagnifyingGlass } from "@phosphor-icons/react/dist/ssr/MagnifyingGlass";
 import { Plus } from "@phosphor-icons/react/dist/ssr/Plus";
 import { ArrowLeft } from "@phosphor-icons/react/dist/ssr/ArrowLeft";
@@ -114,7 +115,7 @@ function AddStudentDialog({ open, onOpenChange, onSave }: {
 // ═══════════════════════════════════════════════════════════
 
 function StudentDetail({ student, onBack }: { student: Student; onBack: () => void }) {
-  const { updateStudent, deleteStudent, addNote, deleteNote, addTestResult, deleteTestResult } = useStudents();
+  const { updateStudent, deleteStudent, deleteNote, deleteTestResult } = useStudents();
   const { subjects } = useSubjects();
   const { setSubtitle } = useBreadcrumb();
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -123,13 +124,6 @@ function StudentDetail({ student, onBack }: { student: Student; onBack: () => vo
   const [editEmail, setEditEmail] = useState(student.email);
   const [editRef, setEditRef] = useState(student.referenceNumber);
   const [editIcon, setEditIcon] = useState(student.icon);
-
-  // Note form
-  const [noteText, setNoteText] = useState("");
-  // Test result form
-  const [trName, setTrName] = useState("");
-  const [trGot, setTrGot] = useState("");
-  const [trOf, setTrOf] = useState("");
 
   useEffect(() => {
     setSubtitle(student.name);
@@ -149,20 +143,6 @@ function StudentDetail({ student, onBack }: { student: Student; onBack: () => vo
       });
     }
     setEditOpen(false);
-  };
-
-  const handleAddNote = () => {
-    if (!noteText.trim()) return;
-    addNote(student.id, noteText.trim());
-    setNoteText("");
-  };
-
-  const handleAddTestResult = () => {
-    const got = parseInt(trGot, 10);
-    const of_ = parseInt(trOf, 10);
-    if (!trName.trim() || isNaN(got) || isNaN(of_) || of_ <= 0) return;
-    addTestResult(student.id, { name: trName.trim(), scoreGot: got, scoreOf: of_ });
-    setTrName(""); setTrGot(""); setTrOf("");
   };
 
   const grades = [
@@ -211,124 +191,85 @@ function StudentDetail({ student, onBack }: { student: Student; onBack: () => vo
 
       {/* Content */}
       <div className="mt-6 flex-1 min-h-0 overflow-auto space-y-5">
-        {/* Subject + Grades row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* Summary row */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <section className="rounded-lg border border-border/50 overflow-hidden">
-            <div className="px-4 py-2.5 bg-muted/80 text-xs font-medium text-muted-foreground">Subject</div>
-            <div className="px-4 py-3 bg-card text-sm">{subjectName}</div>
+            <div className="px-4 py-2 bg-muted/80 text-[10px] font-medium text-muted-foreground">Subject</div>
+            <div className="px-4 py-2.5 bg-card text-sm">{subjectName}</div>
           </section>
           <section className="rounded-lg border border-border/50 overflow-hidden">
-            <div className="px-4 py-2.5 bg-muted/80 text-xs font-medium text-muted-foreground">Grades</div>
+            <div className="px-4 py-2 bg-muted/80 text-[10px] font-medium text-muted-foreground">Grades</div>
             <div className="bg-card flex divide-x divide-border/30">
               {grades.map(g => (
-                <div key={g.label} className="flex-1 px-3 py-3 text-center">
-                  <div className="text-[10px] text-muted-foreground/60 mb-0.5">{g.label}</div>
+                <div key={g.label} className="flex-1 px-2 py-2.5 text-center">
+                  <div className="text-[9px] text-muted-foreground/50">{g.label}</div>
                   <div className="text-sm font-medium">{g.value || "—"}</div>
                 </div>
               ))}
             </div>
           </section>
+          <section className="rounded-lg border border-border/50 overflow-hidden">
+            <div className="px-4 py-2 bg-muted/80 text-[10px] font-medium text-muted-foreground">Sessions</div>
+            <div className="px-4 py-2.5 bg-card text-sm font-medium tabular-nums">{student.completedSessions}</div>
+          </section>
         </div>
 
-        {/* Sessions */}
-        <section className="rounded-lg border border-border/50 overflow-hidden">
-          <div className="px-4 py-2.5 bg-muted/80 text-xs font-medium text-muted-foreground">Completed Sessions</div>
-          <div className="px-4 py-3 bg-card flex items-center justify-between">
-            <span className="text-2xl font-medium tabular-nums">{student.completedSessions}</span>
-            <Button variant="outline" size="xs"
-              onClick={() => updateStudent(student.id, { completedSessions: student.completedSessions + 1 })}>
-              <Plus size={12} className="mr-1" /> Log Session
-            </Button>
-          </div>
-        </section>
+        {/* Session log input */}
+        <SessionLogInput studentId={student.id} />
 
         {/* Notes */}
-        <section className="rounded-lg border border-border/50 overflow-hidden">
-          <div className="px-4 py-2.5 bg-muted/80 flex items-center gap-2">
-            <Notebook size={14} className="text-muted-foreground/50" />
-            <span className="text-xs font-medium text-muted-foreground">Notes</span>
-            <span className="text-[10px] text-muted-foreground/40 ml-auto">{student.notes.length}</span>
-          </div>
-          <div className="bg-card">
-            {/* Add note form */}
-            <div className="px-4 py-2.5 flex gap-2 border-b border-border/20">
-              <Input value={noteText} onChange={(e) => setNoteText(e.target.value)}
-                placeholder="Add a note..." className="text-sm h-8 flex-1"
-                onKeyDown={(e) => { if (e.key === "Enter") handleAddNote(); }} />
-              <Button variant="outline" size="xs" onClick={handleAddNote} disabled={!noteText.trim()}>Add</Button>
+        {student.notes.length > 0 && (
+          <section className="rounded-lg border border-border/50 overflow-hidden">
+            <div className="px-4 py-2.5 bg-muted/80 flex items-center gap-2">
+              <Notebook size={14} className="text-muted-foreground/50" />
+              <span className="text-xs font-medium text-muted-foreground">Notes</span>
+              <span className="text-[10px] text-muted-foreground/40 ml-auto">{student.notes.length}</span>
             </div>
-            {/* Notes list */}
-            {student.notes.length === 0 ? (
-              <p className="px-4 py-4 text-xs text-muted-foreground/40 text-center">No notes yet.</p>
-            ) : (
-              <div className="divide-y divide-border/20 max-h-60 overflow-auto">
-                {student.notes.map(n => (
-                  <div key={n.id} className="group px-4 py-2.5">
-                    <div className="flex items-start justify-between gap-2">
-                      <p className="text-sm text-foreground/80 whitespace-pre-wrap">{n.content}</p>
-                      <button onClick={() => deleteNote(student.id, n.id)}
-                        className="opacity-0 group-hover:opacity-100 p-0.5 text-muted-foreground/30 hover:text-destructive transition-all shrink-0 mt-0.5">
-                        <Trash size={12} />
-                      </button>
-                    </div>
-                    <p className="text-[10px] text-muted-foreground/40 mt-1">{formatDate(n.createdAt)}</p>
+            <div className="bg-card divide-y divide-border/20 max-h-60 overflow-auto">
+              {student.notes.map(n => (
+                <div key={n.id} className="group px-4 py-2.5">
+                  <div className="flex items-start justify-between gap-2">
+                    <p className="text-sm text-foreground/80 whitespace-pre-wrap">{n.content}</p>
+                    <button onClick={() => deleteNote(student.id, n.id)}
+                      className="opacity-0 group-hover:opacity-100 p-0.5 text-muted-foreground/30 hover:text-destructive transition-all shrink-0 mt-0.5">
+                      <Trash size={12} />
+                    </button>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
+                  <p className="text-[10px] text-muted-foreground/40 mt-1">{formatDate(n.createdAt)}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Test Results */}
-        <section className="rounded-lg border border-border/50 overflow-hidden">
-          <div className="px-4 py-2.5 bg-muted/80 flex items-center gap-2">
-            <Exam size={14} className="text-muted-foreground/50" />
-            <span className="text-xs font-medium text-muted-foreground">Test Results</span>
-            <span className="text-[10px] text-muted-foreground/40 ml-auto">{student.testResults.length}</span>
-          </div>
-          <div className="bg-card">
-            {/* Add test result form */}
-            <div className="px-4 py-2.5 flex gap-2 border-b border-border/20 items-center">
-              <Input value={trName} onChange={(e) => setTrName(e.target.value)}
-                placeholder="Test name" className="text-sm h-8 flex-1" />
-              <Input value={trGot} onChange={(e) => setTrGot(e.target.value)}
-                placeholder="Score" className="text-sm h-8 w-16 text-center" type="number" />
-              <span className="text-muted-foreground/40 text-sm">/</span>
-              <Input value={trOf} onChange={(e) => setTrOf(e.target.value)}
-                placeholder="Total" className="text-sm h-8 w-16 text-center" type="number"
-                onKeyDown={(e) => { if (e.key === "Enter") handleAddTestResult(); }} />
-              <Button variant="outline" size="xs" onClick={handleAddTestResult}
-                disabled={!trName.trim() || !trGot || !trOf}>Add</Button>
+        {student.testResults.length > 0 && (
+          <section className="rounded-lg border border-border/50 overflow-hidden">
+            <div className="px-4 py-2.5 bg-muted/80 flex items-center gap-2">
+              <Exam size={14} className="text-muted-foreground/50" />
+              <span className="text-xs font-medium text-muted-foreground">Test Results</span>
+              <span className="text-[10px] text-muted-foreground/40 ml-auto">{student.testResults.length}</span>
             </div>
-            {/* Results list */}
-            {student.testResults.length === 0 ? (
-              <p className="px-4 py-4 text-xs text-muted-foreground/40 text-center">No test results yet.</p>
-            ) : (
-              <div className="divide-y divide-border/20 max-h-60 overflow-auto">
-                {student.testResults.map(r => (
-                  <div key={r.id} className="group px-4 py-2.5">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <span className="text-sm font-medium truncate">{r.name}</span>
-                        <span className="text-sm tabular-nums text-muted-foreground shrink-0">
-                          {r.scoreGot}/{r.scoreOf}
-                        </span>
-                        <span className="text-xs text-muted-foreground/50 shrink-0">
-                          ({Math.round((r.scoreGot / r.scoreOf) * 100)}%)
-                        </span>
-                      </div>
-                      <button onClick={() => deleteTestResult(student.id, r.id)}
-                        className="opacity-0 group-hover:opacity-100 p-0.5 text-muted-foreground/30 hover:text-destructive transition-all shrink-0">
-                        <Trash size={12} />
-                      </button>
+            <div className="bg-card divide-y divide-border/20 max-h-60 overflow-auto">
+              {student.testResults.map(r => (
+                <div key={r.id} className="group px-4 py-2.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <span className="text-sm font-medium truncate">{r.name}</span>
+                      <span className="text-sm tabular-nums text-muted-foreground shrink-0">{r.scoreGot}/{r.scoreOf}</span>
+                      <span className="text-xs text-muted-foreground/50 shrink-0">({Math.round((r.scoreGot / r.scoreOf) * 100)}%)</span>
                     </div>
-                    <p className="text-[10px] text-muted-foreground/40 mt-1">{formatDate(r.createdAt)}</p>
+                    <button onClick={() => deleteTestResult(student.id, r.id)}
+                      className="opacity-0 group-hover:opacity-100 p-0.5 text-muted-foreground/30 hover:text-destructive transition-all shrink-0">
+                      <Trash size={12} />
+                    </button>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
+                  <p className="text-[10px] text-muted-foreground/40 mt-1">{formatDate(r.createdAt)}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
       </div>
 
       {/* Delete dialog */}
