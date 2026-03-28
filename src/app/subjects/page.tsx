@@ -4,8 +4,8 @@ import { useState, useCallback, useRef } from "react";
 import { useSubjects, type Subject, type Topic } from "@/lib/subjects";
 import { useSettings } from "@/lib/settings";
 import { Trash } from "@phosphor-icons/react/dist/ssr/Trash";
-import { CaretRight } from "@phosphor-icons/react/dist/ssr/CaretRight";
-import { CaretDown } from "@phosphor-icons/react/dist/ssr/CaretDown";
+import { Plus } from "@phosphor-icons/react/dist/ssr/Plus";
+import { Minus } from "@phosphor-icons/react/dist/ssr/Minus";
 import { UploadSimple } from "@phosphor-icons/react/dist/ssr/UploadSimple";
 import { CircleNotch } from "@phosphor-icons/react/dist/ssr/CircleNotch";
 import { Check } from "@phosphor-icons/react/dist/ssr/Check";
@@ -23,6 +23,20 @@ type ParsedSubject = {
 
 type FlowStage = "list" | "processing" | "review";
 const ACCEPTED_TYPES = ".pdf,.json,.md,.txt";
+
+// ── Tree toggle (+/−) ──
+
+function TreeToggle({ expanded, size = 16 }: { expanded: boolean; size?: number }) {
+  const iconSize = Math.round(size * 0.55);
+  return (
+    <span
+      className="inline-flex items-center justify-center rounded-[3px] border border-border/60 text-muted-foreground/50 shrink-0 transition-colors hover:border-border hover:text-muted-foreground"
+      style={{ width: size, height: size }}
+    >
+      {expanded ? <Minus size={iconSize} weight="bold" /> : <Plus size={iconSize} weight="bold" />}
+    </span>
+  );
+}
 
 // ── Drop row (looks like an empty subject row) ──
 
@@ -74,9 +88,7 @@ function ReviewRow({ parsed, onSave, onCancel }: {
     <div className="rounded-lg bg-card border border-primary/30 overflow-hidden">
       {/* Header row */}
       <div className="flex items-center gap-3 px-4 py-3 cursor-pointer" onClick={() => setExpanded(!expanded)}>
-        <button className="text-muted-foreground/40 shrink-0">
-          {expanded ? <CaretDown size={14} /> : <CaretRight size={14} />}
-        </button>
+        <TreeToggle expanded={expanded} size={16} />
         <div className="flex-1 min-w-0 flex items-center gap-2">
           <Input value={data.name} onClick={(e) => e.stopPropagation()}
             onChange={(e) => setData({ ...data, name: e.target.value })}
@@ -102,9 +114,9 @@ function ReviewRow({ parsed, onSave, onCancel }: {
         </div>
       </div>
 
-      {/* Expanded: topic list */}
+      {/* Expanded: topic tree */}
       {expanded && (
-        <div className="border-t border-border/10 px-4 py-2 space-y-1">
+        <div className="border-t border-border/10 px-4 py-2">
           {data.units.map((unit, ui) => (
             <UnitPreview key={ui} unit={unit} />
           ))}
@@ -118,20 +130,23 @@ function UnitPreview({ unit }: { unit: { code: string; title: string; topics: { 
   const [expanded, setExpanded] = useState(false);
   return (
     <div>
-      <div className="flex items-center gap-2 py-1 rounded hover:bg-accent/10 cursor-pointer" onClick={() => setExpanded(!expanded)}>
-        <button className="w-4 shrink-0 text-muted-foreground/30">
-          {expanded ? <CaretDown size={10} /> : <CaretRight size={10} />}
-        </button>
-        <span className="text-[10px] font-mono text-muted-foreground/40">{unit.code}</span>
-        <span className="text-xs font-medium text-muted-foreground">{unit.title}</span>
+      <div className="flex items-center gap-2 py-1 px-1.5 rounded-md hover:bg-accent/40 cursor-pointer transition-colors" onClick={() => setExpanded(!expanded)}>
+        <TreeToggle expanded={expanded} size={14} />
+        <span className="text-[11px] font-mono text-muted-foreground/40">{unit.code}</span>
+        <span className="text-xs font-medium text-foreground/70">{unit.title}</span>
         <span className="text-[10px] text-muted-foreground/30 ml-auto">{unit.topics.length}</span>
       </div>
-      {expanded && unit.topics.map((t, ti) => (
-        <div key={ti} className="flex items-center gap-2 py-0.5 pl-6">
-          <span className="text-[10px] font-mono text-muted-foreground/30">{t.code}</span>
-          <span className="text-xs text-muted-foreground/60">{t.title}</span>
+      {expanded && (
+        <div className="ml-[8px] pl-3 border-l border-border/20">
+          {unit.topics.map((t, ti) => (
+            <div key={ti} className="flex items-center gap-2 py-0.5 px-1.5">
+              <span className="size-1 rounded-full bg-muted-foreground/20 shrink-0" />
+              <span className="text-[11px] font-mono text-muted-foreground/30">{t.code}</span>
+              <span className="text-xs text-muted-foreground/60">{t.title}</span>
+            </div>
+          ))}
         </div>
-      ))}
+      )}
     </div>
   );
 }
@@ -147,17 +162,13 @@ function SubjectRow({ subject }: { subject: Subject }) {
     .sort((a, b) => a.code.localeCompare(b.code, undefined, { numeric: true }));
 
   return (
-    <div className="rounded-lg bg-card border border-border/20 hover:border-border/40 transition-colors overflow-hidden">
-      <div className="group flex items-center gap-4 px-4 py-3.5 cursor-pointer" onClick={() => setExpanded(!expanded)}>
-        <button className="text-muted-foreground/40 shrink-0">
-          {expanded ? <CaretDown size={14} /> : <CaretRight size={14} />}
-        </button>
-        <div className="flex-1 min-w-0 flex items-center gap-3">
-          <span className="text-sm font-medium truncate">{subject.name}</span>
-          <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-primary/10 text-primary shrink-0">{subject.examBoard}</span>
-          <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground shrink-0">{subject.level}</span>
-        </div>
-        <span className="text-xs text-muted-foreground/60 shrink-0">{subject.topics.length} topics</span>
+    <div>
+      <div className="group flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-accent/50 cursor-pointer transition-colors"
+        onClick={() => setExpanded(!expanded)}>
+        <TreeToggle expanded={expanded} size={18} />
+        <span className="text-sm font-medium truncate">{subject.name}</span>
+        <span className="text-[11px] text-muted-foreground/50 shrink-0">{subject.examBoard} · {subject.level}</span>
+        <span className="text-xs text-muted-foreground/40 ml-auto shrink-0">{subject.topics.length} topics</span>
         {confirmDelete ? (
           <div className="flex items-center gap-1.5 shrink-0" onClick={(e) => e.stopPropagation()}>
             <button onClick={() => deleteSubject(subject.id)} className="text-[11px] font-medium text-destructive hover:underline">Delete</button>
@@ -171,7 +182,7 @@ function SubjectRow({ subject }: { subject: Subject }) {
         )}
       </div>
       {expanded && roots.length > 0 && (
-        <div className="border-t border-border/10 px-4 py-2">
+        <div className="ml-[21px] pl-3.5 border-l border-border/25 py-0.5 mb-1">
           {roots.map((root) => (
             <StoredUnit key={root.id} topic={root} allTopics={subject.topics} />
           ))}
@@ -185,25 +196,32 @@ function StoredUnit({ topic, allTopics }: { topic: Topic; allTopics: Topic[] }) 
   const children = allTopics.filter((t) => t.parentCode === topic.code)
     .sort((a, b) => a.code.localeCompare(b.code, undefined, { numeric: true }));
   const [expanded, setExpanded] = useState(false);
+  const hasChildren = children.length > 0;
 
   return (
     <div>
-      <div className="flex items-center gap-2 py-1 rounded hover:bg-accent/10 cursor-pointer" onClick={() => setExpanded(!expanded)}>
-        {children.length > 0 ? (
-          <button className="w-4 shrink-0 text-muted-foreground/30">
-            {expanded ? <CaretDown size={10} /> : <CaretRight size={10} />}
-          </button>
-        ) : <span className="w-4 shrink-0" />}
-        <span className="text-[10px] font-mono text-muted-foreground/40">{topic.code}</span>
-        <span className="text-xs font-medium text-muted-foreground">{topic.title}</span>
-        {children.length > 0 && <span className="text-[10px] text-muted-foreground/30 ml-auto">{children.length}</span>}
+      <div
+        className={`flex items-center gap-2 py-1 px-1.5 rounded-md transition-colors ${hasChildren ? "cursor-pointer hover:bg-accent/40" : ""}`}
+        onClick={hasChildren ? () => setExpanded(!expanded) : undefined}
+      >
+        {hasChildren ? (
+          <TreeToggle expanded={expanded} size={14} />
+        ) : (
+          <span className="w-3.5 flex items-center justify-center shrink-0">
+            <span className="size-1 rounded-full bg-muted-foreground/25" />
+          </span>
+        )}
+        <span className="text-[11px] font-mono text-muted-foreground/40 shrink-0">{topic.code}</span>
+        <span className={`text-xs ${hasChildren ? "font-medium text-foreground/70" : "text-muted-foreground/60"}`}>{topic.title}</span>
+        {hasChildren && <span className="text-[10px] text-muted-foreground/30 ml-auto">{children.length}</span>}
       </div>
-      {expanded && children.map((child) => (
-        <div key={child.id} className="flex items-center gap-2 py-0.5 pl-6">
-          <span className="text-[10px] font-mono text-muted-foreground/30">{child.code}</span>
-          <span className="text-xs text-muted-foreground/60">{child.title}</span>
+      {expanded && children.length > 0 && (
+        <div className="ml-[8px] pl-3 border-l border-border/20">
+          {children.map((child) => (
+            <StoredUnit key={child.id} topic={child} allTopics={allTopics} />
+          ))}
         </div>
-      ))}
+      )}
     </div>
   );
 }
@@ -395,7 +413,7 @@ export default function SubjectsPage() {
       )}
 
       <div className="mt-6 flex-1 min-h-0 overflow-auto">
-        <div className="space-y-2">
+        <div className="space-y-0.5">
           {subjects.map((s) => <SubjectRow key={s.id} subject={s} />)}
           {stage === "processing" && <ProcessingRow fileName={fileName} />}
           {stage === "review" && parsed && (
