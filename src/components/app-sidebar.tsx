@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SquaresFour } from "@phosphor-icons/react/dist/ssr/SquaresFour";
@@ -9,8 +10,10 @@ import { FolderOpen } from "@phosphor-icons/react/dist/ssr/FolderOpen";
 import { FileText } from "@phosphor-icons/react/dist/ssr/FileText";
 import { Books } from "@phosphor-icons/react/dist/ssr/Books";
 import { GearSix } from "@phosphor-icons/react/dist/ssr/GearSix";
+import { CaretRight } from "@phosphor-icons/react/dist/ssr/CaretRight";
 import { AppLogo } from "@/components/app-logo";
 import { MagnifyingGlass } from "@phosphor-icons/react/dist/ssr/MagnifyingGlass";
+import { useSubjects } from "@/lib/subjects";
 import type { Icon } from "@phosphor-icons/react/dist/lib/types";
 import {
   Sidebar,
@@ -23,6 +26,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarMenuSubButton,
 } from "@/components/ui/sidebar";
 
 const navItems: { href: string; label: string; icon: Icon }[] = [
@@ -48,6 +54,8 @@ function SearchButton() {
 
 function NavItems() {
   const pathname = usePathname();
+  const { subjects } = useSubjects();
+  const [manualOpen, setManualOpen] = useState<Record<string, boolean>>({});
 
   return (
     <SidebarMenu>
@@ -56,6 +64,10 @@ function NavItems() {
           item.href === "/"
             ? pathname === "/"
             : pathname.startsWith(item.href);
+
+        const subItems =
+          item.href === "/subjects" && subjects.length > 0 ? subjects : null;
+        const isOpen = subItems && (isActive || manualOpen[item.href]);
 
         return (
           <SidebarMenuItem key={item.href}>
@@ -68,8 +80,42 @@ function NavItems() {
                 weight={isActive ? "fill" : "regular"}
                 className="shrink-0"
               />
-              <span>{item.label}</span>
+              <span className="flex-1">{item.label}</span>
+              {subItems && (
+                <span
+                  role="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setManualOpen((prev) => ({
+                      ...prev,
+                      [item.href]: !prev[item.href],
+                    }));
+                  }}
+                  className="flex items-center justify-center size-5 rounded-sm text-muted-foreground/40 hover:text-muted-foreground hover:bg-sidebar-accent transition-all"
+                >
+                  <CaretRight
+                    size={12}
+                    className={`transition-transform duration-150 ${isOpen ? "rotate-90" : ""}`}
+                  />
+                </span>
+              )}
             </SidebarMenuButton>
+
+            {isOpen && (
+              <SidebarMenuSub>
+                {subjects.map((s) => (
+                  <SidebarMenuSubItem key={s.id}>
+                    <SidebarMenuSubButton
+                      size="sm"
+                      render={<Link href="/subjects" />}
+                    >
+                      <span className="truncate">{s.name}</span>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+                ))}
+              </SidebarMenuSub>
+            )}
           </SidebarMenuItem>
         );
       })}
