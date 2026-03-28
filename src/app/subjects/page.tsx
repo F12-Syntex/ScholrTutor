@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useRef } from "react";
 import { useSubjects, type Subject, type Topic } from "@/lib/subjects";
 import { useSettings } from "@/lib/settings";
 import { Trash } from "@phosphor-icons/react/dist/ssr/Trash";
@@ -12,6 +12,7 @@ import { Check } from "@phosphor-icons/react/dist/ssr/Check";
 import { DotsThreeVertical } from "@phosphor-icons/react/dist/ssr/DotsThreeVertical";
 import { DownloadSimple } from "@phosphor-icons/react/dist/ssr/DownloadSimple";
 import { ArrowLeft } from "@phosphor-icons/react/dist/ssr/ArrowLeft";
+import { MagnifyingGlass } from "@phosphor-icons/react/dist/ssr/MagnifyingGlass";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -50,14 +51,10 @@ function exportSubjectJSON(subject: Subject) {
   const roots = subject.topics.filter(t => !t.parentCode)
     .sort((a, b) => a.code.localeCompare(b.code, undefined, { numeric: true }));
   const data = {
-    name: subject.name,
-    examBoard: subject.examBoard,
-    level: subject.level,
+    name: subject.name, examBoard: subject.examBoard, level: subject.level,
     units: roots.map(root => ({
-      code: root.code,
-      title: root.title,
-      topics: subject.topics
-        .filter(t => t.parentCode === root.code)
+      code: root.code, title: root.title,
+      topics: subject.topics.filter(t => t.parentCode === root.code)
         .sort((a, b) => a.code.localeCompare(b.code, undefined, { numeric: true }))
         .map(t => ({ code: t.code, title: t.title })),
     })),
@@ -71,26 +68,26 @@ function exportSubjectJSON(subject: Subject) {
   URL.revokeObjectURL(url);
 }
 
-function SubjectActions({ subject, onDelete }: { subject: Subject; onDelete: () => void }) {
+function SubjectActions({ subject, onDelete, side = "bottom" }: {
+  subject: Subject;
+  onDelete: () => void;
+  side?: "top" | "bottom";
+}) {
   const [deleteOpen, setDeleteOpen] = useState(false);
 
   return (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger
-          className="p-1.5 rounded-md text-muted-foreground/40 hover:text-muted-foreground hover:bg-accent/50 transition-all outline-none"
-        >
-          <DotsThreeVertical size={18} weight="bold" />
+        <DropdownMenuTrigger className="p-1.5 rounded-md text-muted-foreground/40 hover:text-muted-foreground hover:bg-accent/50 transition-all outline-none">
+          <DotsThreeVertical size={16} weight="bold" />
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
+        <DropdownMenuContent align="end" side={side}>
           <DropdownMenuItem onClick={() => exportSubjectJSON(subject)}>
-            <DownloadSimple size={14} />
-            Export JSON
+            <DownloadSimple size={14} /> Export JSON
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem variant="destructive" onClick={() => setDeleteOpen(true)}>
-            <Trash size={14} />
-            Delete
+            <Trash size={14} /> Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -107,17 +104,13 @@ function SubjectActions({ subject, onDelete }: { subject: Subject; onDelete: () 
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction variant="destructive" onClick={onDelete}>
-              Delete
-            </AlertDialogAction>
+            <AlertDialogAction variant="destructive" onClick={onDelete}>Delete</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     </>
   );
 }
-
-// ── Tree toggle (+/−) ──
 
 function TreeToggle({ expanded, size = 16 }: { expanded: boolean; size?: number }) {
   const iconSize = Math.round(size * 0.55);
@@ -132,20 +125,25 @@ function TreeToggle({ expanded, size = 16 }: { expanded: boolean; size?: number 
 }
 
 // ═══════════════════════════════════════════════════════════
-// LIST VIEW — subject rows + import flow
+// LIST VIEW
 // ═══════════════════════════════════════════════════════════
 
 function SubjectRow({ subject, onClick }: { subject: Subject; onClick: () => void }) {
   const { deleteSubject } = useSubjects();
 
   return (
-    <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-card border border-border/20 hover:border-border/40 transition-colors">
-      <div className="flex-1 min-w-0 flex items-center gap-3 cursor-pointer" onClick={onClick}>
-        <span className="text-sm font-medium truncate">{subject.name}</span>
-        <span className="text-[11px] text-muted-foreground/50 shrink-0">{subject.examBoard} · {subject.level}</span>
-      </div>
-      <span className="text-xs text-muted-foreground/40 shrink-0">{subject.topics.length} topics</span>
-      <Button variant="outline" size="xs" onClick={onClick}>View</Button>
+    <div
+      className="flex items-center gap-3 px-4 py-3 rounded-lg bg-muted/80 border border-border hover:bg-accent cursor-pointer transition-colors"
+      onClick={onClick}
+    >
+      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary shrink-0">
+        {subject.examBoard}
+      </span>
+      <span className="text-sm font-medium truncate">{subject.name}</span>
+      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-foreground/5 text-muted-foreground shrink-0">
+        {subject.level}
+      </span>
+      <span className="text-xs text-muted-foreground/40 ml-auto shrink-0">{subject.topics.length} topics</span>
       <div onClick={(e) => e.stopPropagation()} className="shrink-0">
         <SubjectActions subject={subject} onDelete={() => deleteSubject(subject.id)} />
       </div>
@@ -164,7 +162,7 @@ function DropRow({ onFile }: { onFile: (file: File) => void }) {
       onDrop={(e) => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files[0]; if (f) onFile(f); }}
       onClick={() => inputRef.current?.click()}
       className={`flex items-center gap-3 px-4 py-3.5 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
-        dragOver ? "border-primary bg-primary/5" : "border-border/30 hover:border-border/50"
+        dragOver ? "border-primary bg-primary/5" : "border-border/50 hover:border-border"
       }`}
     >
       <UploadSimple size={16} className="text-muted-foreground/40 shrink-0" />
@@ -178,7 +176,7 @@ function DropRow({ onFile }: { onFile: (file: File) => void }) {
 
 function ProcessingRow({ fileName }: { fileName: string }) {
   return (
-    <div className="flex items-center gap-3 px-4 py-3.5 rounded-lg bg-card border border-border/20">
+    <div className="flex items-center gap-3 px-4 py-3.5 rounded-lg bg-muted/80 border border-border">
       <CircleNotch size={16} className="text-primary animate-spin shrink-0" />
       <span className="text-sm text-muted-foreground truncate">{fileName}</span>
       <span className="text-xs text-muted-foreground/40 ml-auto animate-pulse">Parsing...</span>
@@ -194,7 +192,7 @@ function ReviewRow({ parsed, onSave, onCancel }: {
   const totalTopics = data.units.reduce((sum, u) => sum + u.topics.length, 0);
 
   return (
-    <div className="rounded-lg bg-card border border-primary/30 overflow-hidden">
+    <div className="rounded-lg bg-muted/80 border border-primary/30 overflow-hidden">
       <div className="flex items-center gap-3 px-4 py-3 cursor-pointer" onClick={() => setExpanded(!expanded)}>
         <TreeToggle expanded={expanded} size={16} />
         <div className="flex-1 min-w-0 flex items-center gap-2">
@@ -208,7 +206,7 @@ function ReviewRow({ parsed, onSave, onCancel }: {
             {(["A-Level", "GCSE", "Other"] as const).map((l) => (
               <button key={l} onClick={() => setData({ ...data, level: l })}
                 className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
-                  data.level === l ? "bg-primary text-primary-foreground" : "text-muted-foreground/50 hover:bg-muted"
+                  data.level === l ? "bg-primary text-primary-foreground" : "text-muted-foreground/50 hover:bg-accent"
                 }`}>{l}</button>
             ))}
           </div>
@@ -222,7 +220,7 @@ function ReviewRow({ parsed, onSave, onCancel }: {
         </div>
       </div>
       {expanded && (
-        <div className="border-t border-border/10 px-4 py-2">
+        <div className="border-t border-border/20 px-4 py-2">
           {data.units.map((unit, ui) => (
             <UnitPreview key={ui} unit={unit} />
           ))}
@@ -258,102 +256,217 @@ function UnitPreview({ unit }: { unit: { code: string; title: string; topics: { 
 }
 
 // ═══════════════════════════════════════════════════════════
-// DETAIL VIEW — single subject with full topic tree
+// DETAIL VIEW
 // ═══════════════════════════════════════════════════════════
 
 function SubjectDetail({ subject, onBack }: { subject: Subject; onBack: () => void }) {
-  const { deleteSubject } = useSubjects();
+  const { deleteSubject, updateSubject } = useSubjects();
+
+  // Editable fields
+  const [editName, setEditName] = useState(subject.name);
+  const [editBoard, setEditBoard] = useState(subject.examBoard);
+
+  // Topic search + expand control
+  const [topicSearch, setTopicSearch] = useState("");
+  const [expandKey, setExpandKey] = useState(0);
+  const [defaultExpanded, setDefaultExpanded] = useState(true);
 
   const roots = subject.topics
     .filter(t => !t.parentCode)
     .sort((a, b) => a.code.localeCompare(b.code, undefined, { numeric: true }));
 
-  return (
-    <div className="p-8 h-full flex flex-col">
-      {/* Back link */}
-      <button
-        onClick={onBack}
-        className="group flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors shrink-0 self-start mb-6"
-      >
-        <ArrowLeft size={14} className="transition-transform group-hover:-translate-x-0.5" />
-        Subjects
-      </button>
+  const q = topicSearch.toLowerCase();
+  const matchesSearch = (t: Topic) =>
+    !q || t.title.toLowerCase().includes(q) || t.code.toLowerCase().includes(q);
 
-      {/* Header */}
-      <div className="flex items-start justify-between shrink-0">
-        <div>
-          <h1 className="text-3xl font-medium tracking-tight">{subject.name}</h1>
-          <p className="mt-1.5 text-sm text-muted-foreground">
-            {subject.examBoard} · {subject.level} · {subject.topics.length} topics
-          </p>
+  const filteredRoots = !q ? roots : roots.filter(root =>
+    matchesSearch(root) || subject.topics.some(t => t.parentCode === root.code && matchesSearch(t))
+  );
+
+  const saveName = () => {
+    const trimmed = editName.trim();
+    if (trimmed && trimmed !== subject.name) updateSubject(subject.id, { name: trimmed });
+    else setEditName(subject.name);
+  };
+
+  const saveBoard = () => {
+    const trimmed = editBoard.trim();
+    if (trimmed && trimmed !== subject.examBoard) updateSubject(subject.id, { examBoard: trimmed });
+    else setEditBoard(subject.examBoard);
+  };
+
+  const handleLevel = (level: Subject["level"]) => {
+    updateSubject(subject.id, { level });
+  };
+
+  const expandAll = () => { setDefaultExpanded(true); setExpandKey(k => k + 1); };
+  const collapseAll = () => { setDefaultExpanded(false); setExpandKey(k => k + 1); };
+
+  return (
+    <div className="h-full flex flex-col">
+      {/* Scrollable content */}
+      <div className="flex-1 min-h-0 overflow-auto px-8 pt-8 pb-6">
+        {/* Editable name */}
+        <input
+          value={editName}
+          onChange={(e) => setEditName(e.target.value)}
+          onBlur={saveName}
+          onKeyDown={(e) => { if (e.key === "Enter") e.currentTarget.blur(); }}
+          className="text-2xl font-medium tracking-tight bg-transparent outline-none w-full border-b-2 border-transparent hover:border-border/30 focus:border-primary/40 pb-1 transition-colors placeholder:text-muted-foreground/30"
+          placeholder="Subject name"
+        />
+
+        {/* Tags + stats */}
+        <div className="mt-3 flex items-center gap-2 flex-wrap">
+          {/* Editable exam board tag */}
+          <div className="inline-flex items-center rounded-full bg-primary/10 overflow-hidden">
+            <input
+              value={editBoard}
+              onChange={(e) => setEditBoard(e.target.value)}
+              onBlur={saveBoard}
+              onKeyDown={(e) => { if (e.key === "Enter") e.currentTarget.blur(); }}
+              className="text-[11px] font-medium text-primary bg-transparent outline-none px-2.5 py-1 w-[var(--board-w)]"
+              style={{ "--board-w": `${Math.max(editBoard.length + 1, 4)}ch` } as React.CSSProperties}
+            />
+          </div>
+
+          {/* Level toggle */}
+          <div className="flex rounded-full border border-border/60 overflow-hidden">
+            {(["A-Level", "GCSE", "Other"] as const).map(l => (
+              <button key={l} onClick={() => handleLevel(l)}
+                className={`px-2.5 py-1 text-[10px] font-medium transition-colors ${
+                  subject.level === l
+                    ? "bg-foreground/8 text-foreground"
+                    : "text-muted-foreground/40 hover:text-muted-foreground hover:bg-accent/50"
+                }`}>{l}</button>
+            ))}
+          </div>
+
+          {/* Stats */}
+          <span className="text-xs text-muted-foreground/50 ml-auto">
+            {roots.length} units · {subject.topics.length} topics
+          </span>
         </div>
+
+        {/* Separator */}
+        <div className="mt-6 border-t border-border/30" />
+
+        {/* Search + controls */}
+        <div className="mt-5 flex items-center gap-3">
+          <div className="relative flex-1 max-w-xs">
+            <MagnifyingGlass size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground/40" />
+            <Input
+              value={topicSearch}
+              onChange={(e) => setTopicSearch(e.target.value)}
+              placeholder="Search topics..."
+              className="pl-8 h-8 text-sm"
+            />
+          </div>
+          <div className="flex items-center gap-1 text-xs text-muted-foreground/50">
+            <button onClick={expandAll} className="hover:text-foreground transition-colors px-1.5 py-0.5 rounded hover:bg-accent/50">Expand all</button>
+            <span className="text-muted-foreground/20">·</span>
+            <button onClick={collapseAll} className="hover:text-foreground transition-colors px-1.5 py-0.5 rounded hover:bg-accent/50">Collapse all</button>
+          </div>
+        </div>
+
+        {/* Topic tree */}
+        <div className="mt-5">
+          {filteredRoots.length === 0 ? (
+            <p className="text-sm text-muted-foreground/40 py-8 text-center">
+              {q ? "No topics match your search." : "No topics defined for this subject."}
+            </p>
+          ) : (
+            <div className="space-y-1.5">
+              {filteredRoots.map(root => (
+                <DetailUnit
+                  key={`${root.id}-${expandKey}`}
+                  root={root}
+                  allTopics={subject.topics}
+                  search={q}
+                  defaultExpanded={defaultExpanded}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Fixed footer */}
+      <footer className="shrink-0 border-t border-border/30 px-6 py-2 flex items-center justify-between bg-background">
+        <button
+          onClick={onBack}
+          className="group flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <ArrowLeft size={14} className="transition-transform group-hover:-translate-x-0.5" />
+          Subjects
+        </button>
         <SubjectActions
           subject={subject}
           onDelete={() => { deleteSubject(subject.id); onBack(); }}
+          side="top"
         />
-      </div>
-
-      {/* Separator */}
-      <div className="mt-6 border-t border-border/30 shrink-0" />
-
-      {/* Topic tree */}
-      <div className="mt-6 flex-1 min-h-0 overflow-auto">
-        {roots.length === 0 ? (
-          <p className="text-sm text-muted-foreground/50">No topics defined for this subject.</p>
-        ) : (
-          <div className="space-y-5">
-            {roots.map(root => (
-              <DetailUnit key={root.id} root={root} allTopics={subject.topics} />
-            ))}
-          </div>
-        )}
-      </div>
+      </footer>
     </div>
   );
 }
 
-function DetailUnit({ root, allTopics }: { root: Topic; allTopics: Topic[] }) {
+function DetailUnit({ root, allTopics, search, defaultExpanded }: {
+  root: Topic; allTopics: Topic[]; search: string; defaultExpanded: boolean;
+}) {
+  const [expanded, setExpanded] = useState(defaultExpanded);
+  const isSearching = search.length > 0;
+
   const children = allTopics
     .filter(t => t.parentCode === root.code)
     .sort((a, b) => a.code.localeCompare(b.code, undefined, { numeric: true }));
-  const [expanded, setExpanded] = useState(true);
+
+  const filteredChildren = !isSearching ? children : children.filter(t =>
+    t.title.toLowerCase().includes(search) || t.code.toLowerCase().includes(search)
+  );
+
+  const isExpanded = isSearching ? true : expanded;
 
   return (
-    <section>
+    <div className="rounded-lg bg-muted/50 border border-border/40 overflow-hidden">
       <button
         onClick={() => setExpanded(!expanded)}
-        className="flex items-center gap-3 w-full text-left py-1.5 rounded-lg hover:bg-accent/30 transition-colors px-2 -mx-2"
+        className="flex items-center gap-3 w-full text-left px-4 py-3 hover:bg-accent/30 transition-colors"
       >
-        <TreeToggle expanded={expanded} size={18} />
+        <TreeToggle expanded={isExpanded} size={18} />
         <span className="text-xs font-mono text-muted-foreground/50 shrink-0">{root.code}</span>
         <span className="text-[15px] font-medium tracking-tight">{root.title}</span>
         <span className="text-xs text-muted-foreground/40 ml-auto shrink-0">
-          {children.length} {children.length === 1 ? "topic" : "topics"}
+          {filteredChildren.length}{isSearching && filteredChildren.length !== children.length ? `/${children.length}` : ""} {children.length === 1 ? "topic" : "topics"}
         </span>
       </button>
 
-      {expanded && children.length > 0 && (
-        <div className="mt-1 ml-[11px] pl-5 border-l border-border/25">
-          {children.map(child => (
-            <DetailTopic key={child.id} topic={child} allTopics={allTopics} />
+      {isExpanded && filteredChildren.length > 0 && (
+        <div className="border-t border-border/20 px-4 py-1.5">
+          {filteredChildren.map(child => (
+            <DetailTopic key={child.id} topic={child} allTopics={allTopics} search={search} />
           ))}
         </div>
       )}
-    </section>
+    </div>
   );
 }
 
-function DetailTopic({ topic, allTopics }: { topic: Topic; allTopics: Topic[] }) {
+function DetailTopic({ topic, allTopics, search }: { topic: Topic; allTopics: Topic[]; search: string }) {
   const children = allTopics
     .filter(t => t.parentCode === topic.code)
     .sort((a, b) => a.code.localeCompare(b.code, undefined, { numeric: true }));
   const [expanded, setExpanded] = useState(true);
   const hasChildren = children.length > 0;
+  const isSearching = search.length > 0;
+
+  const filteredChildren = !isSearching ? children : children.filter(t =>
+    t.title.toLowerCase().includes(search) || t.code.toLowerCase().includes(search)
+  );
 
   return (
     <div>
       <div
-        className={`flex items-center gap-3 py-2 px-2 rounded-md transition-colors ${hasChildren ? "cursor-pointer hover:bg-accent/30" : "hover:bg-accent/20"}`}
+        className={`flex items-center gap-3 py-2 px-2 rounded-md transition-colors ${hasChildren ? "cursor-pointer hover:bg-accent/30" : ""}`}
         onClick={hasChildren ? () => setExpanded(!expanded) : undefined}
       >
         {hasChildren ? (
@@ -366,13 +479,13 @@ function DetailTopic({ topic, allTopics }: { topic: Topic; allTopics: Topic[] })
         <span className="text-xs font-mono text-muted-foreground/40 shrink-0">{topic.code}</span>
         <span className="text-sm text-foreground/80">{topic.title}</span>
         {hasChildren && (
-          <span className="text-xs text-muted-foreground/30 ml-auto shrink-0">{children.length}</span>
+          <span className="text-xs text-muted-foreground/30 ml-auto shrink-0">{filteredChildren.length}</span>
         )}
       </div>
       {expanded && hasChildren && (
         <div className="ml-[8px] pl-4 border-l border-border/15">
-          {children.map(child => (
-            <DetailTopic key={child.id} topic={child} allTopics={allTopics} />
+          {filteredChildren.map(child => (
+            <DetailTopic key={child.id} topic={child} allTopics={allTopics} search={search} />
           ))}
         </div>
       )}
@@ -493,32 +606,31 @@ export default function SubjectsPage() {
   const { subjects, addSubject, addTopic } = useSubjects();
   const { settings } = useSettings();
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
   const [stage, setStage] = useState<FlowStage>("list");
   const [fileName, setFileName] = useState("");
   const [parsed, setParsed] = useState<ParsedSubject | null>(null);
   const [error, setError] = useState("");
   const fileRef = useRef<File | null>(null);
 
-  // ── Detail view ──
+  // Detail view
   const selectedSubject = selectedId ? subjects.find(s => s.id === selectedId) : null;
   if (selectedSubject) {
     return <SubjectDetail subject={selectedSubject} onBack={() => setSelectedId(null)} />;
   }
 
-  // ── List view ──
+  // List view
   const handleFile = async (file: File) => {
     fileRef.current = file;
     setFileName(file.name);
     setStage("processing");
     setError("");
-
     try {
       if (file.name.toLowerCase().endsWith(".json")) {
         const raw = await file.text();
         const direct = tryParseJSON(raw);
         if (direct) { setParsed(direct); setStage("review"); return; }
       }
-
       const text = await extractFileText(file);
       if (!settings.openRouterApiKey) throw new Error("No API key. Go to Settings → General.");
       if (text.trim().length < 100) throw new Error("Not enough text. Try a .txt or .md file.");
@@ -553,6 +665,11 @@ export default function SubjectsPage() {
 
   const isAdding = stage === "processing" || stage === "review";
 
+  const q = search.toLowerCase();
+  const filtered = !q ? subjects : subjects.filter(s =>
+    s.name.toLowerCase().includes(q) || s.examBoard.toLowerCase().includes(q) || s.level.toLowerCase().includes(q)
+  );
+
   return (
     <div className="p-8 h-full flex flex-col"
       onDragOver={!isAdding ? (e) => e.preventDefault() : undefined}
@@ -567,13 +684,26 @@ export default function SubjectsPage() {
         )}
       </div>
 
+      {/* Search */}
+      {subjects.length > 0 && !isAdding && (
+        <div className="relative mt-5 shrink-0">
+          <MagnifyingGlass size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/40" />
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search subjects..."
+            className="pl-8 h-8 text-sm"
+          />
+        </div>
+      )}
+
       {error && (
         <div className="mt-4 p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-sm text-destructive shrink-0">{error}</div>
       )}
 
-      <div className="mt-6 flex-1 min-h-0 overflow-auto">
+      <div className="mt-4 flex-1 min-h-0 overflow-auto">
         <div className="space-y-2">
-          {subjects.map(s => (
+          {filtered.map(s => (
             <SubjectRow key={s.id} subject={s} onClick={() => setSelectedId(s.id)} />
           ))}
           {stage === "processing" && <ProcessingRow fileName={fileName} />}
