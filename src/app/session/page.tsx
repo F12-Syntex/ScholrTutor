@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { SessionLogInput } from "@/components/session-log-input";
 import { useSubjects } from "@/lib/subjects";
 import {
   loadSessionLogs,
@@ -154,13 +153,6 @@ export default function SessionPage() {
           {dayLogs.length} {dayLogs.length === 1 ? "entry" : "entries"}
         </span>
       </div>
-
-      {/* Log input on today */}
-      {isToday && (
-        <div className="mt-5 shrink-0">
-          <SessionLogInput onLogSubmitted={refresh} />
-        </div>
-      )}
 
       {/* Slots */}
       <div className="mt-5 flex-1 min-h-0 overflow-auto space-y-3">
