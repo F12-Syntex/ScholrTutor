@@ -28,7 +28,7 @@ function formatDateHeading(date: Date): string {
   return date.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 }
 
-// ── Build context string for AI from day's logs + student data ──
+// ── Build context for AI ──
 
 function buildDayContext(
   dayLogs: SessionLogEntry[],
@@ -38,7 +38,6 @@ function buildDayContext(
   const lines: string[] = [];
   const allTopics = subjects.flatMap(s => s.topics);
 
-  // Group logs by slot
   const slotGroups: SessionLogEntry[][] = SESSION_SLOTS.map(() => []);
   for (const log of dayLogs) {
     const slot = log.sessionSlot ?? 0;
@@ -54,13 +53,11 @@ function buildDayContext(
       if (log.parsedData) {
         for (const sd of log.parsedData.students) {
           const student = students.find(s => s.id === sd.studentId);
-          lines.push(`  Student: ${sd.studentName}`);
+          lines.push(`  Student: ${sd.studentName}${student ? ` (${student.referenceNumber})` : ""}`);
           if (student) {
             const sub = subjects.find(s => s.id === student.subjectId);
             if (sub) lines.push(`    Subject: ${sub.name}`);
-            if (student.currentGrade) lines.push(`    Current grade: ${student.currentGrade}`);
-            if (student.predictedGrade) lines.push(`    Predicted grade: ${student.predictedGrade}`);
-            if (student.targetGrade) lines.push(`    Target grade: ${student.targetGrade}`);
+            lines.push(`    Grades — Current: ${student.currentGrade || "N/A"}, Predicted: ${student.predictedGrade || "N/A"}, Target: ${student.targetGrade || "N/A"}`);
           }
           for (const note of sd.notes) lines.push(`    Note: ${note}`);
           for (const tr of sd.testResults) lines.push(`    Test: ${tr.name} — ${tr.scoreGot}/${tr.scoreOf} (${Math.round((tr.scoreGot / tr.scoreOf) * 100)}%)`);
@@ -72,18 +69,20 @@ function buildDayContext(
       }
     }
   }
-
   return lines.join("\n");
 }
 
-// ── Student summary card from AI ──
+// ── AI types ──
 
 interface StudentSummary {
   name: string;
+  reference: string;
   subject: string;
-  grades: string;
+  currentGrade: string;
+  predictedGrade: string;
+  targetGrade: string;
   topicsCovered: string[];
-  testResults: string[];
+  testResults: { name: string; score: string; percentage: string }[];
   notes: string[];
   overallComment: string;
 }
@@ -93,37 +92,36 @@ interface DaySummary {
   students: StudentSummary[];
 }
 
-async function generateSummary(
-  context: string,
-  apiKey: string,
-  model: string,
-): Promise<DaySummary> {
-  const systemPrompt = `You are a tutoring session report writer. Given a day's session logs, generate a clean, professional daily report.
+async function generateSummary(context: string, apiKey: string, model: string): Promise<DaySummary> {
+  const systemPrompt = `You write tutoring daily reports. Given a day's session logs, produce a structured student-by-student summary.
 
 Return ONLY valid JSON:
 {
-  "overview": "<1-2 sentence overview of the day>",
+  "overview": "<1-2 sentence day overview>",
   "students": [
     {
       "name": "<student name>",
-      "subject": "<their subject>",
-      "grades": "<current/predicted/target grades if known>",
-      "topicsCovered": ["<topic 1>", "<topic 2>"],
-      "testResults": ["<test name>: <score>/<total> (<percentage>%)"],
-      "notes": ["<observation 1>", "<observation 2>"],
-      "overallComment": "<brief comment on the student's session>"
+      "reference": "<reference number e.g. ST-001>",
+      "subject": "<subject name>",
+      "currentGrade": "<grade or empty>",
+      "predictedGrade": "<grade or empty>",
+      "targetGrade": "<grade or empty>",
+      "topicsCovered": ["<topic code + title>"],
+      "testResults": [{"name":"<test>","score":"<got>/<total>","percentage":"<n>%"}],
+      "notes": ["<observation>"],
+      "overallComment": "<brief progress comment>"
     }
   ]
 }
 
 Rules:
-- Group all information by student
-- Include all test results with scores and percentages
-- Include all notes/observations
-- List all topics covered
-- Write a brief overall comment per student summarizing their progress
-- If grades are available, mention them
-- Be concise but thorough`;
+- Include every student mentioned in the logs
+- Include reference numbers if available
+- List ALL topics covered and ALL test results
+- For test results, always include name, score fraction, and percentage
+- Notes should be concise observations
+- overallComment is a 1-2 sentence progress summary
+- Grades should reflect what's in the data`;
 
   const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
@@ -132,7 +130,7 @@ Rules:
       model,
       messages: [
         { role: "system", content: systemPrompt },
-        { role: "user", content: `Generate the daily report:\n${context}` },
+        { role: "user", content: `Generate the daily student summary:\n${context}` },
       ],
       temperature: 0.3,
       max_tokens: 4000,
@@ -145,6 +143,89 @@ Rules:
   const match = content.match(/\{[\s\S]*\}/);
   if (!match) throw new Error("AI did not return valid JSON");
   return JSON.parse(match[0]) as DaySummary;
+}
+
+// ── Student summary table ──
+
+function StudentTable({ s }: { s: StudentSummary }) {
+  const hasTopics = s.topicsCovered.length > 0;
+  const hasTests = s.testResults.length > 0;
+  const hasNotes = s.notes.length > 0;
+  const hasRows = hasTopics || hasTests;
+
+  return (
+    <div className="rounded-lg border border-border/50 overflow-hidden">
+      {/* Header */}
+      <div className="px-5 py-3 bg-muted/80">
+        <div className="flex items-center justify-between">
+          <div className="flex items-baseline gap-2">
+            <span className="text-sm font-medium">{s.name}</span>
+            {s.reference && <span className="text-xs font-mono text-muted-foreground/50">({s.reference})</span>}
+          </div>
+          {s.subject && <span className="text-xs text-muted-foreground/60">{s.subject}</span>}
+        </div>
+        {/* Grades row */}
+        {(s.currentGrade || s.predictedGrade || s.targetGrade) && (
+          <div className="flex gap-4 mt-1.5 text-[10px] text-muted-foreground/50">
+            {s.currentGrade && <span>Current: <span className="font-medium text-foreground/70">{s.currentGrade}</span></span>}
+            {s.predictedGrade && <span>Predicted: <span className="font-medium text-foreground/70">{s.predictedGrade}</span></span>}
+            {s.targetGrade && <span>Target: <span className="font-medium text-foreground/70">{s.targetGrade}</span></span>}
+          </div>
+        )}
+      </div>
+
+      {/* Unified table: topics + tests */}
+      {hasRows && (
+        <table className="w-full bg-card">
+          <thead>
+            <tr className="border-b border-border/30 text-[10px] font-medium text-muted-foreground/50 uppercase tracking-wider">
+              <th className="text-left px-5 py-2 w-20">Type</th>
+              <th className="text-left px-3 py-2">Detail</th>
+              <th className="text-right px-5 py-2 w-28">Result</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border/15">
+            {s.topicsCovered.map((t, j) => (
+              <tr key={`t-${j}`}>
+                <td className="px-5 py-2">
+                  <span className="text-[9px] font-medium px-1.5 py-0.5 rounded bg-[color-mix(in_srgb,var(--mention-topic)_15%,transparent)] text-[var(--mention-topic)]">Topic</span>
+                </td>
+                <td className="px-3 py-2 text-sm text-foreground/80">{t}</td>
+                <td className="px-5 py-2 text-right text-xs text-muted-foreground/50">Covered</td>
+              </tr>
+            ))}
+            {s.testResults.map((r, j) => (
+              <tr key={`r-${j}`}>
+                <td className="px-5 py-2">
+                  <span className="text-[9px] font-medium px-1.5 py-0.5 rounded bg-[color-mix(in_srgb,var(--mention-student)_15%,transparent)] text-[var(--mention-student)]">Test</span>
+                </td>
+                <td className="px-3 py-2 text-sm text-foreground/80">{r.name}</td>
+                <td className="px-5 py-2 text-right">
+                  <span className="text-sm font-medium tabular-nums">{r.score}</span>
+                  <span className="text-xs text-muted-foreground/50 ml-1.5">({r.percentage})</span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+
+      {/* Notes + comment */}
+      <div className="bg-card border-t border-border/20 px-5 py-3 space-y-3">
+        {hasNotes && (
+          <div>
+            <p className="text-[10px] font-medium text-muted-foreground/50 uppercase tracking-wider mb-1.5">Notes</p>
+            <div className="space-y-1">
+              {s.notes.map((n, j) => (
+                <p key={j} className="text-xs text-muted-foreground pl-2 border-l-2 border-border/30">{n}</p>
+              ))}
+            </div>
+          </div>
+        )}
+        <p className="text-sm text-foreground/70 italic">{s.overallComment}</p>
+      </div>
+    </div>
+  );
 }
 
 // ── Page ──
@@ -167,7 +248,6 @@ export default function SummaryPage() {
     [allLogs, dateKey]
   );
 
-  // Reset summary when date changes
   useEffect(() => { setSummary(null); setError(""); }, [dateKey]);
 
   const handleGenerate = async () => {
@@ -193,11 +273,10 @@ export default function SummaryPage() {
   return (
     <div className="p-8 h-full flex flex-col">
       <div className="shrink-0">
-        <h1 className="text-3xl font-medium tracking-tight">Summary</h1>
+        <h1 className="text-3xl font-medium tracking-tight">Student Summary</h1>
         <p className="mt-1 text-sm text-muted-foreground">AI-generated daily reports, student by student.</p>
       </div>
 
-      {/* Date nav + generate */}
       <div className="mt-5 flex items-center gap-2 shrink-0">
         <button onClick={prevDay} className="p-1.5 rounded-md hover:bg-accent transition-colors text-muted-foreground hover:text-foreground">
           <CaretLeft size={16} />
@@ -225,7 +304,6 @@ export default function SummaryPage() {
         <div className="mt-4 p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-sm text-destructive shrink-0">{error}</div>
       )}
 
-      {/* Content */}
       <div className="mt-5 flex-1 min-h-0 overflow-auto">
         {!summary && !loading && dayLogs.length === 0 && (
           <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -239,72 +317,20 @@ export default function SummaryPage() {
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <Sparkle size={48} className="text-muted-foreground/15 mb-3" weight="thin" />
             <p className="text-sm text-muted-foreground/50">{dayLogs.length} log {dayLogs.length === 1 ? "entry" : "entries"} ready.</p>
-            <p className="text-xs text-muted-foreground/30 mt-1">Click Generate Report to create an AI summary.</p>
+            <p className="text-xs text-muted-foreground/30 mt-1">Click Generate Report to create student summaries.</p>
           </div>
         )}
 
         {summary && (
           <div className="space-y-5">
             {/* Overview */}
-            <div className="rounded-lg border border-border/50 bg-card px-5 py-4">
+            <div className="rounded-lg border border-border/50 bg-card px-5 py-3">
               <p className="text-sm text-foreground/80">{summary.overview}</p>
             </div>
 
-            {/* Student cards */}
+            {/* Student tables */}
             {summary.students.map((s, i) => (
-              <div key={i} className="rounded-lg border border-border/50 overflow-hidden">
-                {/* Student header */}
-                <div className="px-5 py-3 bg-muted/80 flex items-center justify-between">
-                  <div>
-                    <span className="text-sm font-medium">{s.name}</span>
-                    {s.subject && <span className="text-xs text-muted-foreground/60 ml-2">{s.subject}</span>}
-                  </div>
-                  {s.grades && <span className="text-xs text-muted-foreground/50">{s.grades}</span>}
-                </div>
-
-                <div className="bg-card px-5 py-4 space-y-4">
-                  {/* Overall comment */}
-                  <p className="text-sm text-foreground/80">{s.overallComment}</p>
-
-                  {/* Topics */}
-                  {s.topicsCovered.length > 0 && (
-                    <div>
-                      <p className="text-[10px] font-medium text-muted-foreground/50 uppercase tracking-wider mb-1.5">Topics Covered</p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {s.topicsCovered.map((t, j) => (
-                          <span key={j} className="text-xs font-medium px-2 py-0.5 rounded bg-[color-mix(in_srgb,var(--mention-topic)_15%,transparent)] text-[var(--mention-topic)]">
-                            {t}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Test results */}
-                  {s.testResults.length > 0 && (
-                    <div>
-                      <p className="text-[10px] font-medium text-muted-foreground/50 uppercase tracking-wider mb-1.5">Test Results</p>
-                      <div className="space-y-1">
-                        {s.testResults.map((r, j) => (
-                          <p key={j} className="text-xs text-foreground/70">{r}</p>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Notes */}
-                  {s.notes.length > 0 && (
-                    <div>
-                      <p className="text-[10px] font-medium text-muted-foreground/50 uppercase tracking-wider mb-1.5">Notes</p>
-                      <div className="space-y-1">
-                        {s.notes.map((n, j) => (
-                          <p key={j} className="text-xs text-muted-foreground pl-2 border-l-2 border-border/30">{n}</p>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
+              <StudentTable key={i} s={s} />
             ))}
           </div>
         )}
