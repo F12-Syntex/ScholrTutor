@@ -193,19 +193,17 @@ export default function DashboardPage() {
         {/* Two column: Recent Tests + Recent Notes */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Recent test results */}
-          <section className="rounded-lg border border-border/50 overflow-hidden">
-            <div className="px-4 py-2.5 bg-muted/80 flex items-center gap-2">
-              <Exam size={14} className="text-muted-foreground/50" />
-              <span className="text-xs font-medium text-muted-foreground">Recent Test Results</span>
-            </div>
+          <section>
+            <h3 className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
+              <Exam size={13} className="text-muted-foreground/50" />
+              Recent Test Results
+            </h3>
             {recentTests.length === 0 ? (
-              <div className="px-4 py-6 bg-card text-center">
-                <p className="text-xs text-muted-foreground/40">No test results yet.</p>
-              </div>
+              <p className="text-xs text-muted-foreground/40 py-4 text-center">No test results yet.</p>
             ) : (
-              <div className="bg-card divide-y divide-border/15">
+              <div className="divide-y divide-border/15">
                 {recentTests.map((r, i) => (
-                  <div key={i} className="px-4 py-2.5 flex items-center gap-3">
+                  <div key={i} className="py-2 flex items-center gap-3">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-medium truncate">{r.name}</span>
@@ -225,19 +223,17 @@ export default function DashboardPage() {
           </section>
 
           {/* Recent notes */}
-          <section className="rounded-lg border border-border/50 overflow-hidden">
-            <div className="px-4 py-2.5 bg-muted/80 flex items-center gap-2">
-              <Notebook size={14} className="text-muted-foreground/50" />
-              <span className="text-xs font-medium text-muted-foreground">Recent Notes</span>
-            </div>
+          <section>
+            <h3 className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
+              <Notebook size={13} className="text-muted-foreground/50" />
+              Recent Notes
+            </h3>
             {recentNotes.length === 0 ? (
-              <div className="px-4 py-6 bg-card text-center">
-                <p className="text-xs text-muted-foreground/40">No notes yet.</p>
-              </div>
+              <p className="text-xs text-muted-foreground/40 py-4 text-center">No notes yet.</p>
             ) : (
-              <div className="bg-card divide-y divide-border/15 max-h-64 overflow-auto">
+              <div className="divide-y divide-border/15">
                 {recentNotes.map((n, i) => (
-                  <div key={i} className="px-4 py-2.5">
+                  <div key={i} className="py-2">
                     <p className="text-sm text-foreground/80">{n.content}</p>
                     <p className="text-[10px] text-muted-foreground/40 mt-1">{n.studentName} · {formatDateShort(n.date)}</p>
                   </div>

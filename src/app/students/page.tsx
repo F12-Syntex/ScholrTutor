@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { useStudents, type Student } from "@/lib/students";
 import { useSubjects } from "@/lib/subjects";
 import { useBreadcrumb } from "@/lib/breadcrumb";
@@ -9,6 +10,7 @@ import { MagnifyingGlass } from "@phosphor-icons/react/dist/ssr/MagnifyingGlass"
 import { Plus } from "@phosphor-icons/react/dist/ssr/Plus";
 import { ArrowLeft } from "@phosphor-icons/react/dist/ssr/ArrowLeft";
 import { Trash } from "@phosphor-icons/react/dist/ssr/Trash";
+import { EnvelopeSimple } from "@phosphor-icons/react/dist/ssr/EnvelopeSimple";
 import { DotsThreeVertical } from "@phosphor-icons/react/dist/ssr/DotsThreeVertical";
 import { PencilSimple } from "@phosphor-icons/react/dist/ssr/PencilSimple";
 import { UserCircle } from "@phosphor-icons/react/dist/ssr/UserCircle";
@@ -181,7 +183,17 @@ function StudentDetail({ student, onBack }: { student: Student; onBack: () => vo
             <div>
               <h1 className="text-2xl font-medium tracking-tight">{student.name}</h1>
               <p className="text-sm text-muted-foreground mt-0.5">
-                {student.referenceNumber} · {student.email || "No email"} · {student.completedSessions} session{student.completedSessions !== 1 ? "s" : ""}
+                {student.referenceNumber} · {student.email ? (
+                  <a href={`mailto:${student.email}`} className="hover:text-primary hover:underline transition-colors">
+                    {student.email}
+                  </a>
+                ) : "No email"} · {student.completedSessions} session{student.completedSessions !== 1 ? "s" : ""}
+                {student.email && (
+                  <a href={`mailto:${student.email}?subject=${encodeURIComponent(`Session Notes - ${student.name}`)}`}
+                    className="inline-flex items-center gap-1 ml-2 text-muted-foreground/50 hover:text-primary transition-colors">
+                    <EnvelopeSimple size={13} />
+                  </a>
+                )}
               </p>
             </div>
           </div>
@@ -210,7 +222,13 @@ function StudentDetail({ student, onBack }: { student: Student; onBack: () => vo
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <section className="rounded-lg border border-border/50 overflow-hidden">
             <div className="px-4 py-2 bg-muted/80 text-[10px] font-medium text-muted-foreground">Subject</div>
-            <div className="px-4 py-2.5 bg-card text-sm">{subjectName}</div>
+            <div className="px-4 py-2.5 bg-card text-sm">
+              {student.subjectId ? (
+                <Link href="/subjects" className="hover:text-primary hover:underline transition-colors">
+                  {subjectName}
+                </Link>
+              ) : subjectName}
+            </div>
           </section>
           <section className="rounded-lg border border-border/50 overflow-hidden">
             <div className="px-4 py-2 bg-muted/80 text-[10px] font-medium text-muted-foreground">Grades</div>
@@ -245,17 +263,17 @@ function StudentDetail({ student, onBack }: { student: Student; onBack: () => vo
               <span className="text-xs font-medium text-muted-foreground">Notes</span>
               <span className="text-[10px] text-muted-foreground/40 ml-auto">{student.notes.length}</span>
             </div>
-            <div className="bg-card divide-y divide-border/20 max-h-60 overflow-auto">
+            <div className="bg-card divide-y divide-border/20">
               {student.notes.map(n => (
-                <div key={n.id} className="group px-4 py-2.5">
-                  <div className="flex items-start justify-between gap-2">
+                <div key={n.id} className="flex items-center gap-3 px-4 py-2.5">
+                  <div className="flex-1 min-w-0">
                     <p className="text-sm text-foreground/80 whitespace-pre-wrap">{n.content}</p>
-                    <button onClick={() => setDeleteNoteId(n.id)}
-                      className="opacity-0 group-hover:opacity-100 p-0.5 text-muted-foreground/30 hover:text-destructive transition-all shrink-0 mt-0.5">
-                      <Trash size={12} />
-                    </button>
+                    <p className="text-[10px] text-muted-foreground/40 mt-1">{formatDate(n.createdAt)}</p>
                   </div>
-                  <p className="text-[10px] text-muted-foreground/40 mt-1">{formatDate(n.createdAt)}</p>
+                  <Button variant="ghost" size="xs" onClick={() => setDeleteNoteId(n.id)}
+                    className="text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 shrink-0">
+                    <Trash size={12} className="mr-1" /> Delete
+                  </Button>
                 </div>
               ))}
             </div>
@@ -270,21 +288,21 @@ function StudentDetail({ student, onBack }: { student: Student; onBack: () => vo
               <span className="text-xs font-medium text-muted-foreground">Test Results</span>
               <span className="text-[10px] text-muted-foreground/40 ml-auto">{student.testResults.length}</span>
             </div>
-            <div className="bg-card divide-y divide-border/20 max-h-60 overflow-auto">
+            <div className="bg-card divide-y divide-border/20">
               {student.testResults.map(r => (
-                <div key={r.id} className="group px-4 py-2.5">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-3 min-w-0">
+                <div key={r.id} className="flex items-center gap-3 px-4 py-2.5">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-3">
                       <span className="text-sm font-medium truncate">{r.name}</span>
                       <span className="text-sm tabular-nums text-muted-foreground shrink-0">{r.scoreGot}/{r.scoreOf}</span>
                       <span className="text-xs text-muted-foreground/50 shrink-0">({Math.round((r.scoreGot / r.scoreOf) * 100)}%)</span>
                     </div>
-                    <button onClick={() => setDeleteTestId(r.id)}
-                      className="opacity-0 group-hover:opacity-100 p-0.5 text-muted-foreground/30 hover:text-destructive transition-all shrink-0">
-                      <Trash size={12} />
-                    </button>
+                    <p className="text-[10px] text-muted-foreground/40 mt-1">{formatDate(r.createdAt)}</p>
                   </div>
-                  <p className="text-[10px] text-muted-foreground/40 mt-1">{formatDate(r.createdAt)}</p>
+                  <Button variant="ghost" size="xs" onClick={() => setDeleteTestId(r.id)}
+                    className="text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 shrink-0">
+                    <Trash size={12} className="mr-1" /> Delete
+                  </Button>
                 </div>
               ))}
             </div>
@@ -381,6 +399,16 @@ export default function StudentsPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [addOpen, setAddOpen] = useState(false);
+
+  // Deep-link from sidebar starred students
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+    if (id) {
+      setSelectedId(id);
+      window.history.replaceState({}, "", "/students");
+    }
+  }, []);
 
   const selected = selectedId ? students.find(s => s.id === selectedId) : null;
   if (selected) {

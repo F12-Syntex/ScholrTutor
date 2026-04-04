@@ -11,16 +11,17 @@ import { Check } from "@phosphor-icons/react/dist/ssr/Check";
 import { X } from "@phosphor-icons/react/dist/ssr/X";
 import { Users } from "@phosphor-icons/react/dist/ssr/Users";
 import { Books } from "@phosphor-icons/react/dist/ssr/Books";
+import { CalendarBlank } from "@phosphor-icons/react/dist/ssr/CalendarBlank";
 import { Button } from "@/components/ui/button";
 
 type MentionEntry = { type: "student" | "topic"; id: string; label: string };
 
 type TriggerState =
-  | { phase: "category"; query: string; start: number }
+  | { phase: "unified"; query: string; start: number }
   | { phase: "items"; type: "student" | "topic"; query: string; start: number }
   | null;
 
-type AutoItem = { id: string; label: string; sublabel: string };
+type AutoItem = { id: string; label: string; sublabel: string; type: "student" | "topic" };
 
 function detectTriggerInNode(text: string, pos: number): TriggerState {
   const before = text.slice(0, pos);
@@ -29,7 +30,7 @@ function detectTriggerInNode(text: string, pos: number): TriggerState {
   const tm = before.match(/@topic\(([^)@]*)$/);
   if (tm) return { phase: "items", type: "topic", query: tm[1], start: pos - tm[0].length };
   const bare = before.match(/@([^@\s(]*)$/);
-  if (bare) return { phase: "category", query: bare[1], start: pos - bare[0].length };
+  if (bare) return { phase: "unified", query: bare[1], start: pos - bare[0].length };
   return null;
 }
 
@@ -49,7 +50,6 @@ function extractContent(el: HTMLElement): { text: string; mentions: MentionEntry
     } else if (node instanceof HTMLElement && node.tagName === "BR") {
       text += "\n";
     } else if (node instanceof HTMLElement) {
-      // Handle divs/spans that browsers insert for newlines
       text += "\n" + (node.textContent || "");
     }
   }
@@ -70,43 +70,70 @@ export function SessionLogInput({ studentId, onLogSubmitted }: {
   const [error, setError] = useState("");
   const [trigger, setTrigger] = useState<TriggerState>(null);
   const [selectedIdx, setSelectedIdx] = useState(0);
+  const [logDate, setLogDate] = useState(() => new Date().toISOString().slice(0, 10));
   const editorRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // ── Autocomplete data ──
 
-  const categories = [
-    { key: "student", label: "Student", icon: Users },
-    { key: "topic", label: "Topic", icon: Books },
-  ];
-
-  const items: AutoItem[] = trigger?.phase === "items" ? (() => {
+  const items: AutoItem[] = (() => {
+    if (!trigger) return [];
     const q = trigger.query.toLowerCase();
-    if (trigger.type === "student") {
-      return students
-        .filter(s => s.name.toLowerCase().includes(q) || s.referenceNumber.toLowerCase().includes(q))
-        .slice(0, 6)
-        .map(s => ({ id: s.id, label: s.name, sublabel: s.referenceNumber }));
-    }
-    let pool = subjects.flatMap(sub => sub.topics.map(t => ({ ...t, subName: sub.name })));
+
+    // Build topic pool (scoped to student's subject if on student page)
+    let topicPool = subjects.flatMap(sub => sub.topics.map(t => ({ ...t, subName: sub.name })));
     if (studentId) {
       const st = students.find(s => s.id === studentId);
       if (st?.subjectId) {
         const scoped = subjects.find(s => s.id === st.subjectId);
-        if (scoped) pool = scoped.topics.map(t => ({ ...t, subName: scoped.name }));
+        if (scoped) topicPool = scoped.topics.map(t => ({ ...t, subName: scoped.name }));
       }
     }
-    return pool
-      .filter(t => t.title.toLowerCase().includes(q) || t.code.toLowerCase().includes(q))
+
+    // Sort topics: leaf topics first (by code number), header topics last
+    const sortTopics = (list: typeof topicPool) => [...list].sort((a, b) => {
+      const aIsHeader = topicPool.some(t => t.parentCode === a.code);
+      const bIsHeader = topicPool.some(t => t.parentCode === b.code);
+      if (aIsHeader !== bIsHeader) return aIsHeader ? 1 : -1;
+      const aParts = a.code.split(".").map(Number);
+      const bParts = b.code.split(".").map(Number);
+      for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+        const av = aParts[i] ?? -1, bv = bParts[i] ?? -1;
+        if (av !== bv) return av - bv;
+      }
+      return 0;
+    });
+
+    if (trigger.phase === "items" && trigger.type === "student") {
+      return students
+        .filter(s => s.name.toLowerCase().includes(q) || s.referenceNumber.toLowerCase().includes(q))
+        .sort((a, b) => (a.isStarred === b.isStarred ? a.name.localeCompare(b.name) : a.isStarred ? -1 : 1))
+        .slice(0, 12)
+        .map(s => ({ id: s.id, label: s.name, sublabel: s.referenceNumber, type: "student" as const }));
+    }
+
+    if (trigger.phase === "items" && trigger.type === "topic") {
+      const filtered = topicPool.filter(t => t.title.toLowerCase().includes(q) || t.code.toLowerCase().includes(q));
+      return sortTopics(filtered).slice(0, 12)
+        .map(t => ({ id: t.id, label: `${t.code} ${t.title}`, sublabel: t.subName, type: "topic" as const }));
+    }
+
+    // Unified: show students + topics together when user just types @
+    const studentItems: AutoItem[] = students
+      .filter(s => !q || s.name.toLowerCase().includes(q) || s.referenceNumber.toLowerCase().includes(q))
+      .sort((a, b) => (a.isStarred === b.isStarred ? a.name.localeCompare(b.name) : a.isStarred ? -1 : 1))
       .slice(0, 6)
-      .map(t => ({ id: t.id, label: `${t.code} ${t.title}`, sublabel: t.subName }));
-  })() : [];
+      .map(s => ({ id: s.id, label: s.name, sublabel: s.referenceNumber, type: "student" as const }));
 
-  const filteredCategories = trigger?.phase === "category"
-    ? categories.filter(c => c.label.toLowerCase().includes(trigger.query.toLowerCase()))
-    : [];
+    const filteredTopics = topicPool.filter(t => !q || t.title.toLowerCase().includes(q) || t.code.toLowerCase().includes(q));
+    const topicItems: AutoItem[] = sortTopics(filteredTopics)
+      .slice(0, 8)
+      .map(t => ({ id: t.id, label: `${t.code} ${t.title}`, sublabel: t.subName, type: "topic" as const }));
 
-  const totalItems = trigger?.phase === "category" ? filteredCategories.length : items.length;
+    return [...studentItems, ...topicItems].slice(0, 14);
+  })();
+
+  const totalItems = items.length;
 
   // ── Trigger detection from DOM ──
 
@@ -168,42 +195,11 @@ export function SessionLogInput({ studentId, onLogSubmitted }: {
     setTrigger(null);
   };
 
-  const replaceTextWithPrefix = (key: string) => {
-    const sel = window.getSelection();
-    if (!sel || sel.rangeCount === 0) return;
-    const node = sel.anchorNode;
-    if (!node || node.nodeType !== Node.TEXT_NODE) return;
-
-    const text = node.textContent || "";
-    const cursorPos = sel.anchorOffset;
-    const before = text.slice(0, cursorPos);
-    const match = before.match(/@[^@\s(]*$/);
-    if (!match) return;
-
-    const triggerStart = cursorPos - match[0].length;
-    const prefix = `@${key}(`;
-    node.textContent = text.slice(0, triggerStart) + prefix + text.slice(cursorPos);
-
-    const newPos = triggerStart + prefix.length;
-    const range = document.createRange();
-    range.setStart(node, newPos);
-    range.collapse(true);
-    sel.removeAllRanges();
-    sel.addRange(range);
-
-    // Re-detect trigger
-    const t = detectTriggerInNode(node.textContent || "", newPos);
-    setTrigger(t);
-    setSelectedIdx(0);
-  };
-
-  // ── Selection handlers ──
-
-  const selectCategory = (key: string) => replaceTextWithPrefix(key);
+  // ── Selection handler ──
 
   const selectItem = (item: AutoItem) => {
-    if (!trigger || trigger.phase !== "items") return;
-    replaceTextAndInsertMention(trigger.type, item.id, item.label);
+    if (!trigger) return;
+    replaceTextAndInsertMention(item.type, item.id, item.label);
   };
 
   // ── Input handling ──
@@ -225,8 +221,7 @@ export function SessionLogInput({ studentId, onLogSubmitted }: {
       if (e.key === "ArrowUp") { e.preventDefault(); setSelectedIdx(i => Math.max(i - 1, 0)); return; }
       if (e.key === "Enter" || e.key === "Tab") {
         e.preventDefault();
-        if (trigger.phase === "category") selectCategory(filteredCategories[selectedIdx].key);
-        else selectItem(items[selectedIdx]);
+        selectItem(items[selectedIdx]);
         return;
       }
       if (e.key === "Escape") { e.preventDefault(); setTrigger(null); return; }
@@ -238,6 +233,14 @@ export function SessionLogInput({ studentId, onLogSubmitted }: {
       e.preventDefault();
       document.execCommand("insertLineBreak");
     }
+  };
+
+  // ── Timestamp helper ──
+
+  const makeLogTimestamp = () => {
+    const [year, month, day] = logDate.split("-").map(Number);
+    const now = new Date();
+    return new Date(year, month - 1, day, now.getHours(), now.getMinutes(), now.getSeconds());
   };
 
   // ── Submit ──
@@ -257,8 +260,8 @@ export function SessionLogInput({ studentId, onLogSubmitted }: {
       if (result.students.length === 0) {
         if (studentId) {
           addNote(studentId, text.trim());
-          const now = new Date();
-          saveSessionLog({ id: crypto.randomUUID(), rawText: text, parsedData: null, sessionSlot: resolveSessionSlot(now), createdAt: now.toISOString() });
+          const ts = makeLogTimestamp();
+          saveSessionLog({ id: crypto.randomUUID(), rawText: text, parsedData: null, sessionSlot: resolveSessionSlot(ts), createdAt: ts.toISOString() });
           clearEditor();
           setStage("idle");
           onLogSubmitted?.();
@@ -283,8 +286,8 @@ export function SessionLogInput({ studentId, onLogSubmitted }: {
       for (const tr of sd.testResults) addTestResult(sd.studentId, tr);
       updateStudent(sd.studentId, { completedSessions: student.completedSessions + 1 });
     }
-    const now = new Date();
-    saveSessionLog({ id: crypto.randomUUID(), rawText: rawText, parsedData: parsed, sessionSlot: resolveSessionSlot(now), createdAt: now.toISOString() });
+    const ts = makeLogTimestamp();
+    saveSessionLog({ id: crypto.randomUUID(), rawText: rawText, parsedData: parsed, sessionSlot: resolveSessionSlot(ts), createdAt: ts.toISOString() });
     clearEditor();
     setParsed(null);
     setStage("idle");
@@ -294,6 +297,7 @@ export function SessionLogInput({ studentId, onLogSubmitted }: {
   const clearEditor = () => {
     if (editorRef.current) editorRef.current.innerHTML = "";
     setRawText("");
+    setLogDate(new Date().toISOString().slice(0, 10));
   };
 
   // ── Dropdown position: check if there's room above, else go below ──
@@ -302,7 +306,7 @@ export function SessionLogInput({ studentId, onLogSubmitted }: {
   useEffect(() => {
     if (!trigger || !containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
-    setDropdownAbove(rect.top > 220);
+    setDropdownAbove(rect.top > 380);
   }, [trigger]);
 
   const showDropdown = trigger && totalItems > 0 && stage === "idle";
@@ -313,38 +317,25 @@ export function SessionLogInput({ studentId, onLogSubmitted }: {
       {showDropdown && (
         <div
           className={`absolute left-0 right-0 z-50 ${dropdownAbove ? "bottom-full mb-1" : "top-full mt-1"}`}
-          style={{ maxHeight: 200 }}
+          style={{ maxHeight: 360 }}
         >
-          <div className="mx-2 rounded-lg border border-border bg-popover shadow-lg overflow-auto" style={{ maxHeight: 200 }}>
-            {trigger.phase === "category" ? (
-              filteredCategories.map((c, i) => (
-                <button
-                  key={c.key}
-                  onMouseDown={(e) => { e.preventDefault(); selectCategory(c.key); }}
-                  className={`flex items-center gap-2.5 w-full px-3 py-2 text-sm text-left transition-colors ${
-                    i === selectedIdx ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"
-                  }`}
-                >
-                  <c.icon size={15} className="text-muted-foreground/60 shrink-0" />
-                  <span>{c.label}</span>
-                  <span className="text-[10px] text-muted-foreground/40 ml-auto font-mono">@{c.key}()</span>
-                </button>
-              ))
-            ) : (
-              items.map((item, i) => (
-                <button
-                  key={item.id}
-                  onMouseDown={(e) => { e.preventDefault(); selectItem(item); }}
-                  className={`flex items-center gap-2.5 w-full px-3 py-2 text-sm text-left transition-colors ${
-                    i === selectedIdx ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"
-                  }`}
-                >
-                  <span className={`size-1.5 rounded-full shrink-0 ${trigger.type === "student" ? "bg-[var(--mention-student)]" : "bg-[var(--mention-topic)]"}`} />
-                  <span className="truncate">{item.label}</span>
-                  <span className="text-[10px] text-muted-foreground/40 ml-auto shrink-0">{item.sublabel}</span>
-                </button>
-              ))
-            )}
+          <div className="mx-2 rounded-lg border border-border bg-popover shadow-lg overflow-auto" style={{ maxHeight: 360 }}>
+            {items.map((item, i) => (
+              <button
+                key={`${item.type}-${item.id}`}
+                onMouseDown={(e) => { e.preventDefault(); selectItem(item); }}
+                className={`flex items-center gap-2.5 w-full px-3 py-2 text-sm text-left transition-colors ${
+                  i === selectedIdx ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"
+                }`}
+              >
+                {item.type === "student"
+                  ? <Users size={14} className="text-[var(--mention-student)] shrink-0" />
+                  : <Books size={14} className="text-[var(--mention-topic)] shrink-0" />
+                }
+                <span className="truncate">{item.label}</span>
+                <span className="text-[10px] text-muted-foreground/40 ml-auto shrink-0">{item.sublabel}</span>
+              </button>
+            ))}
           </div>
         </div>
       )}
@@ -437,9 +428,22 @@ export function SessionLogInput({ studentId, onLogSubmitted }: {
 
       {/* Footer */}
       <div className="px-4 py-2 border-t border-border/20 flex items-center justify-between rounded-b-lg bg-muted/40">
-        <span className="text-[10px] text-muted-foreground/40">
-          Type <kbd className="px-1 py-0.5 rounded border border-border/50 bg-background/80 font-mono text-[9px]">@</kbd> to mention · Ctrl+Enter to submit
-        </span>
+        <div className="flex items-center gap-3">
+          <span className="text-[10px] text-muted-foreground/40">
+            Type <kbd className="px-1 py-0.5 rounded border border-border/50 bg-background/80 font-mono text-[9px]">@</kbd> to mention · Ctrl+Enter to submit
+          </span>
+          {stage === "idle" && (
+            <label className="flex items-center gap-1 cursor-pointer">
+              <CalendarBlank size={12} className="text-muted-foreground/40" />
+              <input
+                type="date"
+                value={logDate}
+                onChange={(e) => setLogDate(e.target.value)}
+                className="text-[10px] bg-transparent border-none outline-none text-muted-foreground/60 cursor-pointer w-[90px]"
+              />
+            </label>
+          )}
+        </div>
         {stage === "idle" && (
           <Button variant="outline" size="xs" onClick={handleSubmit}>
             <PaperPlaneRight size={12} className="mr-1" /> Submit

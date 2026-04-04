@@ -154,17 +154,22 @@ export async function parseSessionLog(
   apiKey: string,
   model: string,
 ): Promise<ParsedSessionData> {
-  const studentList = students.map(s => `- "${s.name}" (id: ${s.id})`).join("\n");
-  const topicList = subjects.flatMap(sub =>
-    sub.topics.map(t => `- "${t.code} ${t.title}" (id: ${t.id})`)
-  ).join("\n");
+  const studentList = students.map(s => {
+    const sub = subjects.find(sub => sub.id === s.subjectId);
+    return `- "${s.name}" (id: ${s.id}${sub ? `, subject: "${sub.name}"` : ""})`;
+  }).join("\n");
+
+  const topicList = subjects.map(sub => {
+    const topics = sub.topics.map(t => `  - "${t.code} ${t.title}" (id: ${t.id})`).join("\n");
+    return `[${sub.name}]\n${topics}`;
+  }).join("\n\n");
 
   const systemPrompt = `You parse tutoring session logs into structured data.
 
-Students:
+Students (with their assigned subjects):
 ${studentList || "(none)"}
 
-Topics:
+Topics (grouped by subject):
 ${topicList || "(none)"}
 
 Rules:
@@ -172,6 +177,9 @@ Rules:
 - "got 10/25", "scored 18/20", "full marks" → test results. "full marks" means scoreGot === scoreOf
 - Associate topics and scores with the nearest mentioned student
 - If only one student is mentioned or implied, attribute everything to them
+- CRITICAL: When matching topics, check what subject the student is studying and ONLY use topics from THAT subject
+- If a student studies Economics, only match Economics topics — never assign topics from a different subject
+- Auto-detect students from the database by name even if not explicitly @mentioned
 
 Return ONLY valid JSON:
 {"students":[{"studentId":"<id>","studentName":"<name>","notes":["<text>"],"testResults":[{"name":"<description>","scoreGot":<n>,"scoreOf":<n>}],"topicIds":["<id>"]}]}`;

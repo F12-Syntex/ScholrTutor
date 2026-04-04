@@ -132,7 +132,7 @@ function NavItems() {
               <SidebarMenuSub>
                 {starredStudents.map((s) => (
                   <SidebarMenuSubItem key={s.id}>
-                    <SidebarMenuSubButton size="sm" render={<Link href="/students" />}>
+                    <SidebarMenuSubButton size="sm" render={<Link href={`/students?id=${s.id}`} />}>
                       <Star size={10} weight="fill" className="text-warning shrink-0" />
                       <span className="truncate">{s.name}</span>
                       <span className="text-[9px] font-mono text-muted-foreground/30 ml-auto shrink-0">{s.referenceNumber}</span>
