@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { useSettings } from "@/lib/settings";
 import { Sun } from "@phosphor-icons/react/dist/ssr/Sun";
@@ -25,6 +26,68 @@ const THEMES: { id: "system" | "light" | "dark"; label: string; Icon: Icon }[] =
   { id: "light", label: "Light", Icon: Sun },
   { id: "dark", label: "Dark", Icon: Moon },
 ];
+
+/**
+ * Accent-hue slider. Updates the CSS custom properties live during drag
+ * (cheap — just a style mutation) and commits to context on release, so
+ * the global re-render storm only fires once per drag.
+ */
+function HueSlider({
+  value,
+  onCommit,
+}: {
+  value: number;
+  onCommit: (v: number) => void;
+}) {
+  const [local, setLocal] = useState(value);
+  const committedRef = useRef(value);
+
+  useEffect(() => {
+    setLocal(value);
+    committedRef.current = value;
+  }, [value]);
+
+  const previewCss = (hue: number) => {
+    const root = document.documentElement;
+    root.style.setProperty("--primary", `oklch(0.55 0.2 ${hue})`);
+    root.style.setProperty("--sidebar-primary", `oklch(0.55 0.2 ${hue})`);
+    root.style.setProperty("--ring", `oklch(0.55 0.15 ${hue})`);
+  };
+
+  const commit = () => {
+    if (local === committedRef.current) return;
+    committedRef.current = local;
+    onCommit(local);
+  };
+
+  return (
+    <label className="flex items-center gap-1.5">
+      <input
+        type="range"
+        min={0}
+        max={360}
+        value={local}
+        onChange={(e) => {
+          const v = Number(e.target.value);
+          setLocal(v);
+          previewCss(v);
+        }}
+        onPointerUp={commit}
+        onKeyUp={commit}
+        onBlur={commit}
+        aria-label="Custom hue"
+        className="h-1.5 w-32 cursor-pointer appearance-none rounded-full"
+        style={{
+          background:
+            "linear-gradient(to right, oklch(0.55 0.2 0), oklch(0.55 0.2 60), oklch(0.55 0.2 120), oklch(0.55 0.2 180), oklch(0.55 0.2 240), oklch(0.55 0.2 300), oklch(0.55 0.2 360))",
+        }}
+      />
+      <span className="font-mono text-[11px] text-muted-foreground tabular-nums w-8">
+        {local}°
+      </span>
+    </label>
+  );
+}
 
 type PillOption<T extends string | number> = { value: T; label: string };
 
@@ -122,29 +185,13 @@ export function AppearanceTab() {
               );
             })}
           </div>
-          <div className="flex items-center gap-2">
-            <label className="flex items-center gap-1.5">
-              <input
-                type="range"
-                min={0}
-                max={360}
-                value={settings.accentHue}
-                onChange={(e) => updateSetting("accentHue", Number(e.target.value))}
-                aria-label="Custom hue"
-                className="h-1.5 w-32 cursor-pointer appearance-none rounded-full"
-                style={{
-                  background:
-                    "linear-gradient(to right, oklch(0.55 0.2 0), oklch(0.55 0.2 60), oklch(0.55 0.2 120), oklch(0.55 0.2 180), oklch(0.55 0.2 240), oklch(0.55 0.2 300), oklch(0.55 0.2 360))",
-                }}
-              />
-              <span className="font-mono text-[11px] text-muted-foreground tabular-nums w-8">
-                {settings.accentHue}°
-              </span>
-            </label>
-            {isCustomHue && (
-              <span className="text-[10px] text-muted-foreground/70">custom</span>
-            )}
-          </div>
+          <HueSlider
+            value={settings.accentHue}
+            onCommit={(v) => updateSetting("accentHue", v)}
+          />
+          {isCustomHue && (
+            <span className="text-[10px] text-muted-foreground">custom</span>
+          )}
         </div>
       </SettingRow>
 

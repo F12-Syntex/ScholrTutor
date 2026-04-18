@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SquaresFour } from "@phosphor-icons/react/dist/ssr/SquaresFour";
@@ -51,9 +51,13 @@ function NavItems() {
     setManualOpen((prev) => ({ ...prev, [href]: !prev[href] }));
   };
 
-  const starredStudents = [...students]
-    .filter((s) => s.isStarred)
-    .sort((a, b) => a.name.localeCompare(b.name));
+  const starredStudents = useMemo(
+    () =>
+      students
+        .filter((s) => s.isStarred)
+        .sort((a, b) => a.name.localeCompare(b.name)),
+    [students],
+  );
 
   return (
     <SidebarMenu>

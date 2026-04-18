@@ -22,7 +22,7 @@ export default function SettingsPage() {
           <TabsTrigger value="data">Data &amp; About</TabsTrigger>
         </TabsList>
 
-        <div className="flex-1 min-h-0 overflow-auto pt-2">
+        <div className="scroll-panel flex-1 min-h-0 overflow-auto pt-2">
           <TabsContent value="general">
             <GeneralTab />
           </TabsContent>

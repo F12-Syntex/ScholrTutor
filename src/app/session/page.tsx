@@ -193,7 +193,7 @@ export default function SessionPage() {
         />
       </div>
 
-      <div className="mt-5 flex-1 min-h-0 space-y-3 overflow-auto">
+      <div className="scroll-panel mt-5 flex-1 min-h-0 space-y-3 overflow-auto">
         {SESSION_SLOTS.map((_, i) => (
           <SessionSlotBlock key={i} slot={i} logs={slotLogs[i]} />
         ))}

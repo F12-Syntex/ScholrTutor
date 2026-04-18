@@ -5,9 +5,11 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
   type ReactNode,
 } from "react";
+import { useDebouncedPersist } from "./use-debounced-persist";
 
 export interface Topic {
   id: string;
@@ -42,24 +44,26 @@ function loadSubjects(): Subject[] {
   if (typeof window === "undefined") return [];
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
+    return raw ? (JSON.parse(raw) as Subject[]) : [];
   } catch {
     return [];
   }
 }
 
-function saveSubjects(subjects: Subject[]) {
-  if (typeof window === "undefined") return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(subjects));
-}
-
 type SubjectsContextValue = {
   subjects: Subject[];
   addSubject: (data: Omit<Subject, "id" | "createdAt" | "topics">) => Subject;
-  updateSubject: (id: string, data: Partial<Omit<Subject, "id" | "createdAt">>) => void;
+  updateSubject: (
+    id: string,
+    data: Partial<Omit<Subject, "id" | "createdAt">>,
+  ) => void;
   deleteSubject: (id: string) => void;
   addTopic: (subjectId: string, topic: Omit<Topic, "id">) => void;
-  updateTopic: (subjectId: string, topicId: string, data: Partial<Omit<Topic, "id">>) => void;
+  updateTopic: (
+    subjectId: string,
+    topicId: string,
+    data: Partial<Omit<Topic, "id">>,
+  ) => void;
   deleteTopic: (subjectId: string, topicId: string) => void;
 };
 
@@ -67,109 +71,109 @@ const SubjectsContext = createContext<SubjectsContextValue | null>(null);
 
 export function SubjectsProvider({ children }: { children: ReactNode }) {
   const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
     setSubjects(loadSubjects());
+    setHydrated(true);
   }, []);
 
+  useDebouncedPersist(STORAGE_KEY, subjects, hydrated);
 
-
-  const addSubject = useCallback(
-    (data: Omit<Subject, "id" | "createdAt" | "topics">) => {
-      const subject: Subject = {
-        ...data,
-        id: generateId(),
-        topics: [],
-        createdAt: new Date().toISOString(),
-      };
-      setSubjects((prev) => {
-        const next = [...prev, subject];
-        saveSubjects(next);
-        return next;
-      });
-      return subject;
-    },
-    []
-  );
-
-  const updateSubject = useCallback(
-    (id: string, data: Partial<Omit<Subject, "id" | "createdAt">>) => {
-      setSubjects((prev) => {
-        const next = prev.map((s) => (s.id === id ? { ...s, ...data } : s));
-        saveSubjects(next);
-        return next;
-      });
-    },
-    []
-  );
-
-  const deleteSubject = useCallback((id: string) => {
-    setSubjects((prev) => {
-      const next = prev.filter((s) => s.id !== id);
-      saveSubjects(next);
-      return next;
-    });
+  const addSubject = useCallback<SubjectsContextValue["addSubject"]>((data) => {
+    const subject: Subject = {
+      ...data,
+      id: generateId(),
+      topics: [],
+      createdAt: new Date().toISOString(),
+    };
+    setSubjects((prev) => [...prev, subject]);
+    return subject;
   }, []);
 
-  const addTopic = useCallback(
-    (subjectId: string, topic: Omit<Topic, "id">) => {
-      setSubjects((prev) => {
-        const next = prev.map((s) =>
+  const updateSubject = useCallback<SubjectsContextValue["updateSubject"]>(
+    (id, data) => {
+      setSubjects((prev) =>
+        prev.map((s) => (s.id === id ? { ...s, ...data } : s)),
+      );
+    },
+    [],
+  );
+
+  const deleteSubject = useCallback<SubjectsContextValue["deleteSubject"]>(
+    (id) => {
+      setSubjects((prev) => prev.filter((s) => s.id !== id));
+    },
+    [],
+  );
+
+  const addTopic = useCallback<SubjectsContextValue["addTopic"]>(
+    (subjectId, topic) => {
+      setSubjects((prev) =>
+        prev.map((s) =>
           s.id === subjectId
             ? { ...s, topics: [...s.topics, { ...topic, id: generateId() }] }
-            : s
-        );
-        saveSubjects(next);
-        return next;
-      });
+            : s,
+        ),
+      );
     },
-    []
+    [],
   );
 
-  const updateTopic = useCallback(
-    (subjectId: string, topicId: string, data: Partial<Omit<Topic, "id">>) => {
-      setSubjects((prev) => {
-        const next = prev.map((s) =>
+  const updateTopic = useCallback<SubjectsContextValue["updateTopic"]>(
+    (subjectId, topicId, data) => {
+      setSubjects((prev) =>
+        prev.map((s) =>
           s.id === subjectId
             ? {
                 ...s,
                 topics: s.topics.map((t) =>
-                  t.id === topicId ? { ...t, ...data } : t
+                  t.id === topicId ? { ...t, ...data } : t,
                 ),
               }
-            : s
-        );
-        saveSubjects(next);
-        return next;
-      });
+            : s,
+        ),
+      );
     },
-    []
+    [],
   );
 
-  const deleteTopic = useCallback((subjectId: string, topicId: string) => {
-    setSubjects((prev) => {
-      const next = prev.map((s) =>
-        s.id === subjectId
-          ? { ...s, topics: s.topics.filter((t) => t.id !== topicId) }
-          : s
+  const deleteTopic = useCallback<SubjectsContextValue["deleteTopic"]>(
+    (subjectId, topicId) => {
+      setSubjects((prev) =>
+        prev.map((s) =>
+          s.id === subjectId
+            ? { ...s, topics: s.topics.filter((t) => t.id !== topicId) }
+            : s,
+        ),
       );
-      saveSubjects(next);
-      return next;
-    });
-  }, []);
+    },
+    [],
+  );
+
+  const value = useMemo<SubjectsContextValue>(
+    () => ({
+      subjects,
+      addSubject,
+      updateSubject,
+      deleteSubject,
+      addTopic,
+      updateTopic,
+      deleteTopic,
+    }),
+    [
+      subjects,
+      addSubject,
+      updateSubject,
+      deleteSubject,
+      addTopic,
+      updateTopic,
+      deleteTopic,
+    ],
+  );
 
   return (
-    <SubjectsContext.Provider
-      value={{
-        subjects,
-        addSubject,
-        updateSubject,
-        deleteSubject,
-        addTopic,
-        updateTopic,
-        deleteTopic,
-      }}
-    >
+    <SubjectsContext.Provider value={value}>
       {children}
     </SubjectsContext.Provider>
   );

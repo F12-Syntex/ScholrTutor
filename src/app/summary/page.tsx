@@ -116,7 +116,7 @@ export default function SummaryPage() {
         </div>
       )}
 
-      <div className="mt-5 flex-1 min-h-0 overflow-auto">
+      <div className="scroll-panel mt-5 flex-1 min-h-0 overflow-auto">
         {!summary && !loading && dayLogs.length === 0 && (
           <EmptyState
             title="No log entries for this day."

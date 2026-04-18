@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "@phosphor-icons/react/dist/ssr/ArrowLeft";
 import { EnvelopeSimple } from "@phosphor-icons/react/dist/ssr/EnvelopeSimple";
@@ -24,6 +24,52 @@ import {
 import { StudentAvatar } from "./student-avatar";
 import { EditStudentDialog } from "./edit-student-dialog";
 import { ConfirmDialog } from "./confirm-dialog";
+
+/**
+ * Uncontrolled-ish grade input. Keeps its own local state while the user
+ * types, commits to the provider on blur or Enter. Prevents typing lag
+ * from the students-context re-render cascade firing on every keystroke.
+ */
+function GradeInput({
+  label,
+  value,
+  onCommit,
+}: {
+  label: string;
+  value: string;
+  onCommit: (v: string) => void;
+}) {
+  const [local, setLocal] = useState(value);
+  const committedRef = useRef(value);
+
+  useEffect(() => {
+    setLocal(value);
+    committedRef.current = value;
+  }, [value]);
+
+  const commit = () => {
+    if (local === committedRef.current) return;
+    committedRef.current = local;
+    onCommit(local);
+  };
+
+  return (
+    <input
+      value={local}
+      onChange={(e) => setLocal(e.target.value)}
+      onBlur={commit}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          commit();
+          (e.target as HTMLInputElement).blur();
+        }
+      }}
+      placeholder="—"
+      aria-label={`${label} grade`}
+      className="w-full border-b border-transparent bg-transparent text-center text-sm font-medium outline-none transition-colors hover:border-border focus:border-primary placeholder:text-muted-foreground/40"
+    />
+  );
+}
 
 function formatDate(iso: string) {
   const d = new Date(iso);
@@ -176,7 +222,7 @@ export function StudentDetail({
       </div>
 
       {/* Content */}
-      <div className="mt-6 flex-1 min-h-0 space-y-5 overflow-auto">
+      <div className="scroll-panel mt-6 flex-1 min-h-0 space-y-5 overflow-auto">
         {/* Summary row */}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <section className="overflow-hidden rounded-lg border border-border">
@@ -206,14 +252,12 @@ export function StudentDetail({
                   <div className="mb-0.5 text-[10px] text-muted-foreground">
                     {g.label}
                   </div>
-                  <input
+                  <GradeInput
+                    label={g.label}
                     value={g.value}
-                    onChange={(e) =>
-                      updateStudent(student.id, { [g.key]: e.target.value })
+                    onCommit={(v) =>
+                      updateStudent(student.id, { [g.key]: v })
                     }
-                    placeholder="—"
-                    aria-label={`${g.label} grade`}
-                    className="w-full border-b border-transparent bg-transparent text-center text-sm font-medium outline-none transition-colors hover:border-border focus:border-primary placeholder:text-muted-foreground/40"
                   />
                 </div>
               ))}

@@ -377,22 +377,31 @@
     border-radius: 9999px;
     border: 2px solid transparent;
     background-clip: content-box;
-    transition: background 0.15s ease;
   }
 
   ::-webkit-scrollbar-thumb:hover {
     background: var(--scrollbar-thumb-hover);
-    border: 2px solid transparent;
     background-clip: content-box;
   }
 
   ::-webkit-scrollbar-thumb:active {
     background: var(--scrollbar-thumb-active);
-    border: 2px solid transparent;
     background-clip: content-box;
   }
 
   ::-webkit-scrollbar-corner {
     background: transparent;
+  }
+
+  /* ── Paint / layout isolation for big scroll panels ── */
+  .scroll-panel {
+    contain: layout paint;
+    overscroll-behavior: contain;
+  }
+
+  /* Virtualize offscreen list items — browser skips rendering them. */
+  .cv-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 64px;
   }
 }

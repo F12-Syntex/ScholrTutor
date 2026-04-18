@@ -152,7 +152,7 @@ export function SubjectDetail({
         </div>
       </div>
 
-      <div className="mt-5 flex-1 min-h-0 overflow-auto">
+      <div className="scroll-panel mt-5 flex-1 min-h-0 overflow-auto">
         {filteredRoots.length === 0 ? (
           <p className="py-8 text-center text-sm text-muted-foreground">
             {q
