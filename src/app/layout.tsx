@@ -4,14 +4,8 @@ import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Titlebar } from "@/components/titlebar";
-import { ThemeProvider } from "@/components/theme-provider";
-import { SettingsProvider } from "@/lib/settings";
-import { SubjectsProvider } from "@/lib/subjects";
-import { StudentsProvider } from "@/lib/students";
-import { BreadcrumbProvider } from "@/lib/breadcrumb";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { TooltipProvider } from "@/components/ui/tooltip";
-
+import { AppProviders } from "@/components/app-providers";
+import { SidebarInset } from "@/components/ui/sidebar";
 
 export const metadata: Metadata = {
   title: "ScholrTutor",
@@ -30,29 +24,21 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="h-full flex flex-col overflow-hidden antialiased">
-        <ThemeProvider>
-          <SettingsProvider>
-          <SubjectsProvider>
-          <StudentsProvider>
-          <BreadcrumbProvider>
-          <TooltipProvider>
-            <SidebarProvider className="flex-col">
-              <Titlebar />
-              <div className="flex-1 overflow-hidden flex bg-sidebar">
-                <AppSidebar />
-                <SidebarInset className="shadow-md overflow-hidden" style={{ margin: 'var(--panel-gap, 8px)', borderRadius: 'var(--panel-radius, 12px)' }}>
-                  <div className="flex-1 overflow-auto">
-                    {children}
-                  </div>
-                </SidebarInset>
-              </div>
-            </SidebarProvider>
-          </TooltipProvider>
-          </BreadcrumbProvider>
-          </StudentsProvider>
-          </SubjectsProvider>
-          </SettingsProvider>
-        </ThemeProvider>
+        <AppProviders>
+          <Titlebar />
+          <div className="flex-1 overflow-hidden flex bg-sidebar">
+            <AppSidebar />
+            <SidebarInset
+              className="shadow-md overflow-hidden"
+              style={{
+                margin: "var(--panel-gap, 8px)",
+                borderRadius: "var(--panel-radius, 12px)",
+              }}
+            >
+              <div className="flex-1 overflow-auto">{children}</div>
+            </SidebarInset>
+          </div>
+        </AppProviders>
       </body>
     </html>
   );

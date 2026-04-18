@@ -146,7 +146,6 @@ export function extractMentions(text: string, students: Student[], subjects: Sub
 
 // ── AI parsing ──
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function parseSessionLog(
   rawText: string,
   students: Student[],
@@ -198,8 +197,9 @@ Return ONLY valid JSON:
     }),
   });
   if (!res.ok) throw new Error(`API error ${res.status}`);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const data = await res.json() as any;
+  const data = (await res.json()) as {
+    choices?: { message?: { content?: string } }[];
+  };
   const content = data.choices?.[0]?.message?.content ?? "";
   const match = content.match(/\{[\s\S]*\}/);
   if (!match) throw new Error("AI did not return valid JSON");

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSubjects } from "@/lib/subjects";
 import {
   loadSessionLogs,
@@ -10,55 +10,70 @@ import {
   type SessionLogEntry,
   type ParsedStudentData,
 } from "@/lib/session-log";
-import { CaretLeft } from "@phosphor-icons/react/dist/ssr/CaretLeft";
-import { CaretRight } from "@phosphor-icons/react/dist/ssr/CaretRight";
-
-function formatDateHeading(date: Date): string {
-  const today = new Date();
-  const todayKey = toDateKey(today);
-  const dateKey = toDateKey(date);
-  const yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
-
-  if (dateKey === todayKey) return "Today";
-  if (dateKey === toDateKey(yesterday)) return "Yesterday";
-  return date.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
-}
+import { DateNav } from "../_components/date-nav";
 
 function formatTime(iso: string): string {
-  return new Date(iso).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+  return new Date(iso).toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 function LogEntry({ log }: { log: SessionLogEntry }) {
   const { subjects } = useSubjects();
-  const allTopics = subjects.flatMap(s => s.topics);
+  const topicById = useMemo(() => {
+    const m = new Map<string, { code: string; title: string }>();
+    for (const sub of subjects) for (const t of sub.topics) m.set(t.id, t);
+    return m;
+  }, [subjects]);
   const hasParsed = log.parsedData && log.parsedData.students.length > 0;
 
   return (
     <div className="flex gap-3 py-2.5">
-      <span className="text-[10px] font-mono text-muted-foreground/40 pt-0.5 shrink-0 w-12">{formatTime(log.createdAt)}</span>
-      <div className="flex-1 min-w-0">
-        <p className="text-sm text-foreground/80 whitespace-pre-wrap">{log.rawText}</p>
+      <span className="w-12 shrink-0 pt-0.5 font-mono text-xs text-muted-foreground">
+        {formatTime(log.createdAt)}
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="whitespace-pre-wrap text-sm">{log.rawText}</p>
         {hasParsed && (
           <div className="mt-1.5 space-y-1">
             {log.parsedData!.students.map((sd: ParsedStudentData) => (
               <div key={sd.studentId} className="space-y-1">
                 {sd.notes.map((note, i) => (
-                  <p key={i} className="text-xs text-muted-foreground pl-2 border-l-2 border-border/30">{note}</p>
+                  <p
+                    key={i}
+                    className="border-l-2 border-border pl-2 text-xs text-muted-foreground"
+                  >
+                    {note}
+                  </p>
                 ))}
                 {sd.testResults.map((r, i) => (
-                  <div key={i} className="flex items-center gap-2 text-xs pl-2">
+                  <div
+                    key={i}
+                    className="flex flex-wrap items-center gap-2 pl-2 text-xs"
+                  >
                     <span className="text-muted-foreground">{r.name}</span>
-                    <span className="font-medium tabular-nums">{r.scoreGot}/{r.scoreOf}</span>
-                    <span className="text-muted-foreground/50">({Math.round((r.scoreGot / r.scoreOf) * 100)}%)</span>
+                    <span className="font-medium tabular-nums">
+                      {r.scoreGot}/{r.scoreOf}
+                    </span>
+                    <span className="text-muted-foreground">
+                      ({Math.round((r.scoreGot / r.scoreOf) * 100)}%)
+                    </span>
                   </div>
                 ))}
                 {sd.topicIds.length > 0 && (
                   <div className="flex flex-wrap gap-1 pl-2">
-                    {sd.topicIds.map(tid => {
-                      const topic = allTopics.find(t => t.id === tid);
+                    {sd.topicIds.map((tid) => {
+                      const topic = topicById.get(tid);
                       return (
-                        <span key={tid} className={`text-[9px] font-medium px-1.5 py-0.5 rounded ${topic ? "bg-[color-mix(in_srgb,var(--mention-topic)_15%,transparent)] text-[var(--mention-topic)]" : "bg-muted text-muted-foreground/40 line-through"}`}>
+                        <span
+                          key={tid}
+                          className={`rounded px-1.5 py-0.5 text-[11px] font-medium ${
+                            topic
+                              ? "bg-[color-mix(in_srgb,var(--mention-topic)_15%,transparent)] text-[var(--mention-topic)]"
+                              : "bg-muted text-muted-foreground line-through"
+                          }`}
+                        >
                           {topic ? `${topic.code} ${topic.title}` : "[deleted]"}
                         </span>
                       );
@@ -74,46 +89,73 @@ function LogEntry({ log }: { log: SessionLogEntry }) {
   );
 }
 
-function SessionSlotBlock({ slot, logs }: { slot: number; logs: SessionLogEntry[] }) {
+function SessionSlotBlock({
+  slot,
+  logs,
+}: {
+  slot: number;
+  logs: SessionLogEntry[];
+}) {
   const slotDef = SESSION_SLOTS[slot];
   const hasEntries = logs.length > 0;
 
   return (
-    <div className={`rounded-lg border overflow-hidden ${hasEntries ? "border-border/50" : "border-border/20"}`}>
-      <div className={`px-4 py-2.5 flex items-center justify-between ${hasEntries ? "bg-muted/80" : "bg-muted/30"}`}>
+    <section
+      className={`overflow-hidden rounded-lg border ${
+        hasEntries ? "border-border" : "border-border/50"
+      }`}
+    >
+      <header
+        className={`flex items-center justify-between px-4 py-2.5 ${
+          hasEntries ? "bg-muted/80" : "bg-muted/40"
+        }`}
+      >
         <div className="flex items-center gap-2">
-          <span className={`text-xs font-medium ${hasEntries ? "text-foreground" : "text-muted-foreground/40"}`}>{slotDef.label}</span>
-          <span className={`text-[10px] ${hasEntries ? "text-muted-foreground/60" : "text-muted-foreground/30"}`}>{formatSlotTime(slot)}</span>
+          <span
+            className={`text-sm font-medium ${
+              hasEntries ? "text-foreground" : "text-muted-foreground"
+            }`}
+          >
+            {slotDef.label}
+          </span>
+          <span className="text-xs text-muted-foreground">
+            {formatSlotTime(slot)}
+          </span>
         </div>
         {hasEntries && (
-          <span className="text-[10px] text-muted-foreground/40">{logs.length} {logs.length === 1 ? "entry" : "entries"}</span>
+          <span className="text-xs text-muted-foreground">
+            {logs.length} {logs.length === 1 ? "entry" : "entries"}
+          </span>
         )}
-      </div>
+      </header>
       {hasEntries ? (
-        <div className="bg-card px-4 divide-y divide-border/15">
-          {logs.map(log => <LogEntry key={log.id} log={log} />)}
+        <div className="divide-y divide-border bg-card px-4">
+          {logs.map((log) => (
+            <LogEntry key={log.id} log={log} />
+          ))}
         </div>
       ) : (
         <div className="bg-card/50 px-4 py-3">
-          <p className="text-xs text-muted-foreground/30 text-center">No entries</p>
+          <p className="text-center text-xs text-muted-foreground">No entries</p>
         </div>
       )}
-    </div>
+    </section>
   );
 }
 
 export default function SessionPage() {
   const [allLogs, setAllLogs] = useState<SessionLogEntry[]>([]);
   const [selectedDate, setSelectedDate] = useState(() => new Date());
-  const refresh = () => setAllLogs(loadSessionLogs());
 
-  useEffect(() => { refresh(); }, []);
+  useEffect(() => {
+    setAllLogs(loadSessionLogs());
+  }, []);
 
   const dateKey = toDateKey(selectedDate);
 
-  const dayLogs = useMemo(() =>
-    allLogs.filter(l => toDateKey(new Date(l.createdAt)) === dateKey),
-    [allLogs, dateKey]
+  const dayLogs = useMemo(
+    () => allLogs.filter((l) => toDateKey(new Date(l.createdAt)) === dateKey),
+    [allLogs, dateKey],
   );
 
   const slotLogs = useMemo(() => {
@@ -122,40 +164,36 @@ export default function SessionPage() {
       const slot = log.sessionSlot ?? 0;
       if (slot >= 0 && slot < grouped.length) grouped[slot].push(log);
     }
-    for (const arr of grouped) arr.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+    for (const arr of grouped)
+      arr.sort(
+        (a, b) =>
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+      );
     return grouped;
   }, [dayLogs]);
 
-  const prevDay = () => { const d = new Date(selectedDate); d.setDate(d.getDate() - 1); setSelectedDate(d); };
-  const nextDay = () => { const d = new Date(selectedDate); d.setDate(d.getDate() + 1); setSelectedDate(d); };
-  const isToday = dateKey === toDateKey(new Date());
-
   return (
-    <div className="p-8 h-full flex flex-col">
-      <div className="shrink-0">
-        <h1 className="text-3xl font-medium tracking-tight">Session Times</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Log entries grouped by session time slots.</p>
+    <div className="flex h-full flex-col p-4 sm:p-8">
+      <header className="shrink-0">
+        <h1 className="text-2xl font-medium tracking-tight sm:text-3xl">Session Times</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Log entries grouped by session time slots.
+        </p>
+      </header>
+
+      <div className="mt-5 shrink-0">
+        <DateNav
+          date={selectedDate}
+          onChange={setSelectedDate}
+          trailing={
+            <span className="text-xs text-muted-foreground">
+              {dayLogs.length} {dayLogs.length === 1 ? "entry" : "entries"}
+            </span>
+          }
+        />
       </div>
 
-      {/* Date nav */}
-      <div className="mt-5 flex items-center gap-2 shrink-0">
-        <button onClick={prevDay} className="p-1.5 rounded-md hover:bg-accent transition-colors text-muted-foreground hover:text-foreground">
-          <CaretLeft size={16} />
-        </button>
-        <span className="text-sm font-medium min-w-[180px] text-center">{formatDateHeading(selectedDate)}</span>
-        <button onClick={nextDay} className="p-1.5 rounded-md hover:bg-accent transition-colors text-muted-foreground hover:text-foreground">
-          <CaretRight size={16} />
-        </button>
-        {!isToday && (
-          <button onClick={() => setSelectedDate(new Date())} className="text-xs text-muted-foreground hover:text-foreground transition-colors ml-1">Today</button>
-        )}
-        <span className="text-xs text-muted-foreground/40 ml-auto">
-          {dayLogs.length} {dayLogs.length === 1 ? "entry" : "entries"}
-        </span>
-      </div>
-
-      {/* Slots */}
-      <div className="mt-5 flex-1 min-h-0 overflow-auto space-y-3">
+      <div className="mt-5 flex-1 min-h-0 space-y-3 overflow-auto">
         {SESSION_SLOTS.map((_, i) => (
           <SessionSlotBlock key={i} slot={i} logs={slotLogs[i]} />
         ))}

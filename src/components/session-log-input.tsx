@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import { useStudents } from "@/lib/students";
 import { useSubjects } from "@/lib/subjects";
 import { useSettings } from "@/lib/settings";
@@ -66,17 +66,22 @@ export function SessionLogInput({ studentId, onLogSubmitted }: {
 
   const [stage, setStage] = useState<"idle" | "submitting" | "review">("idle");
   const [parsed, setParsed] = useState<ParsedSessionData | null>(null);
-  const [rawText, setRawText] = useState("");
+  const pendingTextRef = useRef("");
   const [error, setError] = useState("");
   const [trigger, setTrigger] = useState<TriggerState>(null);
   const [selectedIdx, setSelectedIdx] = useState(0);
-  const [logDate, setLogDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const todayIso = () => {
+    const d = new Date();
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  };
+  const [logDateTime, setLogDateTime] = useState(todayIso);
   const editorRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // ── Autocomplete data ──
 
-  const items: AutoItem[] = (() => {
+  const items = useMemo<AutoItem[]>(() => {
     if (!trigger) return [];
     const q = trigger.query.toLowerCase();
 
@@ -131,9 +136,15 @@ export function SessionLogInput({ studentId, onLogSubmitted }: {
       .map(t => ({ id: t.id, label: `${t.code} ${t.title}`, sublabel: t.subName, type: "topic" as const }));
 
     return [...studentItems, ...topicItems].slice(0, 14);
-  })();
+  }, [trigger, students, subjects, studentId]);
 
   const totalItems = items.length;
+
+  const topicById = useMemo(() => {
+    const m = new Map<string, { code: string; title: string }>();
+    for (const sub of subjects) for (const t of sub.topics) m.set(t.id, t);
+    return m;
+  }, [subjects]);
 
   // ── Trigger detection from DOM ──
 
@@ -236,11 +247,12 @@ export function SessionLogInput({ studentId, onLogSubmitted }: {
   };
 
   // ── Timestamp helper ──
-
+  // Honour the datetime-local value. If the user picked a prior date, use now for
+  // the "time" portion so the log lands in today's slot on the picked calendar day.
   const makeLogTimestamp = () => {
-    const [year, month, day] = logDate.split("-").map(Number);
-    const now = new Date();
-    return new Date(year, month - 1, day, now.getHours(), now.getMinutes(), now.getSeconds());
+    const parsed = new Date(logDateTime);
+    if (Number.isNaN(parsed.getTime())) return new Date();
+    return parsed;
   };
 
   // ── Submit ──
@@ -251,7 +263,7 @@ export function SessionLogInput({ studentId, onLogSubmitted }: {
     if (!text.trim()) return;
     if (!settings.openRouterApiKey) { setError("No API key. Go to Settings."); return; }
 
-    setRawText(text);
+    pendingTextRef.current = text;
     setStage("submitting");
     setError("");
 
@@ -287,7 +299,7 @@ export function SessionLogInput({ studentId, onLogSubmitted }: {
       updateStudent(sd.studentId, { completedSessions: student.completedSessions + 1 });
     }
     const ts = makeLogTimestamp();
-    saveSessionLog({ id: crypto.randomUUID(), rawText: rawText, parsedData: parsed, sessionSlot: resolveSessionSlot(ts), createdAt: ts.toISOString() });
+    saveSessionLog({ id: crypto.randomUUID(), rawText: pendingTextRef.current, parsedData: parsed, sessionSlot: resolveSessionSlot(ts), createdAt: ts.toISOString() });
     clearEditor();
     setParsed(null);
     setStage("idle");
@@ -296,8 +308,8 @@ export function SessionLogInput({ studentId, onLogSubmitted }: {
 
   const clearEditor = () => {
     if (editorRef.current) editorRef.current.innerHTML = "";
-    setRawText("");
-    setLogDate(new Date().toISOString().slice(0, 10));
+    pendingTextRef.current = "";
+    setLogDateTime(todayIso());
   };
 
   // ── Dropdown position: check if there's room above, else go below ──
@@ -405,9 +417,9 @@ export function SessionLogInput({ studentId, onLogSubmitted }: {
                       <p className="text-[10px] font-medium text-muted-foreground/50 mb-1">Topics Covered</p>
                       <div className="flex flex-wrap gap-1">
                         {sd.topicIds.map(tid => {
-                          const topic = subjects.flatMap(s => s.topics).find(t => t.id === tid);
+                          const topic = topicById.get(tid);
                           return (
-                            <span key={tid} className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${topic ? "bg-[color-mix(in_srgb,var(--mention-topic)_15%,transparent)] text-[var(--mention-topic)]" : "bg-muted text-muted-foreground/40 line-through"}`}>
+                            <span key={tid} className={`rounded px-1.5 py-0.5 text-xs font-medium ${topic ? "bg-[color-mix(in_srgb,var(--mention-topic)_15%,transparent)] text-[var(--mention-topic)]" : "bg-muted text-muted-foreground line-through"}`}>
                               {topic ? `${topic.code} ${topic.title}` : "[deleted]"}
                             </span>
                           );
@@ -433,13 +445,14 @@ export function SessionLogInput({ studentId, onLogSubmitted }: {
             Type <kbd className="px-1 py-0.5 rounded border border-border/50 bg-background/80 font-mono text-[9px]">@</kbd> to mention · Ctrl+Enter to submit
           </span>
           {stage === "idle" && (
-            <label className="flex items-center gap-1 cursor-pointer">
-              <CalendarBlank size={12} className="text-muted-foreground/40" />
+            <label className="flex cursor-pointer items-center gap-1">
+              <CalendarBlank size={12} className="text-muted-foreground" />
               <input
-                type="date"
-                value={logDate}
-                onChange={(e) => setLogDate(e.target.value)}
-                className="text-[10px] bg-transparent border-none outline-none text-muted-foreground/60 cursor-pointer w-[90px]"
+                type="datetime-local"
+                value={logDateTime}
+                onChange={(e) => setLogDateTime(e.target.value)}
+                aria-label="Log date and time"
+                className="cursor-pointer border-none bg-transparent text-xs text-muted-foreground outline-none"
               />
             </label>
           )}
