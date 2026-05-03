@@ -7,6 +7,7 @@ ScholrTutor is a **desktop Electron app** with a secondary responsive fallback (
 ## The Meta-Rule
 
 > **Any new pattern not already in this document must be added here *first*, then adopted in code — in the same commit.**
+
 >
 > - If the convention exists below: use it exactly as specified.
 > - If it doesn't: open this file, add the row/section with a one-line rationale, and ship it alongside the code that uses it.
